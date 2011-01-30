@@ -14,7 +14,6 @@ function feeds_tamper_ui_select_importer_form($form, &$form_state) {
     '#type' => 'select',
     '#options' => $options,
   );
-
   $form['next'] = array(
     '#type' => 'submit',
     '#value' => t('Continue'),
@@ -167,12 +166,10 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
   foreach ($feeds_tamper_plugins as $plugin_id => $plugin) {
     $plugins[$plugin['category']][$plugin_id] = $plugin['name'];
   }
-
   ksort($plugins);
   foreach ($plugins as &$p) {
     asort($p);
   }
-
   $form['plugin_id'] = array(
     '#title' => 'The plugin to add',
     '#type' => 'select',
