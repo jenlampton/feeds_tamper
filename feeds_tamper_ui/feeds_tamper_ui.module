@@ -1,7 +1,7 @@
 <?php
 // $Id$
 
-// Implements of hook_menu.
+// Implements hook_menu.
 function feeds_tamper_ui_menu() {
   $items = array();
 

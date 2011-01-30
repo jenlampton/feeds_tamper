@@ -20,15 +20,16 @@ function feeds_tamper_feeds_after_parse(FeedsSource $source, &$result) {
     foreach ($importer_instances as $element_key => $instances) {
       foreach ($instances as $instance) {
         $plugin = feeds_tamper_get_plugin($instance->plugin_id);
-        if (is_array($item[$element_key]) && $plugin['multi'] == 'loop') {
+        $is_array = is_array($item[$element_key]);
+        if ($is_array && $plugin['multi'] == 'loop') {
           foreach ($item[$element_key] as &$i) {
             $plugin['callback']($result, $item_key, $element_key, $i, $instance->settings);
           }
         }
-        else if (is_array($item[$element_key]) && $plugin['multi'] == 'direct') {
+        else if ($is_array && $plugin['multi'] == 'direct') {
           $plugin['callback']($result, $item_key, $element_key, $item[$element_key], $instance->settings);
         }
-        else if (!is_array($item[$element_key]) && $plugin['single'] != 'skip') {
+        else if (!$is_array && $plugin['single'] != 'skip') {
           $plugin['callback']($result, $item_key, $element_key, $item[$element_key], $instance->settings);
         }
       }
