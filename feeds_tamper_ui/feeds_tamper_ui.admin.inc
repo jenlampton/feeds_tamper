@@ -2,9 +2,9 @@
 // $Id$
 
 /**
- * Build overview of available configurations.
+ * Build select_importer of available configurations.
  */
-function feeds_tamper_ui_overview_form($form, &$form_state) {
+function feeds_tamper_ui_select_importer_form($form, &$form_state) {
   $importers = feeds_importer_load_all();
   $options = array_keys($importers);
   $options = array_combine($options, $options);
@@ -22,7 +22,7 @@ function feeds_tamper_ui_overview_form($form, &$form_state) {
   return $form;
 }
 
-function feeds_tamper_ui_overview_form_submit($form, &$form_state) {
+function feeds_tamper_ui_select_importer_form_submit($form, &$form_state) {
   $importer_id = check_plain($form_state['values']['importer']);
   drupal_goto('admin/structure/feeds_tamper/edit/' . $importer_id);
 }
@@ -66,7 +66,7 @@ function feeds_tamper_ui_edit_form($form, &$form_state, $importer) {
           $plugin['name'],
           $status,
           l($edit, 'admin/structure/feeds_tamper/edit_plugin/' . $instance->id) .
-          (empty($delete) ? '' :  ' | '. l($delete, 'admin/structure/feeds_tamper/remove_plugin/'. $instance->id)),
+          (empty($delete) ? '' :  ' | '. l($delete, 'admin/structure/feeds_tamper/delete/'. $instance->id)),
         );
         $form['mappings'][$mapping['source']]['table'][$instance->id]['data'] = array(
           '#type' => 'value',
@@ -117,34 +117,35 @@ function feeds_tamper_ui_edit_form_submit($form, &$form_state) {
 
 function theme_feeds_tamper_ui_edit_form($variables) {
   $form = $variables['form'];
-  $header = array(t('Description'), t('Plugin Type'), t('Status'), t('Operations'), t('Enabled'), t('Weight'));
+  $header = array(t('Description'), t('Plugin'), t('Status'), t('Operations'), t('Enabled'), t('Weight'));
   $output = '';
   foreach (element_children($form['mappings']) as $source) {
     $table_rows = array();
-    //dpm(element_children($form['mappings'][$source]['table']));
-    foreach (element_children($form['mappings'][$source]['table']) as $id) {
-      $this_row = $form['mappings'][$source]['table'][$id]['data']['#value'];
-      $this_row[] = drupal_render($form['mappings'][$source]['table'][$id]['enabled']);
-      $this_row[] = drupal_render($form['mappings'][$source]['table'][$id]['weight-' . $id]);
-      $table_rows[] = array('data' => $this_row, 'class' => array('draggable'));
+    $children = element_children($form['mappings'][$source]['table']);
+
+    if (!empty($children)) {
+      foreach ($children as $id) {
+        $this_row = $form['mappings'][$source]['table'][$id]['data']['#value'];
+        $this_row[] = drupal_render($form['mappings'][$source]['table'][$id]['enabled']);
+        $this_row[] = drupal_render($form['mappings'][$source]['table'][$id]['weight-' . $id]);
+        $table_rows[] = array('data' => $this_row, 'class' => array('draggable'));
+      }
+      $table_id = preg_replace('/[^a-z0-9-]/', '',
+        preg_replace('/_+/', '-',
+          strtolower($source . '-table')
+        )
+      );
+      $table = theme_table(array(
+        'header' => $header,
+        'rows' => $table_rows,
+        'attributes' => array('id' => $table_id),
+        'caption' => '',
+        'colgroups' => array(),
+        'sticky' => FALSE,
+        'empty' => '',
+      ));
+      $form['mappings'][$source]['#value'] = $table;
     }
-    
-    $table_id = preg_replace('/[^a-z0-9-]/', '',
-      preg_replace('/_+/', '-',
-        strtolower($source . '-table')
-      )
-    );
-    
-    $table = theme_table(array(
-      'header' => $header,
-      'rows' => $table_rows,
-      'attributes' => array('id' => $table_id),
-      'caption' => '',
-      'colgroups' => array(),
-      'sticky' => FALSE,
-      'empty' => '',
-    ));
-    $form['mappings'][$source]['#value'] = $table;
     $form['mappings'][$source]['#value'] .= $form['mappings'][$source]['add_link']['#value'];
     $output .= drupal_render($form['mappings'][$source]);
     drupal_add_tabledrag($table_id, 'order', 'sibling', 'weight');
@@ -154,6 +155,9 @@ function theme_feeds_tamper_ui_edit_form($variables) {
 }
 
 function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source) {
+  $crumb = drupal_get_breadcrumb();
+  $crumb[4] = l(t('Edit ') . $importer->id, 'admin/structure/feeds_tamper/edit/' . $importer->id);
+  drupal_set_breadcrumb($crumb);
   $form_state['importer'] = $importer;
   $form_state['source'] = $source;
   $form = array();
@@ -208,8 +212,7 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
     foreach ($plugin['form']($importer, $source, array()) as $key => $form_item) {
       $form['plugin_forms'][$machine_name][$key] = $form_item;
     }
-  }
-  
+  }  
   $form['add'] = array(
     '#type' => 'submit',
     '#value' => t('Add'),
@@ -264,6 +267,10 @@ function feeds_tamper_ui_add_plugin_form_validate(&$form, &$form_state) {
 }
 
 function feeds_tamper_ui_edit_plugin_form($form, &$form_state, $instance) {
+  $importer = l(t('Edit ') . $instance->importer, 'admin/structure/feeds_tamper/edit/' . $instance->importer);
+  $crumb = drupal_get_breadcrumb();
+  $crumb[] = $importer;
+  drupal_set_breadcrumb($crumb);
   $form_state['instance'] = $instance;
   $plugin = feeds_tamper_get_plugin($instance->plugin_id);
   $form = array();
@@ -302,7 +309,7 @@ function feeds_tamper_ui_edit_plugin_form_validate($form, &$form_state) {
   }
 }
 
-function feeds_tamper_ui_edit_plugin_form_submit($form, &$form_state) {
+function feeds_tamper_ui_edit_plugin_plugin_form_submit($form, &$form_state) {
   $instance = $form_state['instance'];
   $instance->settings = $form_state['values'][$instance->plugin_id];
   $instance->description = $form_state['storage']['description'];
@@ -312,14 +319,18 @@ function feeds_tamper_ui_edit_plugin_form_submit($form, &$form_state) {
   drupal_goto('admin/structure/feeds_tamper/edit/' . $instance->importer);
 }
 
-function feeds_tamper_ui_remove_plugin_form($form, &$form_state, $instance) {
+function feeds_tamper_ui_delete_form($form, &$form_state, $instance) {
+  $importer = l(t('Edit ') . $instance->importer, 'admin/structure/feeds_tamper/edit/' . $instance->importer);
+  $crumb = drupal_get_breadcrumb();
+  $crumb[] = $importer;
+  drupal_set_breadcrumb($crumb);
   $form_state['instance'] = $instance;
   $form = array();
-  $form['remove'] = array('#type' => 'submit', '#value' => t('Remove'));
+  $form['delete'] = array('#type' => 'submit', '#value' => t('Delete'));
   return $form;
 }
 
-function feeds_tamper_ui_remove_plugin_form_submit($form, &$form_state) {
+function feeds_tamper_ui_delete_form_submit($form, &$form_state) {
   ctools_export_crud_delete('feeds_tamper', $form_state['instance']);
   drupal_goto('admin/structure/feeds_tamper/edit/' . $form_state['instance']->importer);
 }

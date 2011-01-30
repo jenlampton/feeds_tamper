@@ -9,23 +9,10 @@ function feeds_tamper_ui_menu() {
     'title' => 'Feed tamper',
     'description' => 'Configure Feeds tamper to modify incoming feeds data.',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('feeds_tamper_ui_overview_form'),
+    'page arguments' => array('feeds_tamper_ui_select_importer_form'),
     'access arguments' => array('administer feeds_tamper'),
     'file' => 'feeds_tamper_ui.admin.inc',
   );
-
-  //$items['admin/structure/feeds_tamper/list'] = array(
-  //  'title' => t('List'),
-  //  'type' => MENU_DEFAULT_LOCAL_TASK,
-  //);
-  //$items['admin/structure/feeds_tamper/export/%feeds_importer'] = array(
-  //  'title' => t('Export'),
-  //  'page callback' => 'drupal_get_form',
-  //  'page arguments' => array('feeds_ui_export_form', 4),
-  //  'access arguments' => array('administer feeds'),
-  //  'file' => 'feeds_ui.admin.inc',
-  //  'type' => MENU_CALLBACK,
-  //);
 
   $items['admin/structure/feeds_tamper/edit/%feeds_importer'] = array(
     'title' => t('Edit'),
@@ -49,11 +36,11 @@ function feeds_tamper_ui_menu() {
     'access arguments' => array('administer feeds_tamper'),
     'file' => 'feeds_tamper_ui.admin.inc',
   );
-  $items['admin/structure/feeds_tamper/remove_plugin/%feeds_tamper_plugin_instance'] = array(
-    'title callback' => 'feeds_tamper_ui_remove_title',
+  $items['admin/structure/feeds_tamper/delete/%feeds_tamper_plugin_instance'] = array(
+    'title callback' => 'feeds_tamper_ui_delete_title',
     'title arguments' => array(4),
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('feeds_tamper_ui_remove_plugin_form', 4),
+    'page arguments' => array('feeds_tamper_ui_delete_form', 4),
     'access arguments' => array('administer feeds_tamper'),
     'file' => 'feeds_tamper_ui.admin.inc',
   );
@@ -70,9 +57,9 @@ function feeds_tamper_ui_edit_title($instance) {
   }
   return t('Override plugin: ') . $instance->id;
 }
-function feeds_tamper_ui_remove_title($instance) {
+function feeds_tamper_ui_delete_title($instance) {
   if ($instance->export_type == EXPORT_IN_DATABASE) {
-    return t('Remove plugin: ') . $instance->id;
+    return t('Delete plugin: ') . $instance->id;
   }
   return t('Revert plugin: !id?', array('!id' => $instance->id));
 }
