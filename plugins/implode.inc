@@ -2,12 +2,16 @@
 // $Id$
 
 $plugin = array(
-  'form' => 'feeds_tamper_implode_form',
+  'form'     => 'feeds_tamper_implode_form',
   'callback' => 'feeds_tamper_implode_callback',
-  'name' => 'Implode',
+  'validate' => 'feeds_tamper_implode_validate',
+  'name'     => 'Implode',
+  'multi'    => 'direct',
+  'single'   => 'skip',
+  'category' => 'List',
 );
 
-function feeds_tamper_implode_form($settings) {
+function feeds_tamper_implode_form($importer, $source, $settings) {
   $form = array();
 
   $form['glue'] = array(
@@ -21,9 +25,10 @@ function feeds_tamper_implode_form($settings) {
   return $form;
 }
 
-function feeds_tamper_implode_callback($source, &$key, &$field, $values) {
-  if (is_array($field)) {
-    $glue = str_replace(array('%s', '%t', '%n'), array(' ', "\t", "\n"), $values['glue']);
-    $field = implode($glue, $field);
-  }
+function feeds_tamper_implode_validate(&$values) {
+  $values['real_glue'] = str_replace(array('%s', '%t', '%n'), array(' ', "\t", "\n"), $values['glue']);
+}
+
+function feeds_tamper_implode_callback($source, $item_key, $element_key, &$field, $values) {
+  $field = implode($values['real_glue'], $field);
 }
