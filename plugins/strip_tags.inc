@@ -10,7 +10,7 @@ $plugin = array(
   'category' => 'HTML',
 );
 
-function feeds_tamper_strip_tags_form($importer, $source, $settings) {
+function feeds_tamper_strip_tags_form($importer, $element_key, $settings) {
   $form = array();
 
   $form['allowed_tags'] = array(
@@ -23,10 +23,10 @@ function feeds_tamper_strip_tags_form($importer, $source, $settings) {
   return $form;
 }
 
-function feeds_tamper_strip_tags_validate(&$values) {
-  $values['allowed_tags'] = trim($values['allowed_tags']);
+function feeds_tamper_strip_tags_validate(&$settings) {
+  $settings['allowed_tags'] = trim($settings['allowed_tags']);
 }
 
-function feeds_tamper_strip_tags_callback($source, $item_key, $element_key, &$field, $values) {
-  $field = strip_tags($field, $values['allowed_tags']);
+function feeds_tamper_strip_tags_callback($result, $item_key, $element_key, &$field, $settings) {
+  $field = strip_tags($field, $settings['allowed_tags']);
 }

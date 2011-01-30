@@ -12,7 +12,7 @@ $plugin = array(
   'validate' => 'feeds_tamper_truncate_text_validate',
 );
 
-function feeds_tamper_truncate_text_form($importer, $source, $settings) {
+function feeds_tamper_truncate_text_form($importer, $element_key, $settings) {
   $form = array();
   $form['num_char'] = array(
     '#type' => 'textfield',
@@ -47,9 +47,9 @@ function feeds_tamper_truncate_text_validate($settings) {
   }
 }
 
-function feeds_tamper_truncate_text_callback($source, $item_key, $element_key, &$field, $values) {
-  $field = substr($field, 0, $values['num_char']);
-  if ($values['ellipses']) {
+function feeds_tamper_truncate_text_callback($result, $item_key, $element_key, &$field, $settings) {
+  $field = substr($field, 0, $settings['num_char']);
+  if ($settings['ellipses']) {
     $field .= '...';
   }
 }

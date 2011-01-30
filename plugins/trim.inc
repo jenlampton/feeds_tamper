@@ -9,7 +9,7 @@ $plugin = array(
   'category' => 'Text',
 );
 
-function feeds_tamper_trim_form($importer, $source, $settings) {
+function feeds_tamper_trim_form($importer, $element_key, $settings) {
   $form = array();
 
   $form['mask'] = array(
@@ -29,6 +29,6 @@ function feeds_tamper_trim_form($importer, $source, $settings) {
   return $form;
 }
 
-function feeds_tamper_trim_callback($source, $item_key, $element_key, &$field, $values) {
-  $field = $values['side']($field, $values['mask']);
+function feeds_tamper_trim_callback($result, $item_key, $element_key, &$field, $settings) {
+  $field = $settings['side']($field, $settings['mask']);
 }

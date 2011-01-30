@@ -9,7 +9,7 @@ $plugin = array(
   'category' => 'HTML',
 );
 
-function feeds_tamper_html_entity_decode_form($importer, $source, $settings) {
+function feeds_tamper_html_entity_decode_form($importer, $element_key, $settings) {
   $form = array();
   $form['html'] = array(
     '#markup' => t('This will convert all HTML entities such as &amp;amp; and &amp;quot; to &amp; and &quot;.')
@@ -17,6 +17,6 @@ function feeds_tamper_html_entity_decode_form($importer, $source, $settings) {
   return $form;
 }
 
-function feeds_tamper_html_entity_decode_callback($source, $item_key, $element_key, &$field, $values) {
+function feeds_tamper_html_entity_decode_callback($result, $item_key, $element_key, &$field, $settings) {
   $field = html_entity_decode($field, ENT_QUOTES, 'UTF-8');
 }

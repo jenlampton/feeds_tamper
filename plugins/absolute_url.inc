@@ -10,13 +10,11 @@ $plugin = array(
   'machine_name' => 'feeds_tamper_absolute_url_machine_name',
 );
 
-function feeds_tamper_absolute_url_form($importer, $source, $settings) {
+function feeds_tamper_absolute_url_form($importer, $element_key, $settings) {
   $form = array();
-
   $form['info'] = array(
     '#markup' => t('This plugin has no options.<br>'),
   );
-
   return $form;
 }
 
@@ -32,11 +30,11 @@ function feeds_tamper_absolute_url_machine_name($settings) {
  * @todo
  *   Make this not suck.
  */
-function feeds_tamper_absolute_url_callback($source, $item_key, $element_key, &$field, $values) {
+function feeds_tamper_absolute_url_callback($result, $item_key, $element_key, &$field, $settings) {
   static $base_url = NULL;
 
   if (!$base_url) {
-    $base_url = rtrim($source->batch->link, '/') . '/';
+    $base_url = rtrim($result->link, '/') . '/';
   }
 
   preg_match_all('/<.*(href|src)(\s*=\s*)(\'|")(.*)("|\').*>/', $field, $matches, PREG_SET_ORDER);

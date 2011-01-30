@@ -11,7 +11,7 @@ $plugin = array(
   'machine_name' => 'feeds_tamper_convert_case_machine_name',
 );
 
-function feeds_tamper_convert_case_form($importer, $source, $settings) {
+function feeds_tamper_convert_case_form($importer, $element_key, $settings) {
   $form = array();
   $form['mode'] = array(
     '#type' => 'radios',
@@ -46,6 +46,6 @@ function feeds_tamper_convert_case_description($settings) {
   }
 }
 
-function feeds_tamper_convert_case_callback($source, $item_key, $element_key, &$field, $values) {
-  $field = mb_convert_case($field, $values['mode'], 'UTF-8');
+function feeds_tamper_convert_case_callback($result, $item_key, $element_key, &$field, $settings) {
+  $field = mb_convert_case($field, $settings['mode'], 'UTF-8');
 }

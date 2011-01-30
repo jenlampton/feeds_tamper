@@ -11,7 +11,7 @@ $plugin = array(
   'description' => 'feeds_tamper_explode_description',
 );
 
-function feeds_tamper_explode_form($importer, $source, $settings) {
+function feeds_tamper_explode_form($importer, $element_key, $settings) {
   $form = array();
   $form['separator'] = array(
     '#type' => 'textfield',
@@ -30,13 +30,13 @@ function feeds_tamper_explode_form($importer, $source, $settings) {
   return $form;
 }
 
-function feeds_tamper_explode_validate(&$values) {
-  $values['real_separator'] = str_replace(array('%s', '%t', '%n'), array(' ', "\t", "\n"), $values['separator']);
-  $values['limit'] = trim($values['limit']);
-  if ($values['limit'] == 0) {
-    $values['limit'] = 1;
+function feeds_tamper_explode_validate(&$settings) {
+  $settings['real_separator'] = str_replace(array('%s', '%t', '%n'), array(' ', "\t", "\n"), $settings['separator']);
+  $settings['limit'] = trim($settings['limit']);
+  if ($settings['limit'] == 0) {
+    $settings['limit'] = 1;
   }
-  if (!is_numeric($values['limit'])) {
+  if (!is_numeric($settings['limit'])) {
     form_set_error('explode][limit', t('Limit must be an integer.'));
   }
 }
@@ -50,6 +50,6 @@ function feeds_tamper_explode_description($settings) {
   return t($text);
 }
 
-function feeds_tamper_explode_callback($source, $item_key, $element_key, &$field, $values) {
-  $field = explode($values['real_separator'], $field);
+function feeds_tamper_explode_callback($result, $item_key, $element_key, &$field, $settings) {
+  $field = explode($settings['real_separator'], $field);
 }

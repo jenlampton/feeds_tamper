@@ -9,12 +9,12 @@ $plugin = array(
   'category' => 'Other',
 );
 
-function feeds_tamper_rewrite_form($importer, $source, $settings) {
+function feeds_tamper_rewrite_form($importer, $element_key, $settings) {
   $form = array();
-
   $mappings = $importer->processor->config['mappings'];
   $replace = array();
   $options = array();
+
   foreach ($mappings as $mapping) {
     $replace[] = '[' . $mapping['source'] . ']';
   }
@@ -29,11 +29,11 @@ function feeds_tamper_rewrite_form($importer, $source, $settings) {
   return $form;
 }
 
-function feeds_tamper_rewrite_callback($source, $item_key, $element_key, &$field, $values) {
+function feeds_tamper_rewrite_callback($result, $item_key, $element_key, &$field, $settings) {
   $trans = array();
-  $item = $source->batch->items[$item_key];
+  $item = $result->items[$item_key];
   foreach ($item as $key => $value) {
     $trans['[' . $key . ']'] = $value;
   }
-  $field = strtr($values['text'], $trans);
+  $field = strtr($settings['text'], $trans);
 }

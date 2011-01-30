@@ -11,9 +11,8 @@ $plugin = array(
   'category' => 'List',
 );
 
-function feeds_tamper_implode_form($importer, $source, $settings) {
+function feeds_tamper_implode_form($importer, $element_key, $settings) {
   $form = array();
-
   $form['glue'] = array(
     '#type' => 'textfield',
     '#title' => t('String glue'),
@@ -21,14 +20,13 @@ function feeds_tamper_implode_form($importer, $source, $settings) {
     '#description' => t('Join array elements into a string. For example, array(\'a\', \'b\', \'c\') would become "a, b, c".
                         A space can be represented by %s, tabs by %t, and newlines by %n.'),
   );
-
   return $form;
 }
 
-function feeds_tamper_implode_validate(&$values) {
-  $values['real_glue'] = str_replace(array('%s', '%t', '%n'), array(' ', "\t", "\n"), $values['glue']);
+function feeds_tamper_implode_validate(&$settings) {
+  $settings['real_glue'] = str_replace(array('%s', '%t', '%n'), array(' ', "\t", "\n"), $settings['glue']);
 }
 
-function feeds_tamper_implode_callback($source, $item_key, $element_key, &$field, $values) {
-  $field = implode($values['real_glue'], $field);
+function feeds_tamper_implode_callback($result, $item_key, $element_key, &$field, $settings) {
+  $field = implode($settings['real_glue'], $field);
 }
