@@ -47,7 +47,7 @@ function feeds_tamper_explode_description($settings) {
   if ($settings['limit']) {
     $text .= ' Limit to ' . $settings['limit'] . ' items.';
   }
-  return t($text);
+  return $text;
 }
 
 function feeds_tamper_explode_callback($result, $item_key, $element_key, &$field, $settings) {

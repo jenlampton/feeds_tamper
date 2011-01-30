@@ -2,10 +2,10 @@
 // $Id$
 
 $plugin = array(
-  'form'     => 'feeds_tamper_convert_case_form',
+  'form' => 'feeds_tamper_convert_case_form',
   'callback' => 'feeds_tamper_convert_case_callback',
-  'name'     => 'Convert case',
-  'multi'    => 'loop',
+  'name' => 'Convert case',
+  'multi' => 'loop',
   'category' => 'Text',
   'description' => 'feeds_tamper_convert_case_description',
   'machine_name' => 'feeds_tamper_convert_case_machine_name',
@@ -42,7 +42,7 @@ function feeds_tamper_convert_case_description($settings) {
     case MB_CASE_LOWER:
       return $text .= 'lowercase.';
     case MB_CASE_UPPER:
-      return $text .= 'uppercase';
+      return $text .= 'uppercase.';
   }
 }
 

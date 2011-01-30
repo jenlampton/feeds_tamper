@@ -2,12 +2,13 @@
 // $Id$
 
 $plugin = array(
-  'form'     => 'feeds_tamper_implode_form',
+  'form' => 'feeds_tamper_implode_form',
   'callback' => 'feeds_tamper_implode_callback',
   'validate' => 'feeds_tamper_implode_validate',
-  'name'     => 'Implode',
-  'multi'    => 'direct',
-  'single'   => 'skip',
+  'description' => 'feeds_tamper_implode_description',
+  'name' => 'Implode',
+  'multi' => 'direct',
+  'single' => 'skip',
   'category' => 'List',
 );
 
@@ -25,6 +26,10 @@ function feeds_tamper_implode_form($importer, $element_key, $settings) {
 
 function feeds_tamper_implode_validate(&$settings) {
   $settings['real_glue'] = str_replace(array('%s', '%t', '%n'), array(' ', "\t", "\n"), $settings['glue']);
+}
+
+function feeds_tamper_implode_description($settings) {
+  return 'Convert this multi-valued item to a single valued item separated by: "' . $settings['real_glue'] . '".';
 }
 
 function feeds_tamper_implode_callback($result, $item_key, $element_key, &$field, $settings) {

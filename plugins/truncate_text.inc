@@ -4,12 +4,12 @@
 $plugin = array(
   'form' => 'feeds_tamper_truncate_text_form',
   'callback' => 'feeds_tamper_truncate_text_callback',
-  'name' => 'Truncate',
-  'multi' => 'loop',
-  'category' => 'Text',
   'description' => 'feeds_tamper_truncate_text_description',
   'machine_name' => 'feeds_tamper_truncate_text_machine_name',
   'validate' => 'feeds_tamper_truncate_text_validate',
+  'name' => 'Truncate',
+  'multi' => 'loop',
+  'category' => 'Text',
 );
 
 function feeds_tamper_truncate_text_form($importer, $element_key, $settings) {

@@ -5,7 +5,7 @@ $plugin = array(
   'form'     => 'feeds_tamper_find_replace_regex_form',
   'callback' => 'feeds_tamper_find_replace_regex_callback',
   'validate' => 'feeds_tamper_find_replace_regex_validate',
-  'name'     => 'Find Replace REGEX',
+  'name'     => 'Find replace REGEX',
   'multi'    => 'direct',
   'category' => 'Text',
 );
@@ -37,11 +37,18 @@ function feeds_tamper_find_replace_regex_validate(&$settings) {
   // test the regex
   $test = @preg_replace($settings['find'], '', 'asdfsadf');
   if ($test === NULL) {
-    return form_set_error('find', 'Invalid regular expression.');
+    return form_set_error('find_replace_regex][find', 'Invalid regular expression.');
   }
   $settings['limit'] = trim($settings['limit']);
   if (empty($settings['limit'])) {
     $settings['real_limit'] = -1;
+    $limit = -1;
+  }
+  else {
+    $limit = $settings['limit'];
+  }
+  if (!is_numeric($limit)) {
+    form_set_error('find_replace_regex][limit', 'Limit must be an integer.');
   }
   else {
     $settings['real_limit'] = intval($settings['limit']);

@@ -2,11 +2,12 @@
 // $Id$
 
 $plugin = array(
-  'form'     => 'feeds_tamper_keyword_filter_form',
+  'form' => 'feeds_tamper_keyword_filter_form',
   'callback' => 'feeds_tamper_keyword_filter_callback',
   'validate' => 'feeds_tamper_keyword_filter_validate',
-  'name'     => 'Keyword Filter',
-  'multi'    => 'skip',
+  'description' => 'feeds_tamper_keyword_filter_description',
+  'name' => 'Keyword filter',
+  'multi' => 'skip',
   'category' => 'Filter',
 );
 
@@ -34,6 +35,7 @@ function feeds_tamper_keyword_filter_form($importer, $element_key, $settings) {
 }
 
 function feeds_tamper_keyword_filter_validate(&$settings) {
+  $settings['words'] = str_replace("\r", '', $settings['words']);
   $settings['word_list'] = explode("\n", $settings['words']);
   $settings['word_list'] = array_map('trim', $settings['word_list']);
   $settings['regex'] = FALSE;
@@ -54,6 +56,13 @@ function feeds_tamper_keyword_filter_validate(&$settings) {
     }
     $settings['regex'] = TRUE;
   }
+}
+
+function feeds_tamper_keyword_filter_description($settings) {
+  $words = explode("\n", $settings['words']);
+  $words = implode(', ', $words);
+  $words = substr($words, 0, 15);
+  return 'Filter items that do not contain one of "' . $words . '".';
 }
 
 function feeds_tamper_keyword_filter_callback($result, $item_key, $element_key, &$field, $settings) {

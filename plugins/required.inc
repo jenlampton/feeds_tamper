@@ -2,13 +2,13 @@
 // $Id$
 
 $plugin = array(
-  'form'     => 'feeds_tamper_required_form',
+  'form' => 'feeds_tamper_required_form',
   'callback' => 'feeds_tamper_required_callback',
-  'name'     => 'Required field',
-  'multi'    => 'direct',
-  'category' => 'Filter',
   'description' => 'feeds_tamper_required_description',
   'machine_name' => 'feeds_tamper_required_machine_name',
+  'name' => 'Required field',
+  'multi' => 'direct',
+  'category' => 'Filter',
 );
 
 function feeds_tamper_required_form($importer, $element_key, $settings) {
@@ -20,7 +20,7 @@ function feeds_tamper_required_form($importer, $element_key, $settings) {
 }
 
 function feeds_tamper_required_description($settings) {
-  return 'If field is empty, do not save item';
+  return 'If the field is empty, do not save item.';
 }
 
 function feeds_tamper_required_machine_name($settings) {

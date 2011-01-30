@@ -61,7 +61,7 @@ function feeds_tamper_ui_edit_form($form, &$form_state, $importer) {
         $checkbox = array('#type' => 'checkbox', '#default_value' => !$instance->disabled);
         $form['mappings'][$mapping['source']]['table'][$instance->id]['enabled'] = $checkbox;
         $data = array(
-          !empty($instance->description) ? $instance->description : $instance->id,
+          !empty($instance->description) ? check_plain($instance->description) : $instance->id,
           $plugin['name'],
           $status,
           l($edit, 'admin/structure/feeds_tamper/edit_plugin/' . $instance->id) .
@@ -235,6 +235,9 @@ function feeds_tamper_ui_add_plugin_form_submit(&$form, &$form_state) {
 function feeds_tamper_ui_add_plugin_form_validate(&$form, &$form_state) {
   $plugin_id = $form_state['values']['plugin_id'];
   $plugin = feeds_tamper_get_plugin($plugin_id);
+  if ($plugin['validate']) {
+    $plugin['validate']($form_state['values'][$plugin_id]);
+  }
   if ($plugin['description']) {
     $form_state['storage']['description'] = $plugin['description']($form_state['values'][$plugin_id]);
   }
@@ -257,9 +260,6 @@ function feeds_tamper_ui_add_plugin_form_validate(&$form, &$form_state) {
     else {
       unset($form_state['values'][$plugin_id]['id']);
     }
-  }
-  if ($plugin['validate']) {
-    $plugin['validate']($form_state['values'][$plugin_id]);
   }
 }
 
@@ -295,18 +295,18 @@ function feeds_tamper_ui_edit_plugin_form($form, &$form_state, $instance) {
 function feeds_tamper_ui_edit_plugin_form_validate($form, &$form_state) {
   $plugin_id = $form_state['instance']->plugin_id;
   $plugin = feeds_tamper_get_plugin($plugin_id);
+  if ($plugin['validate']) {
+    $plugin['validate']($form_state['values'][$plugin_id]);
+  }
   if ($plugin['description']) {
     $form_state['storage']['description'] = $plugin['description']($form_state['values'][$plugin_id]);
   }
   else {
     $form_state['storage']['description'] = trim($form_state['values']['description']);
   }
-  if ($plugin['validate']) {
-    $plugin['validate']($form_state['values'][$plugin_id]);
-  }
 }
 
-function feeds_tamper_ui_edit_plugin_plugin_form_submit($form, &$form_state) {
+function feeds_tamper_ui_edit_plugin_form_submit($form, &$form_state) {
   $instance = $form_state['instance'];
   $instance->settings = $form_state['values'][$instance->plugin_id];
   $instance->description = $form_state['storage']['description'];

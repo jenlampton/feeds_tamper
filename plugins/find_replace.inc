@@ -2,11 +2,11 @@
 // $Id$
 
 $plugin = array(
-  'form'     => 'feeds_tamper_find_replace_form',
+  'form' => 'feeds_tamper_find_replace_form',
   'callback' => 'feeds_tamper_find_replace_callback',
   'validate' => 'feeds_tamper_find_replace_validate',
-  'name'     => 'Find Replace',
-  'multi'    => 'loop',
+  'name' => 'Find replace',
+  'multi' => 'loop',
   'category' => 'Text',
 );
 
@@ -74,7 +74,6 @@ function feeds_tamper_find_replace_callback($result, $item_key, $element_key, &$
   if ($settings['regex']) {
     $field = preg_replace($settings['regex_find'], $settings['replace'], $field);
   }
-
   else {
     $field = $settings['func']($settings['find'], $settings['replace'], $field);
   }
