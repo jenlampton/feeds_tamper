@@ -14,7 +14,7 @@ $plugin = array(
 
 function feeds_tamper_unique_form($importer, $element_key, $settings) {
   $form = array();
-  $form['#markup'] = t('Makes the elements in a multivalued field unique.');
+  $form['unique']['#markup'] = t('Makes the elements in a multivalued field unique.');
   return $form;
 }
 

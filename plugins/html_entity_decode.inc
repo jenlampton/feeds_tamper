@@ -14,7 +14,7 @@ $plugin = array(
 function feeds_tamper_html_entity_decode_form($importer, $element_key, $settings) {
   $form = array();
   $form['html'] = array(
-    '#markup' => t('This will convert all HTML entities such as &amp;amp; and &amp;quot; to &amp; and &quot;.')
+    '#markup' => t('Convert all HTML entities such as &amp;amp; and &amp;quot; to &amp; and &quot;.')
   );
   return $form;
 }

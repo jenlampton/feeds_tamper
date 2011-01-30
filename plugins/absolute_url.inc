@@ -12,8 +12,9 @@ $plugin = array(
 
 function feeds_tamper_absolute_url_form($importer, $element_key, $settings) {
   $form = array();
+  $links = htmlentities('<a href="/stuff/things"> to <a href="http://example.com/stuff/things">');
   $form['info'] = array(
-    '#markup' => t('This plugin has no options.<br>'),
+    '#markup' => t('Make URLs in markup absolute. (i.e. ' . $links . ').'),
   );
   return $form;
 }

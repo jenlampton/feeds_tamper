@@ -14,7 +14,7 @@ $plugin = array(
 function feeds_tamper_required_form($importer, $element_key, $settings) {
   $form = array();
   $form['help'] = array(
-    '#markup' => t('Makes this field required. If it is empty, the feed item will not be saved.'),
+    '#markup' => t('Make this field required. If it is empty, the feed item will not be saved.'),
   );
   return $form;
 }
