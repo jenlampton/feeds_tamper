@@ -77,7 +77,6 @@ function feeds_tamper_ui_edit_form($form, &$form_state, $importer) {
           '#type' => 'value',
           '#value' => $data,
         );
-
         $form['mappings'][$mapping['source']]['table'][$instance->id]['weight-' . $instance->id] = array(
           '#type'=>'textfield',
           '#size'=>5,
@@ -110,7 +109,6 @@ function feeds_tamper_ui_edit_form_submit($form, &$form_state) {
           ctools_export_crud_save('feeds_tamper', $instance);
         }
       }
-
     }
   }
   variable_set('default_feeds_tamper', $disabled);
