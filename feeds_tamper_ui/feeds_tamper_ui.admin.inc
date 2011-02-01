@@ -22,8 +22,9 @@ function feeds_tamper_ui_select_importer_form($form, &$form_state) {
     return $form;
   }
   $form['help'] = array(
-    '#value' => t('There are no configured Feeds importers.'),
+    '#markup' => t('There are no enabled Feeds importers.'),
   );
+  return $form;
 }
 
 function feeds_tamper_ui_select_importer_form_submit($form, &$form_state) {
