@@ -5,20 +5,25 @@
  * Build select_importer of available configurations.
  */
 function feeds_tamper_ui_select_importer_form($form, &$form_state) {
+  $form = array();
   $importers = feeds_importer_load_all();
-  $options = array_keys($importers);
-  $options = array_combine($options, $options);
-
-  $form['importer'] = array(
-    '#title' => t('Select Importer'),
-    '#type' => 'select',
-    '#options' => $options,
+  if (!empty($importers)) {
+    $options = array_keys($importers);
+    $options = array_combine($options, $options);
+    $form['importer'] = array(
+      '#title' => t('Select Importer'),
+      '#type' => 'select',
+      '#options' => $options,
+    );
+    $form['next'] = array(
+      '#type' => 'submit',
+      '#value' => t('Continue'),
+    );
+    return $form;
+  }
+  $form['help'] = array(
+    '#value' => t('There are no configured Feeds importers.'),
   );
-  $form['next'] = array(
-    '#type' => 'submit',
-    '#value' => t('Continue'),
-  );
-  return $form;
 }
 
 function feeds_tamper_ui_select_importer_form_submit($form, &$form_state) {
