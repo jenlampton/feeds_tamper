@@ -105,12 +105,8 @@ function feeds_tamper_ui_edit_form_submit($form, &$form_state) {
         $instance = feeds_tamper_load_instance($id);
         $weight = (int) $value['weight-' . $id];
         $disabled[$id] = !$value['enabled'];
-        $modified = FALSE;
         if ($instance->weight != $weight) {
           $instance->weight = $weight;
-          $modified = TRUE;
-        }
-        if ($modified) {
           ctools_export_crud_save('feeds_tamper', $instance);
         }
       }
