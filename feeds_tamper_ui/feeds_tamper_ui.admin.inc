@@ -71,7 +71,7 @@ function feeds_tamper_ui_edit_form($form, &$form_state, $importer) {
           '#type' => 'value',
           '#value' => $data,
         );
-  
+
         $form['mappings'][$mapping['source']]['table'][$instance->id]['weight-' . $instance->id] = array(
           '#type'=>'textfield',
           '#size'=>5,
@@ -108,7 +108,7 @@ function feeds_tamper_ui_edit_form_submit($form, &$form_state) {
           ctools_export_crud_save('feeds_tamper', $instance);
         }
       }
-      
+
     }
   }
   variable_set('default_feeds_tamper', $disabled);
@@ -144,10 +144,10 @@ function theme_feeds_tamper_ui_edit_form($variables) {
         'empty' => '',
       ));
       $form['mappings'][$source]['#value'] = $table;
+      drupal_add_tabledrag($table_id, 'order', 'sibling', 'weight');
     }
     $form['mappings'][$source]['#value'] .= $form['mappings'][$source]['add_link']['#value'];
     $output .= drupal_render($form['mappings'][$source]);
-    drupal_add_tabledrag($table_id, 'order', 'sibling', 'weight');
   }
   $output .= drupal_render_children($form);
   return $output;
@@ -178,7 +178,7 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
     '#tree' => TRUE,
   );
   ctools_include('dependent');
-  
+
   foreach ($feeds_tamper_plugins as $machine_name => $plugin) {
     $i = str_replace('_', '-', $machine_name);
 
@@ -209,7 +209,7 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
     foreach ($plugin['form']($importer, $source, array()) as $key => $form_item) {
       $form['plugin_forms'][$machine_name][$key] = $form_item;
     }
-  }  
+  }
   $form['add'] = array(
     '#type' => 'submit',
     '#value' => t('Add'),
@@ -217,7 +217,7 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
   return $form;
 }
 
-function feeds_tamper_ui_add_plugin_form_submit(&$form, &$form_state) {
+function feeds_tamper_ui_add_plugin_form_submit($form, &$form_state) {
   $obj = new stdClass();
   $obj->plugin_id = $form_state['values']['plugin_id'];
   $obj->settings = $form_state['values'][$obj->plugin_id];
@@ -232,7 +232,7 @@ function feeds_tamper_ui_add_plugin_form_submit(&$form, &$form_state) {
   drupal_goto('admin/structure/feeds_tamper/edit/' . $obj->importer);
 }
 
-function feeds_tamper_ui_add_plugin_form_validate(&$form, &$form_state) {
+function feeds_tamper_ui_add_plugin_form_validate($form, &$form_state) {
   $plugin_id = $form_state['values']['plugin_id'];
   $plugin = feeds_tamper_get_plugin($plugin_id);
   if ($plugin['validate']) {

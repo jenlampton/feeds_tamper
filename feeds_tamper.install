@@ -75,6 +75,13 @@ function feeds_tamper_schema() {
 }
 
 /**
+ *  Implements hook_uninstall().
+ */
+function feeds_tamper_uninstall() {
+  variable_del('default_feeds_tamper');
+}
+
+/**
  * Add weight field to feeds_tamper table.
  */
 function feeds_tamper_update_7001(&$sandbox) {

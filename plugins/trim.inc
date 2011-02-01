@@ -43,7 +43,7 @@ function feeds_tamper_trim_description($settings) {
   else {
     $mask = $settings['mask'];
   }
-  return 'Remove ' . $mask . $side . '.';
+  return 'Remove "' . $mask . '"' . $side . '.';
 }
 
 function feeds_tamper_trim_callback($result, $item_key, $element_key, &$field, $settings) {

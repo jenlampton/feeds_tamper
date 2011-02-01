@@ -21,6 +21,7 @@ function feeds_tamper_feeds_after_parse(FeedsSource $source, &$result) {
       foreach ($instances as $instance) {
         $plugin = feeds_tamper_get_plugin($instance->plugin_id);
         $is_array = is_array($item[$element_key]);
+
         if ($is_array && $plugin['multi'] == 'loop') {
           foreach ($item[$element_key] as &$i) {
             $plugin['callback']($result, $item_key, $element_key, $i, $instance->settings);
@@ -75,16 +76,20 @@ function feeds_tamper_load_all_instances($load_disabled = FALSE) {
  */
 function feeds_tamper_load_instance($id) {
   ctools_include('export');
-  $t = ctools_export_load_object('feeds_tamper', 'conditions', array('id' => $id));
-  return $t[$id];
+  return ctools_export_crud_load('feeds_tamper', $id);
 }
 
 function feeds_tamper_load_by_importer($importer_id, $disabled = FALSE) {
+  $mappings = feeds_importer($importer_id)->processor->config['mappings'];
+  $sources = array();
+  foreach ($mappings as $mapping) {
+    $sources[] = $mapping['source'];
+  }
   ctools_include('export');
   $t = ctools_export_load_object('feeds_tamper', 'conditions', array('importer' => $importer_id));
   $instances = array();
   foreach ($t as $i) {
-    if ($disabled || !$i->disabled) {
+    if (($disabled || empty($i->disabled)) && in_array($i->source, $sources)) {
       $instances[$i->source][] = $i;
     }
   }
@@ -164,6 +169,7 @@ function feeds_tamper_ctools_plugin_type() {
         'description' => FALSE,
         'machine_name' => FALSE,
         'category' => 'Other',
+        'single' => FALSE,
       ),
     ),
   );
@@ -171,4 +177,16 @@ function feeds_tamper_ctools_plugin_type() {
 
 function feeds_tamper_make_machine($string) {
   return substr(preg_replace('/[^a-z0-9-]/', '_', strtolower($string)), 0, 127);
+}
+
+/**
+ * Implements hook_permission().
+ */
+function feeds_tamper_permission() {
+  return array(
+    'administer feeds_tamper' => array(
+      'title' => t('Administer Feeds Tamper'),
+      'description' => t('Create, edit and delete plugins for feeds tamper.'),
+    ),
+  );
 }

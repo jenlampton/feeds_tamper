@@ -40,6 +40,7 @@ function feeds_tamper_truncate_text_description($settings) {
   $desc .= $settings['ellipses'] ? ' with ellipses.' : '.';
   return $desc;
 }
+
 function feeds_tamper_truncate_text_validate($settings) {
   $settings['num_char'] = trim($settings['num_char']);
   if (!ctype_digit($settings['num_char'])) {
