@@ -25,7 +25,11 @@ function feeds_tamper_strip_tags_form($importer, $element_key, $settings) {
 }
 
 function feeds_tamper_strip_tags_description($settings) {
-  return 'Strip HTML tags.';
+  $desc = 'Strip HTML tags.';
+  if (!empty($settings['allowed_tags'])) {
+    $desc .= ' Allowing: ' . $settings['allowed_tags'];
+  }
+  return $desc;
 }
 
 function feeds_tamper_strip_tags_machine_name($settings) {

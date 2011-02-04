@@ -177,7 +177,6 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
     '#default_value' => '',
     '#tree' => TRUE,
   );
-  ctools_include('dependent');
 
   foreach ($feeds_tamper_plugins as $machine_name => $plugin) {
     $i = str_replace('_', '-', $machine_name);
@@ -186,11 +185,13 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
       '#title' => t('Configure ' . $plugin['name']),
       '#tree' => TRUE,
       '#type' => 'fieldset',
-      '#process' => array('ctools_dependent_process'),
-      '#dependency' => array('edit-plugin-id' => array($machine_name)),
-      '#input' => TRUE,
-      '#prefix' => '<div id="edit-'. $i .'-wrapper"><div id="edit-'. $i .'">',
-      '#suffix' => '</div></div>',
+      '#states' => array(
+        'visible' => array(
+          ':input[name="plugin_id"]' => array(
+            'value' => $machine_name,
+          ),
+        ),
+      ),
     );
     if (!$plugin['machine_name']) {
       $form['plugin_forms'][$machine_name]['id'] = array(
