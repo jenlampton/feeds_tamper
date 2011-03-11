@@ -11,13 +11,12 @@
 * processing, this gets called and modifies the data based on the configuration.
 */
 function feeds_tamper_feeds_after_parse(FeedsSource $source, &$result) {
-  $importer_instances = feeds_tamper_load_by_importer($source->importer->id);
+  $importer_instances = feeds_tamper_load_by_importer($source->importer->id, FALSE, TRUE);
   if (empty($importer_instances)) {
     return;
   }
   foreach ($result->items as $item_key => &$item) {
     foreach ($importer_instances as $element_key => $instances) {
-      $element_key = drupal_strtolower($element_key);
       foreach ($instances as $instance) {
         $plugin = feeds_tamper_get_plugin($instance->plugin_id);
         $is_array = is_array($item[$element_key]);
@@ -79,7 +78,7 @@ function feeds_tamper_load_instance($id) {
   return ctools_export_crud_load('feeds_tamper', $id);
 }
 
-function feeds_tamper_load_by_importer($importer_id, $disabled = FALSE) {
+function feeds_tamper_load_by_importer($importer_id, $disabled = FALSE, $lower = FALSE) {
   $mappings = feeds_importer($importer_id)->processor->config['mappings'];
   $sources = array();
   foreach ($mappings as $mapping) {
@@ -90,7 +89,12 @@ function feeds_tamper_load_by_importer($importer_id, $disabled = FALSE) {
   $instances = array();
   foreach ($t as $i) {
     if (($disabled || empty($i->disabled)) && in_array($i->source, $sources)) {
-      $instances[$i->source][] = $i;
+      if ($lower) {
+        $instances[drupal_strtolower($i->source)][] = $i;
+      }
+      else {
+        $instances[$i->source][] = $i;
+      }
     }
   }
   foreach ($instances as &$instance_list) {
