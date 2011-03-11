@@ -17,6 +17,7 @@ function feeds_tamper_feeds_after_parse(FeedsSource $source, &$result) {
   }
   foreach ($result->items as $item_key => &$item) {
     foreach ($importer_instances as $element_key => $instances) {
+      $element_key = drupal_strtolower($element_key);
       foreach ($instances as $instance) {
         $plugin = feeds_tamper_get_plugin($instance->plugin_id);
         $is_array = is_array($item[$element_key]);
