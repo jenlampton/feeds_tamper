@@ -62,7 +62,7 @@ function feeds_tamper_schema() {
       ),
       'description' => array(
         'type' => 'varchar',
-        'length' => 256,
+        'length' => 255,
         'not null' => TRUE,
         'default' => '',
         'description' => 'Description of this plugin.',
@@ -100,7 +100,7 @@ function feeds_tamper_update_7001(&$sandbox) {
 function feeds_tamper_update_7002(&$sandbox) {
   $spec = array(
     'type' => 'varchar',
-    'length' => 256,
+    'length' => 255,
     'not null' => TRUE,
     'default' => '',
     'description' => 'Description of this plugin.',
