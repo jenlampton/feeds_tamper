@@ -47,4 +47,10 @@ function feeds_tamper_trim_description($settings) {
 
 function feeds_tamper_trim_callback($result, $item_key, $element_key, &$field, $settings) {
   $field = $settings['side']($field, $settings['mask']);
+  if (!empty($settings['mask'])) {
+    $field = $settings['side']($field, $settings['mask']);
+  }
+  else {
+    $field = $settings['side']($field);
+  }
 }

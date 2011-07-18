@@ -26,10 +26,10 @@ function feeds_tamper_feeds_after_parse(FeedsSource $source, FeedsParserResult $
             $plugin['callback']($result, $item_key, $element_key, $i, $instance->settings);
           }
         }
-        else if ($is_array && $plugin['multi'] == 'direct') {
+        elseif ($is_array && $plugin['multi'] == 'direct') {
           $plugin['callback']($result, $item_key, $element_key, $item[$element_key], $instance->settings);
         }
-        else if (!$is_array && $plugin['single'] != 'skip') {
+        elseif (!$is_array && $plugin['single'] != 'skip') {
           $plugin['callback']($result, $item_key, $element_key, $item[$element_key], $instance->settings);
         }
       }
