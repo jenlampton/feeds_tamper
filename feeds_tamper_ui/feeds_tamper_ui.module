@@ -49,6 +49,7 @@ function feeds_tamper_ui_edit_title($instance) {
   }
   return t('Override: @id', array('@id' => $instance->description));
 }
+
 function feeds_tamper_ui_delete_title($instance) {
   if ($instance->export_type == EXPORT_IN_DATABASE) {
     return t('Delete plugin: @id', array('@id', $instance->id));

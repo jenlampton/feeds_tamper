@@ -18,6 +18,7 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
       '#tree' => TRUE,
     );
     $form['mappings'][$mapping['source']]['table'] = array();
+
     if (!isset($instances[$mapping['source']])) {
       $instances[$mapping['source']] = array();
     }
@@ -62,7 +63,7 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
     $add = l(t('Add plugin'), 'admin/structure/feeds/tamper/add/' . $importer->id . '/' . $mapping['source']);
     $form['mappings'][$mapping['source']]['add_link']['#value'] = '<ul class="action-links"><li>' . $add . '</li></ul>';
   }
-  $form['submit']=array(
+  $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save changes'),
   );
