@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Rewrite a field using tokens.
+ */
+
 $plugin = array(
   'form'     => 'feeds_tamper_rewrite_form',
   'callback' => 'feeds_tamper_rewrite_callback',

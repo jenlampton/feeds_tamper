@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Remove text or whitespace from the beginning, middle, or both sides of text.
+ */
+
 $plugin = array(
   'form' => 'feeds_tamper_trim_form',
   'callback' => 'feeds_tamper_trim_callback',
@@ -30,7 +35,7 @@ function feeds_tamper_trim_description($settings) {
   if ($settings['side'] == 'ltrim') {
     $side = ' from the left side';
   }
-  else if ($settings['side'] == 'rtrim') {
+  elseif ($settings['side'] == 'rtrim') {
     $side = ' from the right side';
   }
   else {

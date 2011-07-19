@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Truncate text to a specified length.
+ */
+
 $plugin = array(
   'form' => 'feeds_tamper_truncate_text_form',
   'callback' => 'feeds_tamper_truncate_text_callback',
@@ -48,7 +53,7 @@ function feeds_tamper_truncate_text_validate($settings) {
 }
 
 function feeds_tamper_truncate_text_callback($result, $item_key, $element_key, &$field, $settings) {
-  $field = substr($field, 0, $settings['num_char']);
+  $field = drupal_substr($field, 0, $settings['num_char']);
   if ($settings['ellipses']) {
     $field .= '...';
   }

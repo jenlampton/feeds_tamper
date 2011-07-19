@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Strip HTML tags.
+ */
+
 $plugin = array(
   'form' => 'feeds_tamper_strip_tags_form',
   'callback' => 'feeds_tamper_strip_tags_callback',

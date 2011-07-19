@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Convert text to upper, lower, or title case.
+ */
+
 $plugin = array(
   'form' => 'feeds_tamper_convert_case_form',
   'callback' => 'feeds_tamper_convert_case_callback',
@@ -8,6 +13,7 @@ $plugin = array(
   'category' => 'Text',
   'description' => 'feeds_tamper_convert_case_description',
   'machine_name' => 'feeds_tamper_convert_case_machine_name',
+  'default description' => 'asfasfasdf',
 );
 
 function feeds_tamper_convert_case_form($importer, $element_key, $settings) {
@@ -23,7 +29,7 @@ function feeds_tamper_convert_case_form($importer, $element_key, $settings) {
 
 function feeds_tamper_convert_case_machine_name($settings) {
   $text = 'convert_to_';
-  switch($settings['mode']) {
+  switch ($settings['mode']) {
     case MB_CASE_TITLE:
       return $text .= 'titlecase';
     case MB_CASE_LOWER:
@@ -35,7 +41,7 @@ function feeds_tamper_convert_case_machine_name($settings) {
 
 function feeds_tamper_convert_case_description($settings) {
   $text = 'Convert text to ';
-  switch($settings['mode']) {
+  switch ($settings['mode']) {
     case MB_CASE_TITLE:
       return $text .= 'title case.';
     case MB_CASE_LOWER:

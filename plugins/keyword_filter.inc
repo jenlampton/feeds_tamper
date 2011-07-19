@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Filter based on a list of words/phrases.
+ */
+
 $plugin = array(
   'form' => 'feeds_tamper_keyword_filter_form',
   'callback' => 'feeds_tamper_keyword_filter_callback',
@@ -42,7 +47,7 @@ function feeds_tamper_keyword_filter_validate(&$settings) {
   if (!$settings['word_boundaries'] && $settings['case_sensitive']) {
     $settings['func'] = 'strpos';
   }
-  else if (!$settings['word_boundaries'] && !$settings['case_sensitive']) {
+  elseif (!$settings['word_boundaries'] && !$settings['case_sensitive']) {
     $settings['func'] = 'stripos';
   }
   else {
@@ -60,7 +65,7 @@ function feeds_tamper_keyword_filter_validate(&$settings) {
 function feeds_tamper_keyword_filter_description($settings) {
   $words = explode("\n", $settings['words']);
   $words = implode(', ', $words);
-  $words = substr($words, 0, 15);
+  $words = drupal_substr($words, 0, 15);
   return 'Filter items that do not contain one of "' . $words . '".';
 }
 

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Find/replace text using REGEX.
+ */
+
 $plugin = array(
   'form'     => 'feeds_tamper_find_replace_regex_form',
   'callback' => 'feeds_tamper_find_replace_regex_callback',

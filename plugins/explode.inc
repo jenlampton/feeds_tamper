@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Break up text on every specified delimeter.
+ */
+
 $plugin = array(
   'form' => 'feeds_tamper_explode_form',
   'callback' => 'feeds_tamper_explode_callback',
