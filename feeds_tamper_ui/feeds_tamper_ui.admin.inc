@@ -196,7 +196,7 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
     '#tree' => TRUE,
   );
   $form['plugin']['settings'] = array(
-    '#title' => t('Configure $name', array('@name' => $plugin['name'])),
+    '#title' => t('Configure @name', array('@name' => $plugin['name'])),
     '#type' => 'fieldset',
     '#tree' => TRUE,
   );
