@@ -67,10 +67,6 @@ function feeds_tamper_ui_theme($existing, $type, $theme, $path) {
       'render element' => 'form',
       'file' => 'feeds_tamper_ui.admin.inc',
     ),
-    //'feeds_ui_mapping_form' => array(
-    //  'file' => 'feeds_tamper_ui.admin.inc',
-    //  'function' => 'theme_feeds_tamper_ui_mapping_form',
-    //),
   );
 }
 

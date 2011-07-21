@@ -9,6 +9,8 @@
 function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
   $mappings = $importer->processor->config['mappings'];
   $instances = feeds_tamper_load_by_importer($importer->id, TRUE);
+  $form['mappings'] = array();
+  $form['#importer'] = $importer;
 
   foreach ($mappings as $mapping) {
     $form['mappings'][$mapping['source']] = array(
@@ -90,6 +92,15 @@ function feeds_tamper_ui_list_form_submit($form, &$form_state) {
 function theme_feeds_tamper_ui_list_form($variables) {
   $form = $variables['form'];
   $output = '';
+  $mappings =   element_children($form['mappings']);
+
+  if (empty($mappings)) {
+    // Can't use drupal_set_message here.
+    $output .= '<div class="messages warning">';
+    $output .= t('There are no !mappings defined for this importer.', array('!mappings' => l(t('mappings'), 'admin/structure/feeds/edit/' . $form['#importer']->id . '/mapping')));
+    $output .= '</div>';
+    return $output;
+  }
   foreach (element_children($form['mappings']) as $source) {
     $header = array(t('Description'), t('Plugin'), t('Status'), t('Operations'), t('Enabled'), t('Weight'));
     $table_rows = array();
