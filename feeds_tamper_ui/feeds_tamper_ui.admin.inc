@@ -86,7 +86,7 @@ function feeds_tamper_ui_list_form_submit($form, &$form_state) {
 function theme_feeds_tamper_ui_list_form($variables) {
   $form = $variables['form'];
   $output = '';
-  $mappings =   element_children($form['mappings']);
+  $mappings = element_children($form['mappings']);
 
   if (empty($mappings)) {
     // Can't use drupal_set_message here.
@@ -95,16 +95,15 @@ function theme_feeds_tamper_ui_list_form($variables) {
     $output .= '</div>';
     return $output;
   }
-  foreach (element_children($form['mappings']) as $source) {
+  foreach ($mappings as $source) {
+    $table_rows = $disabled_rows = array();
     $table_id = feeds_tamper_make_machine($source) . '-table';
     $header = array(t('Description'), t('Weight'), t('Plugin'), t('Status'), t('Operations'), t('Enabled'));
-    $table_rows = array();
-    $disabled_rows = array();
     $children = element_children($form['mappings'][$source]['table']);
 
     if (empty($children)) {
       $help_text = t('No plugins defined.');
-      $table_rows[] = array('data' => array(array('data' => $help_text, 'colspan' => 5)));
+      $table_rows = array('data' => array(array('data' => $help_text, 'colspan' => 5)));
       $header = array(t('Description'), t('Plugin'), t('Status'), t('Operations'), t('Enabled'));
     }
     else {
@@ -126,7 +125,7 @@ function theme_feeds_tamper_ui_list_form($variables) {
           $this_row[] = drupal_render($form['mappings'][$source]['table'][$id]['weight-' . $id]);
           $this_row[] = $form['mappings'][$source]['table'][$id]['name']['#value'];
           $this_row[] = $form['mappings'][$source]['table'][$id]['status']['#value'];
-          $this_row[] = '';
+          $this_row[] = strip_tags($form['mappings'][$source]['table'][$id]['edit']['#value']);
           $this_row[] = drupal_render($form['mappings'][$source]['table'][$id]['enabled']);
           $disabled_rows[] = array('data' => $this_row, 'class' => array('disabled'));
         }
@@ -194,7 +193,7 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
     ),
     '#suffix' => '<br />',
   );
-  $form['plugin']['#prefix'] = '<div id="feeds-tamper-plugin">';
+  $form['plugin']['#prefix'] = '<div class="clear-fix" id="feeds-tamper-plugin">';
   $form['plugin']['#suffix'] = '</div>';
 
   $form['plugin']['description'] = array(
