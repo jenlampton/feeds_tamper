@@ -15,11 +15,7 @@ $plugin = array(
 
 function feeds_tamper_country_to_code_callback($result, $item_key, $element_key, &$field, $settings) {
   include_once DRUPAL_ROOT . '/includes/locale.inc';
-  static $countries;
-
-  if (empty($countries)) {
-    $countries = array_flip(country_get_list());
-  }
+  static $countries = array_flip(country_get_list());
 
   //Trim whitespace, capitalize and translate country
   $country = t(ucwords(drupal_strtolower(trim($field))));

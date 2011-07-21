@@ -57,7 +57,7 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
     $add = l(t('Add plugin'), 'admin/structure/feeds/tamper/add/' . $importer->id . '/' . $mapping['source']);
     $form['mappings'][$mapping['source']]['add_link']['#value'] = '<ul class="feeds-tamper-add action-links"><li>' . $add . '</li></ul>';
   }
-  $form['help']['#markup'] = '<div class="help"><p>' . t('Configure plugins to modify Feeds data before it gets saved. Each !mapping can be manipualted individually.', array('!mapping' => l(t('mapping'), 'admin/structure/feeds/edit/' . $importer->id . '/mapping'))) . '</p></div>';
+  $form['help']['#markup'] = '<div class="help"><p>' . t('Configure plugins to modify Feeds data before it gets saved. Each !mapping can be manipulated individually.', array('!mapping' => l(t('mapping'), 'admin/structure/feeds/edit/' . $importer->id . '/mapping'))) . '</p></div>';
 
   $form['submit'] = array(
     '#type' => 'submit',
