@@ -12,9 +12,7 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
 
   foreach ($mappings as $mapping) {
     $form['mappings'][$mapping['source']] = array(
-      '#type' => 'fieldset',
       '#title' => check_plain($mapping['source']) . ' -> ' . check_plain($mapping['target']),
-      '#collapsible' => TRUE,
       '#tree' => TRUE,
     );
     $form['mappings'][$mapping['source']]['table'] = array();
@@ -61,7 +59,7 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
       );
     }
     $add = l(t('Add plugin'), 'admin/structure/feeds/tamper/add/' . $importer->id . '/' . $mapping['source']);
-    $form['mappings'][$mapping['source']]['add_link']['#value'] = '<ul class="action-links"><li>' . $add . '</li></ul>';
+    $form['mappings'][$mapping['source']]['add_link']['#value'] = '<ul class="feeds-tamper-add action-links"><li>' . $add . '</li></ul>';
   }
   $form['submit'] = array(
     '#type' => 'submit',
@@ -91,42 +89,53 @@ function feeds_tamper_ui_list_form_submit($form, &$form_state) {
 
 function theme_feeds_tamper_ui_list_form($variables) {
   $form = $variables['form'];
-  $header = array(t('Description'), t('Plugin'), t('Status'), t('Operations'), t('Enabled'), t('Weight'));
   $output = '';
   foreach (element_children($form['mappings']) as $source) {
+    $header = array(t('Description'), t('Plugin'), t('Status'), t('Operations'), t('Enabled'), t('Weight'));
     $table_rows = array();
+    $disabled_rows = array();
     $children = element_children($form['mappings'][$source]['table']);
 
     if (empty($children)) {
-      $help_text = t('No plugins defined for this source.');
+      $help_text = t('No plugins defined.');
       $table_rows[] = array('data' => array(array('data' => $help_text, 'colspan' => 6)));
+      array_pop($header);
     }
     else {
       foreach ($children as $id) {
-        $this_row = $form['mappings'][$source]['table'][$id]['data']['#value'];
-        $this_row[] = drupal_render($form['mappings'][$source]['table'][$id]['enabled']);
-        $this_row[] = drupal_render($form['mappings'][$source]['table'][$id]['weight-' . $id]);
-        $table_rows[] = array('data' => $this_row, 'class' => array('draggable'));
+        $disabled = empty($form['mappings'][$source]['table'][$id]['enabled']['#default_value']);
+        if (!$disabled) {
+          $this_row = $form['mappings'][$source]['table'][$id]['data']['#value'];
+          $this_row[] = drupal_render($form['mappings'][$source]['table'][$id]['enabled']);
+          $this_row[] = drupal_render($form['mappings'][$source]['table'][$id]['weight-' . $id]);
+          $table_rows[] = array('data' => $this_row, 'class' => array('draggable'));
+        }
+        else {
+          $this_row = $form['mappings'][$source]['table'][$id]['data']['#value'];
+          $this_row[3] = '';
+          $this_row[] = drupal_render($form['mappings'][$source]['table'][$id]['enabled']);
+          $this_row[] = drupal_render($form['mappings'][$source]['table'][$id]['weight-' . $id]);
+          $disabled_rows[] = array('data' => $this_row, 'class' => array('disabled'));
+        }
       }
     }
-      $table_id = preg_replace('/[^a-z0-9-]/', '',
-        preg_replace('/_+/', '-',
-          drupal_strtolower($source . '-table')
-        )
-      );
-      $table = theme_table(array(
-        'header' => $header,
-        'rows' => $table_rows,
-        'attributes' => array('id' => $table_id),
-        'caption' => '',
-        'colgroups' => array(),
-        'sticky' => FALSE,
-        'empty' => '',
-      ));
-      $form['mappings'][$source]['#value'] = $table;
-      drupal_add_tabledrag($table_id, 'order', 'sibling', 'weight');
-    $form['mappings'][$source]['#value'] .= $form['mappings'][$source]['add_link']['#value'];
-    $output .= drupal_render($form['mappings'][$source]);
+    $table_rows = array_merge($table_rows, $disabled_rows);
+    $add = $form['mappings'][$source]['add_link']['#value'];
+    $table_rows[] = array('data' => array(array('data' => $add, 'colspan' => 7)), 'class' => array('feeds-tamper-add'));
+    $table_id = feeds_tamper_make_machine($source) . '-table';
+    $table = array(
+      '#theme' => 'table',
+      '#header' => $header,
+      '#rows' => $table_rows,
+      '#caption' => $form['mappings'][$source]['#title'],
+    );
+    $table['#attributes']['id'] = $table_id;
+    //$table['#attributes']['class'][] = 'feeds-tamper-table';
+    $table['#attached']['css'][] = drupal_get_path('module', 'feeds_tamper_ui') . '/feeds_tamper_ui.css';
+    $form['mappings'][$source]['table'] = $table;
+    $form['mappings'][$source]['#prefix'] = '<div class="feeds-tamper-table">';
+    $form['mappings'][$source]['#suffix'] = '</div>';
+    drupal_add_tabledrag($table_id, 'order', 'sibling', 'weight');
   }
   $output .= drupal_render_children($form);
   return $output;
