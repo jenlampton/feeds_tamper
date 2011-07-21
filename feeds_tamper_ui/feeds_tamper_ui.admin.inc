@@ -13,10 +13,12 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
   $form['#importer'] = $importer;
 
   foreach ($mappings as $mapping) {
-    $form['mappings'][$mapping['source']] = array(
-      '#title' => check_plain($mapping['source']) . ' -> ' . check_plain($mapping['target']),
-      '#tree' => TRUE,
-    );
+    $title = check_plain($mapping['source']) . ' -> ' . check_plain($mapping['target']);
+    if (!isset($form['mappings'][$mapping['source']]['#title'])) {
+      $form['mappings'][$mapping['source']]['#title'] = array();
+    }
+    $form['mappings'][$mapping['source']]['#title'][] = $title;
+    $form['mappings'][$mapping['source']]['#tree'] = TRUE;
     $form['mappings'][$mapping['source']]['table'] = array();
 
     if (!isset($instances[$mapping['source']])) {
@@ -141,7 +143,7 @@ function theme_feeds_tamper_ui_list_form($variables) {
       '#theme' => 'table',
       '#header' => $header,
       '#rows' => $table_rows,
-      '#caption' => $form['mappings'][$source]['#title'],
+      '#caption' => implode(', ', $form['mappings'][$source]['#title']),
       '#sticky' => FALSE,
     );
     $table['#attributes']['id'] = $table_id;
