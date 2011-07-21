@@ -57,6 +57,8 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
     $add = l(t('Add plugin'), 'admin/structure/feeds/tamper/add/' . $importer->id . '/' . $mapping['source']);
     $form['mappings'][$mapping['source']]['add_link']['#value'] = '<ul class="feeds-tamper-add action-links"><li>' . $add . '</li></ul>';
   }
+  $form['help']['#markup'] = '<div class="help"><p>' . t('Configure plugins to modify Feeds data before it gets saved. Each !mapping can be manipualted individually.', array('!mapping' => l(t('mapping'), 'admin/structure/feeds/edit/' . $importer->id . '/mapping'))) . '</p></div>';
+
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save changes'),
@@ -149,6 +151,8 @@ function theme_feeds_tamper_ui_list_form($variables) {
     $form['mappings'][$source]['#prefix'] = '<div class="feeds-tamper-table">';
     $form['mappings'][$source]['#suffix'] = '</div>';
   }
+  $output .= $form['help']['#markup'];
+  unset($form['help']);
   $output .= drupal_render_children($form);
   return $output;
 }
@@ -174,7 +178,7 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
     asort($p);
   }
 
-  $machine_name = 'keyword_filter';
+  $machine_name = key(reset($plugins));
   if (!empty($form_state['values']['plugin_id'])) {
     $machine_name = $form_state['values']['plugin_id'];
   }
@@ -199,7 +203,7 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
   $form['plugin']['description'] = array(
     '#title' => t('Description'),
     '#type' => 'textfield',
-    '#default_value' => $plugin['default description'] ? $plugin['default description'] : $plugin['name'],
+    '#default_value' => $plugin['default description'] ? t($plugin['default description']) : t($plugin['name']),
     '#required' => TRUE,
     '#description' => t('A useful description of what this plugin is doing.'),
     '#tree' => TRUE,
