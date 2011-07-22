@@ -28,7 +28,7 @@ class FeedsTamperWebTestCase extends FeedsWebTestCase {
 
   public function testBasic() {
     $this->createImporterConfiguration();
-    $this->drupalGet($this->base_url . '/list');
+    $this->drupalGet($this->base_url . '/list/syndication');
     $this->assertText('There are no mappings defined for this importer.');
     $this->addMappings('syndication',
       array(
