@@ -14,7 +14,8 @@ function feeds_tamper_ui_menu() {
     'file' => 'feeds_tamper_ui.admin.inc',
   );
   $items['admin/structure/feeds/tamper/add/%feeds_importer/%'] = array(
-    'title' => 'Add Plugin',
+    'title callback' => 'feeds_tamper_ui_add_title',
+    'title arguments' => array(6),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('feeds_tamper_ui_add_plugin_form', 5, 6),
     'access arguments' => array('administer feeds_tamper'),
@@ -41,6 +42,10 @@ function feeds_tamper_ui_menu() {
 
 function feeds_tamper_plugin_instance_load($instance_id) {
   return feeds_tamper_load_instance($instance_id);
+}
+
+function feeds_tamper_ui_add_title($source) {
+  return t('Add plugin to: @source', array('@source' => $source));
 }
 
 function feeds_tamper_ui_edit_title($instance) {
