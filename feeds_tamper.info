@@ -2,4 +2,5 @@ name = Feeds Tamper
 description = Modify feeds data before it gets saved.
 package = Feeds
 dependencies[] = feeds
+files[] = tests/feeds_tamper.test
 core = 7.x

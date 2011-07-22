@@ -1,0 +1,11 @@
+<?php
+
+/**
+ * @file
+ * Tests for feeds_tamper.module.
+ */
+
+/**
+ * Test single feeds.
+ */
+class FeedsTamperWebTestCase extends FeedsWebTestCase {
