@@ -50,12 +50,10 @@ function feeds_tamper_find_replace_form($importer, $element_key, $settings) {
 function feeds_tamper_find_replace_validate(&$settings) {
   $settings['regex'] = FALSE;
 
-  if (!$settings['word_boundaries'] && !$settings['whole'] &&
-    $settings['case_sensitive']) {
+  if (!$settings['word_boundaries'] && !$settings['whole'] && $settings['case_sensitive']) {
     $settings['func'] = 'str_replace';
   }
-  elseif (!$settings['word_boundaries'] && !$settings['whole'] &&
-    !$settings['case_sensitive']) {
+  elseif (!$settings['word_boundaries'] && !$settings['whole'] && !$settings['case_sensitive']) {
     $settings['func'] = 'str_ireplace';
   }
   else {

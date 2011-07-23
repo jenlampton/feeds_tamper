@@ -8,7 +8,6 @@
 $plugin = array(
   'form' => 'feeds_tamper_trim_form',
   'callback' => 'feeds_tamper_trim_callback',
-  'description' => 'feeds_tamper_trim_description',
   'name' => 'Trim',
   'multi' => 'loop',
   'category' => 'Text',
@@ -31,27 +30,7 @@ function feeds_tamper_trim_form($importer, $element_key, $settings) {
   return $form;
 }
 
-function feeds_tamper_trim_description($settings) {
-  if ($settings['side'] == 'ltrim') {
-    $side = ' from the left side';
-  }
-  elseif ($settings['side'] == 'rtrim') {
-    $side = ' from the right side';
-  }
-  else {
-    $side = ' from both sides';
-  }
-  if (empty($settings['mask'])) {
-    $mask = 'white space';
-  }
-  else {
-    $mask = $settings['mask'];
-  }
-  return 'Remove "' . $mask . '"' . $side . '.';
-}
-
 function feeds_tamper_trim_callback($result, $item_key, $element_key, &$field, $settings) {
-  $field = $settings['side']($field, $settings['mask']);
   if (!empty($settings['mask'])) {
     $field = $settings['side']($field, $settings['mask']);
   }
