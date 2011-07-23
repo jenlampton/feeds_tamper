@@ -99,6 +99,18 @@ function feeds_tamper_load_instance($id) {
  * Save plugin instance.
  */
 function feeds_tamper_save_instance($instance) {
+  // It's a new instance, give it the heaviest weight.
+  if (empty($instance->weight)) {
+    $all = feeds_tamper_load_by_importer($instance->importer, TRUE);
+    $all = !empty($all[$instance->source]) ? $all[$instance->source] : array();
+    $weight = 0;
+    foreach ($all as $i) {
+      if ($i->weight >= $weight) {
+        $weight = $i->weight + 1;
+      }
+    }
+    $instance->weight = $weight;
+  }
   return ctools_export_crud_save('feeds_tamper', $instance);
 }
 
@@ -135,8 +147,14 @@ function feeds_tamper_load_by_importer($importer_id, $disabled = FALSE, $lower =
 }
 
 function _feeds_tamper_cmp($a, $b) {
+  // If weights are equal compare id's.
   if ($a->weight == $b->weight) {
-    return 0;
+    $tmp = array($a->id, $b->id);
+    sort($tmp);
+    if ($tmp[0] == $a->id) {
+      return 1;
+    }
+    return -1;
   }
   return ($a->weight < $b->weight) ? -1 : 1;
 }

@@ -53,13 +53,13 @@ class FeedsTamperAbsoluteURLTestCase extends FeedsTamperUnitTestCase {
   }
 
   public function test() {
-    $this->execute('http://example.com', '<a href="dog"></a>', '<a href="http://example.com/dog"></a>');
-    $this->execute('http://example.com/cat/chicken', '<a href="dog"></a>', '<a href="http://example.com/cat/chicken/dog"></a>');
-    $this->execute('http://example.com/cat', '<a href="/dog"></a>', '<a href="http://example.com/dog"></a>');
-    $this->execute('http://example.com', '<a href="/dog"></a><img src="/kitty" />', '<a href="http://example.com/dog"></a><img src="http://example.com/kitty" />');
+    $this->executeAbs('http://example.com', '<a href="dog"></a>', '<a href="http://example.com/dog"></a>');
+    $this->executeAbs('http://example.com/cat/chicken', '<a href="dog"></a>', '<a href="http://example.com/cat/chicken/dog"></a>');
+    $this->executeAbs('http://example.com/cat', '<a href="/dog"></a>', '<a href="http://example.com/dog"></a>');
+    $this->executeAbs('http://example.com', '<a href="/dog"></a><img src="/kitty" />', '<a href="http://example.com/dog"></a><img src="http://example.com/kitty" />');
   }
 
-  function execute($link, $html_in, $html_out) {
+  function executeAbs($link, $html_in, $html_out) {
     $result = new stdClass();
     $result->link = $link;
     $this->callback($result, NULL, NULL, $html_in, array());
@@ -113,15 +113,15 @@ class FeedsTamperCopyTestCase extends FeedsTamperUnitTestCase {
       'title' => 'This is a title',
       'body' => 'This is a body',
     );
-    $this->execute($item, 'title', $settings);
+    $this->executeCop($item, 'title', $settings);
     $settings = array(
       'to_from' => 'from',
       'source' => 'body',
     );
-    $this->execute($item, 'title', $settings);
+    $this->executeCop($item, 'title', $settings);
   }
 
-  function execute($input, $element_key, $settings) {
+  function executeCop($input, $element_key, $settings) {
     $result = new stdClass();
     $result->items = array();
     $result->items[] = $input;
@@ -368,15 +368,15 @@ class FeedsTamperKeyWordFilterTestCase extends FeedsTamperUnitTestCase {
       'word_boundaries' => FALSE,
       'case_sensitive' => FALSE,
     );
-    $this->execute($item, array(), 'title', $settings);
+    $this->executeKey($item, array(), 'title', $settings);
     $settings = array(
       'words' => 'this',
       'word_boundaries' => FALSE,
       'case_sensitive' => FALSE,
     );
-    $this->execute($item, array($item), 'title', $settings);
+    $this->executeKey($item, array($item), 'title', $settings);
     $settings['case_sensitive'] = TRUE;
-    $this->execute($item, array(), 'title', $settings);
+    $this->executeKey($item, array(), 'title', $settings);
     $item = array(
       'title' => 'This is atitle',
       'body' => 'hello body',
@@ -386,12 +386,12 @@ class FeedsTamperKeyWordFilterTestCase extends FeedsTamperUnitTestCase {
       'word_boundaries' => FALSE,
       'case_sensitive' => FALSE,
     );
-    $this->execute($item, array($item), 'title', $settings);
+    $this->executeKey($item, array($item), 'title', $settings);
     $settings['word_boundaries'] = TRUE;
-    $this->execute($item, array(), 'title', $settings);
+    $this->executeKey($item, array(), 'title', $settings);
   }
 
-  function execute($item, $output, $element_key, $settings) {
+  function executeKey($item, $output, $element_key, $settings) {
     $result = new stdClass();
     $result->items = array();
     $result->items[] = $item;
@@ -416,7 +416,7 @@ class FeedsTamperRequiredTestCase extends FeedsTamperUnitTestCase {
     );
   }
 
-  function execute($input, $output, $source) {
+  function executeReq($input, $output, $source) {
     $result = new stdClass();
     $result->items = $input;
     foreach ($result->items as $key => &$item) {
@@ -436,7 +436,7 @@ class FeedsTamperRequiredTestCase extends FeedsTamperUnitTestCase {
     $input[] = array('s1' => 'sdafasf', 's2' => 'asdfsf', 's3' => 'asdfasf');
     $output = $input;
     unset($output[1]);
-    $this->execute($input, $output, 's3');
+    $this->executeReq($input, $output, 's3');
   }
 }
 
@@ -455,7 +455,7 @@ class FeedsTamperRewriteTestCase extends FeedsTamperUnitTestCase {
     );
   }
 
-  function execute($input, $output, $source, $settings) {
+  function executeRew($input, $output, $source, $settings) {
     $result = new stdClass();
     $result->items = array($input);
     $this->callback($result, 0, $source, $result->items[0][$source], $settings);
@@ -469,7 +469,7 @@ class FeedsTamperRewriteTestCase extends FeedsTamperUnitTestCase {
       'body' => "I'm the coolest.",
       'combined' => 'Blah, blah, blah',
     );
-    $this->execute($input, "HI YA! - I'm the coolest.", 'combined', $settings);
+    $this->executeRew($input, "HI YA! - I'm the coolest.", 'combined', $settings);
   }
 }
 

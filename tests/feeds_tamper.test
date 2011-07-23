@@ -73,6 +73,17 @@ class FeedsTamperWebTestCase extends FeedsWebTestCase {
     $this->toggleTamperPlugin('syndication', 'title', $id, TRUE);
     $this->setTamperPluginWeight('syndication', 'title', $id, 2);
     $this->deleteTamperPlugin($id);
+    $settings = array(
+      'settings[mode]' => 0,
+    );
+    $case = $this->addTamperPlugin('syndication', 'title', 'convert_case', $settings);
+    $settings = array(
+      'settings[side]' => 'trim',
+    );
+    $trim = $this->addTamperPlugin('syndication', 'title', 'trim', $settings);
+    $this->toggleTamperPlugin('syndication', 'title', $case);
+    $this->toggleTamperPlugin('syndication', 'title', $case, TRUE);
+    $this->setTamperPluginWeight('syndication', 'title', $case, 2);
   }
 
   function addTamperPlugin($importer_id, $source, $plugin_id, $settings, $description = NULL, $id = NULL) {
