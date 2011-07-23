@@ -14,6 +14,14 @@ $plugin = array(
   'default description' => 'Convert country to ISO code',
 );
 
+function feeds_tamper_country_to_code_form($importer, $element_key, $settings) {
+  $form = array();
+  $form['help'] = array(
+    '#markup' => t('Converts this field from a country name string to the two character ISO 3166-1 alpha-2 code.'),
+  );
+  return $form;
+}
+
 function feeds_tamper_country_to_code_callback($result, $item_key, $element_key, &$field, $settings) {
   include_once DRUPAL_ROOT . '/includes/locale.inc';
   static $countries = array();
@@ -33,14 +41,6 @@ function feeds_tamper_country_to_code_callback($result, $item_key, $element_key,
     // If country name cannot be found, return nothing.
     $field = '';
   }
-}
-
-function feeds_tamper_country_to_code_form($importer, $element_key, $settings) {
-  $form = array();
-  $form['help'] = array(
-    '#markup' => t('Converts this field from a country name string to the two character ISO 3166-1 alpha-2 code.'),
-  );
-  return $form;
 }
 
 function _feeds_tamper_country_to_code_strtolower(&$word) {

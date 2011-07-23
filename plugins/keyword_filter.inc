@@ -9,7 +9,6 @@ $plugin = array(
   'form' => 'feeds_tamper_keyword_filter_form',
   'callback' => 'feeds_tamper_keyword_filter_callback',
   'validate' => 'feeds_tamper_keyword_filter_validate',
-  'description' => 'feeds_tamper_keyword_filter_description',
   'name' => 'Keyword filter',
   'multi' => 'skip',
   'category' => 'Filter',
@@ -60,13 +59,6 @@ function feeds_tamper_keyword_filter_validate(&$settings) {
     }
     $settings['regex'] = TRUE;
   }
-}
-
-function feeds_tamper_keyword_filter_description($settings) {
-  $words = explode("\n", $settings['words']);
-  $words = implode(', ', $words);
-  $words = drupal_substr($words, 0, 15);
-  return 'Filter items that do not contain one of "' . $words . '".';
 }
 
 function feeds_tamper_keyword_filter_callback($result, $item_key, $element_key, &$field, $settings) {

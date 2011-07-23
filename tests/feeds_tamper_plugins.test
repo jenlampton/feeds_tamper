@@ -13,11 +13,7 @@ class FeedsTamperUnitTestCase extends DrupalUnitTestCase {
 
   public function setUp() {
     parent::setUp();
-    GLOBAL $plugin;
-    $plugin = NULL;
-    // Don't use DRUPAL_ROOT to maintain compatibility with 6.x.
-    require_once $file = drupal_get_path('module', 'feeds_tamper') . '/plugins/' . $this->plugin_id . '.inc';
-    $this->plugin_info = $plugin;
+    $this->plugin_info = feeds_tamper_get_plugin($this->plugin_id);
   }
 
   function form($importer, $element_key, $settings) {
@@ -25,7 +21,7 @@ class FeedsTamperUnitTestCase extends DrupalUnitTestCase {
   }
 
   function validate(&$settings) {
-    if (isset($this->plugin_info['validate'])) {
+    if (!empty($this->plugin_info['validate'])) {
       $this->plugin_info['validate']($settings);
     }
   }
@@ -42,28 +38,6 @@ class FeedsTamperUnitTestCase extends DrupalUnitTestCase {
 }
 
 /**
- * Tests for strip_tags.inc
- */
-class FeedsTamperStripTagsTestCase extends FeedsTamperUnitTestCase {
-
-  protected $plugin_id = 'strip_tags';
-
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Strip Tags',
-      'description' => 'Unit tests for the "Strip Tags" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
-  public function test() {
-    $this->execute('sdfsdfsdfsdf<b>sdfsdf</b>sdfsdf', 'sdfsdfsdfsdfsdfsdfsdfsdf', array('allowed_tags' => NULL));
-    $this->execute('sdfsdfsdfsdf<b>sdfsdfsdfsdf', 'sdfsdfsdfsdfsdfsdfsdfsdf', array('allowed_tags' => NULL));
-    $this->execute('sdfsdfsdfsdf<i>sdfsdf</i><b>sdfs</b>dfsdfsdf', 'sdfsdfsdfsdf<i>sdfsdf</i>sdfsdfsdfsdf', array('allowed_tags' => '<i>'));
-  }
-}
-
-/**
  * Tests for absolute_url.inc
  */
 class FeedsTamperAbsoluteURLTestCase extends FeedsTamperUnitTestCase {
@@ -73,7 +47,7 @@ class FeedsTamperAbsoluteURLTestCase extends FeedsTamperUnitTestCase {
   public static function getInfo() {
     return array(
       'name' => 'Plugins: Make URLs absolute',
-      'description' => 'Unit tests for "Make URLs absolute" Feeds Tamper plugin.',
+      'description' => 'Unit tests for "Make URLs absolute" plugin.',
       'group' => 'Feeds Tamper',
     );
   }
@@ -103,7 +77,7 @@ class FeedsTamperConvertCaseTestCase extends FeedsTamperUnitTestCase {
   public static function getInfo() {
     return array(
       'name' => 'Plugins: Convert Case',
-      'description' => 'Unit tests for "Convert Case" Feeds Tamper plugin.',
+      'description' => 'Unit tests for "Convert Case" plugin.',
       'group' => 'Feeds Tamper',
     );
   }
@@ -112,6 +86,70 @@ class FeedsTamperConvertCaseTestCase extends FeedsTamperUnitTestCase {
     $this->execute('asdfasdf', 'ASDFASDF', array('mode' => MB_CASE_UPPER));
     $this->execute('AsdFasdf', 'asdfasdf', array('mode' => MB_CASE_LOWER));
     $this->execute('asdfasdf', 'Asdfasdf', array('mode' => MB_CASE_TITLE));
+  }
+}
+
+/**
+ * Tests for copy.inc
+ */
+class FeedsTamperCopyTestCase extends FeedsTamperUnitTestCase {
+
+  protected $plugin_id = 'copy';
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Plugins: Copy',
+      'description' => 'Unit tests for "Copy" plugin.',
+      'group' => 'Feeds Tamper',
+    );
+  }
+
+  public function test() {
+    $settings = array(
+      'to_from' => 'to',
+      'source' => 'body',
+    );
+    $item = array(
+      'title' => 'This is a title',
+      'body' => 'This is a body',
+    );
+    $this->execute($item, 'title', $settings);
+    $settings = array(
+      'to_from' => 'from',
+      'source' => 'body',
+    );
+    $this->execute($item, 'title', $settings);
+  }
+
+  function execute($input, $element_key, $settings) {
+    $result = new stdClass();
+    $result->items = array();
+    $result->items[] = $input;
+    $this->callback($result, 0, $element_key, $result->items[0][$element_key], $settings);
+    $this->assertEqual($result->items[0][$element_key], $result->items[0][$settings['source']]);
+  }
+}
+
+
+/**
+ * Tests for country_to_code.inc
+ */
+class FeedsTamperCountryToCodeTestCase extends FeedsTamperUnitTestCase {
+
+  protected $plugin_id = 'country_to_code';
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Plugins: Country to Code',
+      'description' => 'Unit tests for "Country to Code" plugin.',
+      'group' => 'Feeds Tamper',
+    );
+  }
+
+  public function test() {
+    $this->execute('Argentina', 'AR');
+    // Test that lowercasing and trimming works.
+    $this->execute('antigua and barbuda ', 'AG');
   }
 }
 
@@ -202,113 +240,31 @@ class FeedsTamperFindReplaceTestCase extends FeedsTamperUnitTestCase {
 }
 
 /**
- * Tests for truncate_text.inc
+ * Tests for find_replace_regex.inc
  */
-class FeedsTamperTruncateTextTestCase extends FeedsTamperUnitTestCase {
+class FeedsTamperFindReplaceREGEXTestCase extends FeedsTamperUnitTestCase {
 
-  protected $plugin_id = 'truncate_text';
+  protected $plugin_id = 'find_replace_regex';
 
   public static function getInfo() {
     return array(
-      'name' => 'Plugins: Truncate Text',
-      'description' => 'Unit tests for the "Truncate Text" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
-  public function test() {
-    $this->execute('Hello, how are you today?', 'Hello', array('num_char' => 5, 'ellipses' => FALSE));
-    $this->execute('Hello, how are you today?', 'Hello...', array('num_char' => 5, 'ellipses' => TRUE));
-  }
-}
-
-/**
- * Tests for unique.inc
- */
-class FeedsTamperUniqueTestCase extends FeedsTamperUnitTestCase {
-
-  protected $plugin_id = 'unique';
-
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Unique',
-      'description' => 'Unit tests for "Unique" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
-  public function test() {
-    $this->execute(array('a', 'a', 'b', 'c'), array('a', 'b', 'c'));
-    $this->execute(array(1, 1, 2, 3, 4), array(1, 2, 3, 4));
-  }
-}
-
-/**
- * Tests for trim.inc
- */
-class FeedsTamperTrimTestCase extends FeedsTamperUnitTestCase {
-
-  protected $plugin_id = 'trim';
-
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Trim',
-      'description' => 'Unit tests for "Trim" plugin.',
+      'name' => 'Plugins: Find Replace Regex',
+      'description' => 'Unit tests for "Find Replace Regex" plugin.',
       'group' => 'Feeds Tamper',
     );
   }
 
   public function test() {
     $settings = array(
-      'side' => 'trim',
+      'find' => '/cat/',
+      'replace' => 'dog',
+      'limit' => '',
     );
-    $this->execute('  asdfasf  ', 'asdfasf', $settings);
-    $settings['side'] = 'ltrim';
-    $this->execute('  asdfasf  ', 'asdfasf  ', $settings);
-    $settings['side'] = 'rtrim';
-    $this->execute('  asdfasf  ', '  asdfasf', $settings);
-    $settings['side'] = 'trim';
-    $settings['mask'] = '$';
-    $this->execute('$$asdfasf$$', 'asdfasf', $settings);
-  }
-}
-
-/**
- * Tests for required.inc
- */
-class FeedsTamperRequiredTestCase extends FeedsTamperUnitTestCase {
-
-  protected $plugin_id = 'required';
-
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Required',
-      'description' => 'Unit tests for "Required" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
-  function execute($input, $output, $source) {
-    $result = new stdClass();
-    $result->items = $input;
-    foreach ($result->items as $key => &$item) {
-      foreach ($item as $element_key => &$i) {
-        if ($source == $element_key) {
-          $this->callback($result, $key, $element_key, $i, array());
-        }
-      }
-    }
-    $this->assertEqual($result->items, $output);
-  }
-
-  public function test() {
-    $input = array();
-    $input[] = array('s1' => 'sdafasf', 's2' => 'asdfsf', 's3' => 'asdfasf');
-    $input[] = array('s1' => 'sdafasf', 's2' => 'asdfsf', 's3' => NULL);
-    $input[] = array('s1' => 'sdafasf', 's2' => 'asdfsf', 's3' => 'asdfasf');
-    $output = $input;
-    unset($output[1]);
-    $this->execute($input, $output, 's3');
+    $this->execute('The cat went to the park.', 'The dog went to the park.', $settings);
+    $settings['find'] = '/cat/i';
+    $this->execute('The Cat went to the park.', 'The dog went to the park.', $settings);
+    $settings['find'] = '/cat\b/i';
+    $this->execute('The Catwent to the park.', 'The Catwent to the park.', $settings);
   }
 }
 
@@ -353,6 +309,138 @@ class FeedsTamperHTMLEntityDecodeTestCase extends FeedsTamperUnitTestCase {
 }
 
 /**
+ * Tests for implode.inc
+ */
+class FeedsTamperImplodeTestCase extends FeedsTamperUnitTestCase {
+
+  protected $plugin_id = 'implode';
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Plugins: Implode',
+      'description' => 'Unit tests for "Implode" plugin.',
+      'group' => 'Feeds Tamper',
+    );
+  }
+
+  public function test() {
+    $settings = array(
+      'glue' => ',',
+    );
+    $this->execute(array('a', 'b', 'c'), 'a,b,c', $settings);
+    $settings = array(
+      'glue' => ',%s',
+    );
+    $this->execute(array('a', 'b', 'c'), 'a, b, c', $settings);
+    $settings = array(
+      'glue' => ',%t',
+    );
+    $this->execute(array('a', 'b', 'c'), "a,\tb,\tc", $settings);
+    $settings = array(
+      'glue' => ',%n',
+    );
+    $this->execute(array('a', 'b', 'c'), "a,\nb,\nc", $settings);
+  }
+}
+
+/**
+ * Tests for keyword_filter.inc
+ */
+class FeedsTamperKeyWordFilterTestCase extends FeedsTamperUnitTestCase {
+
+  protected $plugin_id = 'keyword_filter';
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Plugins: Keyword Filter',
+      'description' => 'Unit tests for "Keyword Filter" plugin.',
+      'group' => 'Feeds Tamper',
+    );
+  }
+
+  public function test() {
+    $item = array(
+      'title' => 'This is a title',
+      'body' => 'hello body',
+    );
+    $settings = array(
+      'words' => 'booya',
+      'word_boundaries' => FALSE,
+      'case_sensitive' => FALSE,
+    );
+    $this->execute($item, array(), 'title', $settings);
+    $settings = array(
+      'words' => 'this',
+      'word_boundaries' => FALSE,
+      'case_sensitive' => FALSE,
+    );
+    $this->execute($item, array($item), 'title', $settings);
+    $settings['case_sensitive'] = TRUE;
+    $this->execute($item, array(), 'title', $settings);
+    $item = array(
+      'title' => 'This is atitle',
+      'body' => 'hello body',
+    );
+    $settings = array(
+      'words' => 'title',
+      'word_boundaries' => FALSE,
+      'case_sensitive' => FALSE,
+    );
+    $this->execute($item, array($item), 'title', $settings);
+    $settings['word_boundaries'] = TRUE;
+    $this->execute($item, array(), 'title', $settings);
+  }
+
+  function execute($item, $output, $element_key, $settings) {
+    $result = new stdClass();
+    $result->items = array();
+    $result->items[] = $item;
+    $this->validate($settings);
+    $this->callback($result, 0, NULL, $result->items[0][$element_key], $settings);
+    $this->assertEqual($result->items, $output);
+  }
+}
+
+/**
+ * Tests for required.inc
+ */
+class FeedsTamperRequiredTestCase extends FeedsTamperUnitTestCase {
+
+  protected $plugin_id = 'required';
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Plugins: Required',
+      'description' => 'Unit tests for "Required" plugin.',
+      'group' => 'Feeds Tamper',
+    );
+  }
+
+  function execute($input, $output, $source) {
+    $result = new stdClass();
+    $result->items = $input;
+    foreach ($result->items as $key => &$item) {
+      foreach ($item as $element_key => &$i) {
+        if ($source == $element_key) {
+          $this->callback($result, $key, $element_key, $i, array());
+        }
+      }
+    }
+    $this->assertEqual($result->items, $output);
+  }
+
+  public function test() {
+    $input = array();
+    $input[] = array('s1' => 'sdafasf', 's2' => 'asdfsf', 's3' => 'asdfasf');
+    $input[] = array('s1' => 'sdafasf', 's2' => 'asdfsf', 's3' => NULL);
+    $input[] = array('s1' => 'sdafasf', 's2' => 'asdfsf', 's3' => 'asdfasf');
+    $output = $input;
+    unset($output[1]);
+    $this->execute($input, $output, 's3');
+  }
+}
+
+/**
  * Tests for rewrite.inc
  */
 class FeedsTamperRewriteTestCase extends FeedsTamperUnitTestCase {
@@ -382,5 +470,99 @@ class FeedsTamperRewriteTestCase extends FeedsTamperUnitTestCase {
       'combined' => 'Blah, blah, blah',
     );
     $this->execute($input, "HI YA! - I'm the coolest.", 'combined', $settings);
+  }
+}
+
+/**
+ * Tests for strip_tags.inc
+ */
+class FeedsTamperStripTagsTestCase extends FeedsTamperUnitTestCase {
+
+  protected $plugin_id = 'strip_tags';
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Plugins: Strip Tags',
+      'description' => 'Unit tests for the "Strip Tags" plugin.',
+      'group' => 'Feeds Tamper',
+    );
+  }
+
+  public function test() {
+    $this->execute('sdfsdfsdfsdf<b>sdfsdf</b>sdfsdf', 'sdfsdfsdfsdfsdfsdfsdfsdf', array('allowed_tags' => NULL));
+    $this->execute('sdfsdfsdfsdf<b>sdfsdfsdfsdf', 'sdfsdfsdfsdfsdfsdfsdfsdf', array('allowed_tags' => NULL));
+    $this->execute('sdfsdfsdfsdf<i>sdfsdf</i><b>sdfs</b>dfsdfsdf', 'sdfsdfsdfsdf<i>sdfsdf</i>sdfsdfsdfsdf', array('allowed_tags' => '<i>'));
+  }
+}
+
+/**
+ * Tests for trim.inc
+ */
+class FeedsTamperTrimTestCase extends FeedsTamperUnitTestCase {
+
+  protected $plugin_id = 'trim';
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Plugins: Trim',
+      'description' => 'Unit tests for "Trim" plugin.',
+      'group' => 'Feeds Tamper',
+    );
+  }
+
+  public function test() {
+    $settings = array(
+      'side' => 'trim',
+    );
+    $this->execute('  asdfasf  ', 'asdfasf', $settings);
+    $settings['side'] = 'ltrim';
+    $this->execute('  asdfasf  ', 'asdfasf  ', $settings);
+    $settings['side'] = 'rtrim';
+    $this->execute('  asdfasf  ', '  asdfasf', $settings);
+    $settings['side'] = 'trim';
+    $settings['mask'] = '$';
+    $this->execute('$$asdfasf$$', 'asdfasf', $settings);
+  }
+}
+
+/**
+ * Tests for truncate_text.inc
+ */
+class FeedsTamperTruncateTextTestCase extends FeedsTamperUnitTestCase {
+
+  protected $plugin_id = 'truncate_text';
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Plugins: Truncate Text',
+      'description' => 'Unit tests for "Truncate Text" plugin.',
+      'group' => 'Feeds Tamper',
+    );
+  }
+
+  public function test() {
+    $this->execute('Hello, how are you today?', 'Hello', array('num_char' => 5, 'ellipses' => FALSE));
+    $this->execute('Hello, how are you today?', 'Hello...', array('num_char' => 5, 'ellipses' => TRUE));
+  }
+}
+
+/**
+ * Tests for unique.inc
+ */
+class FeedsTamperUniqueTestCase extends FeedsTamperUnitTestCase {
+
+  protected $plugin_id = 'unique';
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Plugins: Unique',
+      'description' => 'Unit tests for "Unique" plugin.',
+      'group' => 'Feeds Tamper',
+    );
+  }
+
+  public function test() {
+    $this->execute(array('a', 'a', 'b', 'c'), array('a', 'b', 'c'));
+    $this->execute(array(1, 1, 2, 3, 4), array(1, 2, 3, 4));
   }
 }
