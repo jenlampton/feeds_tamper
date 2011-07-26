@@ -79,7 +79,7 @@ function feeds_tamper_ui_list_form_submit($form, &$form_state) {
         $disabled[$id] = !$value['enabled'];
         if ($instance->weight != $weight) {
           $instance->weight = $weight;
-          ctools_export_crud_save('feeds_tamper', $instance);
+          feeds_tamper_save_instance($instance);
         }
       }
     }

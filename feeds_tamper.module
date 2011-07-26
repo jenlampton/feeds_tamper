@@ -77,7 +77,7 @@ function feeds_tamper_load_all_instances($load_disabled = FALSE) {
   $instances = array();
   if (function_exists('ctools_include')) {
     ctools_include('export');
-    $configs = ctools_export_load_object('feeds_tamper', 'all');
+    $configs = ctools_export_crud_load_all('feeds_tamper');
     foreach ($configs as $instance_id => $config) {
       if (!empty($config->id) && ($load_disabled || empty($config->disabled))) {
         $instances[$instance_id] = $config;
@@ -204,7 +204,7 @@ function feeds_tamper_ctools_plugin_api($owner, $api) {
  */
 function feeds_tamper_ctools_plugin_directory($module, $plugin) {
   if ($module == 'feeds_tamper') {
-    return 'plugins/';
+    return 'plugins';
   }
 }
 
@@ -214,8 +214,7 @@ function feeds_tamper_ctools_plugin_directory($module, $plugin) {
 function feeds_tamper_ctools_plugin_type() {
   return array(
     'plugins' => array(
-      'cache' => FALSE,
-      'use hook' => FALSE,
+      'use hooks' => FALSE,
       'defaults' => array(
         'validate' => FALSE,
         'multi' => FALSE,
