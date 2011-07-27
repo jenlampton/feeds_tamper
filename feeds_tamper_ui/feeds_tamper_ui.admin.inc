@@ -287,6 +287,10 @@ function feeds_tamper_ui_add_plugin_form_submit($form, &$form_state) {
 }
 
 function feeds_tamper_ui_edit_plugin_form($form, &$form_state, $instance) {
+  if (!$instance) {
+    drupal_set_message(t('Invalid plugin id.'), 'error');
+    return;
+  }
   // Set breadcrumb.
   $importer = feeds_importer($instance->importer);
   $crumb = drupal_get_breadcrumb();
@@ -338,6 +342,10 @@ function feeds_tamper_ui_edit_plugin_form_submit($form, &$form_state) {
 
 function feeds_tamper_ui_delete_form($form, &$form_state, $instance) {
   // Set breadcrumb.
+  if (!$instance) {
+    drupal_set_message(t('Invalid plugin id.'), 'error');
+    return;
+  }
   $importer = feeds_importer($instance->importer);
   $crumb = drupal_get_breadcrumb();
   $crumb[] = l(t('Tamper: @importer', array('@importer' => $importer->config['name'])), 'admin/structure/feeds/tamper/list/' . $instance->importer);

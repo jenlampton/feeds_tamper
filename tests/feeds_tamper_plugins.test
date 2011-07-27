@@ -110,8 +110,6 @@ class FeedsTamperCovertBooleanTestCase extends FeedsTamperUnitTestCase {
     $settings['no_match'] = 'other';
     $settings['other_text'] = 'other text';
     $this->execute('a', 'other text', $settings);
-
-
   }
 }
 
