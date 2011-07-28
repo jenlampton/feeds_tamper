@@ -25,7 +25,7 @@ function feeds_tamper_keyword_filter_form($importer, $element_key, $settings) {
   $form['word_boundaries'] = array(
     '#type' => 'checkbox',
     '#title' => t('Respect word boundaries'),
-    '#default_value' => isset($settings['word_boundaries']) ? $settings['word_boundaries'] : TRUE,
+    '#default_value' => isset($settings['word_boundaries']) ? $settings['word_boundaries'] : FALSE,
     '#description' => t('If checked, then "book" will match "book" but not "bookcase".'),
   );
   $form['case_sensitive'] = array(
@@ -51,8 +51,10 @@ function feeds_tamper_keyword_filter_validate(&$settings) {
   }
   else {
     foreach ($settings['word_list'] as &$word) {
-      $word = '/\b' . $word . '\b/';
-
+      if (!preg_match('/^\w.*\w$/', $word)) {
+        form_set_error('settings][words', t('Seach text must begin and end with a letter, number, or underscore to use the %option option.<br />%word', array('%option' => 'Respect word boundaries', '%word' => $word)));
+      }
+      $word = '/\b\Q' . $word . '\E\b/';
       if (!$settings['case_sensitive']) {
         $word .= 'i';
       }
