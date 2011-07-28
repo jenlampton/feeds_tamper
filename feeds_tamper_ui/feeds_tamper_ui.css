@@ -48,3 +48,14 @@ tr.feeds-tamper-add td {
     color: #AAAAAA;
     background-color: #F5F5F5;
 }
+
+/* Add form styles. */
+
+html.js .no-js {
+  display: none;
+}
+
+/* Make Choose button come up next to select. */
+.form-item-plugin-id {
+  display: inline-block;
+}

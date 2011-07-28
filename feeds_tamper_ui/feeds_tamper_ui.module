@@ -10,7 +10,8 @@ function feeds_tamper_ui_menu() {
     'title arguments' => array(5),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('feeds_tamper_ui_list_form', 5),
-    'access arguments' => array('administer feeds_tamper'),
+    'access callback' => 'feeds_tamper_access',
+    'access arguments' => array(5),
     'file' => 'feeds_tamper_ui.admin.inc',
   );
   $items['admin/structure/feeds/tamper/add/%feeds_importer/%'] = array(
@@ -18,7 +19,8 @@ function feeds_tamper_ui_menu() {
     'title arguments' => array(6),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('feeds_tamper_ui_add_plugin_form', 5, 6),
-    'access arguments' => array('administer feeds_tamper'),
+    'access callback' => 'feeds_tamper_access',
+    'access arguments' => array(5),
     'file' => 'feeds_tamper_ui.admin.inc',
   );
   $items['admin/structure/feeds/tamper/edit/%feeds_tamper_plugin_instance'] = array(
@@ -26,7 +28,8 @@ function feeds_tamper_ui_menu() {
     'title arguments' => array(5),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('feeds_tamper_ui_edit_plugin_form', 5),
-    'access arguments' => array('administer feeds_tamper'),
+    'access callback' => 'feeds_tamper_access',
+    'access arguments' => array(NULL, 5),
     'file' => 'feeds_tamper_ui.admin.inc',
   );
   $items['admin/structure/feeds/tamper/delete/%feeds_tamper_plugin_instance'] = array(
@@ -34,7 +37,8 @@ function feeds_tamper_ui_menu() {
     'title arguments' => array(5),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('feeds_tamper_ui_delete_form', 5),
-    'access arguments' => array('administer feeds_tamper'),
+    'access callback' => 'feeds_tamper_access',
+    'access arguments' => array(NULL, 5),
     'file' => 'feeds_tamper_ui.admin.inc',
   );
   return $items;
@@ -49,21 +53,17 @@ function feeds_tamper_ui_add_title($source) {
 }
 
 function feeds_tamper_ui_edit_title($instance) {
-  if ($instance) {
-    if ($instance->export_type == EXPORT_IN_DATABASE) {
-      return t('Edit: @id', array('@id' => $instance->description));
-    }
-    return t('Override: @id', array('@id' => $instance->description));
+  if ($instance->export_type == EXPORT_IN_DATABASE) {
+    return t('Edit: @id', array('@id' => $instance->description));
   }
+  return t('Override: @id', array('@id' => $instance->description));
 }
 
 function feeds_tamper_ui_delete_title($instance) {
-  if ($instance) {
-    if ($instance->export_type == EXPORT_IN_DATABASE) {
-      return t('Delete plugin: @id', array('@id', $instance->id));
-    }
-    return t('Revert plugin: @id', array('@id', $instance->id));
+  if ($instance->export_type == EXPORT_IN_DATABASE) {
+    return t('Delete plugin: @id', array('@id', $instance->id));
   }
+  return t('Revert plugin: @id', array('@id', $instance->id));
 }
 
 function feeds_tamper_ui_main_title($importer) {
@@ -82,13 +82,17 @@ function feeds_tamper_ui_theme($existing, $type, $theme, $path) {
 function feeds_tamper_ui_form_feeds_ui_overview_form_alter(&$form, &$form_state, $form_id) {
   if (!empty($form['enabled'])) {
     foreach ($form['enabled'] as $id => &$table) {
-      $table['operations']['#markup'] .= ' | ' . l(t('Tamper'), 'admin/structure/feeds/tamper/list/' . $id);
+      if (feeds_tamper_access($id)) {
+        $table['operations']['#markup'] .= ' | ' . l(t('Tamper'), 'admin/structure/feeds/tamper/list/' . $id);
+      }
     }
   }
 }
 
 function feeds_tamper_ui_form_feeds_ui_mapping_form_alter(&$form, &$form_state, $form_id) {
-  $form['help']['#markup'] .= l(t('Configure Feeds Tamper'), 'admin/structure/feeds/tamper/list/' . $form['#importer']->id);
+  if (feeds_tamper_access($form['#importer'])) {
+    $form['help']['#markup'] .= l(t('Configure Feeds Tamper'), 'admin/structure/feeds/tamper/list/' . $form['#importer']->id);
+  }
 }
 
 /**

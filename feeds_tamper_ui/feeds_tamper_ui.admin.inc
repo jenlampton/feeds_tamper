@@ -194,6 +194,8 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
   if (!empty($form_state['values']['plugin_id'])) {
     $machine_name = $form_state['values']['plugin_id'];
   }
+  // Add css.
+  $form['#attached']['css'][] = drupal_get_path('module', 'feeds_tamper_ui') . '/feeds_tamper_ui.css';
 
   $plugin = feeds_tamper_get_plugin($machine_name);
 
@@ -207,12 +209,11 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
       'callback' => 'feeds_tamper_ajax_callback',
       'wrapper' => 'feeds-tamper-plugin',
     ),
-    '#suffix' => '<br />',
   );
   $form['update'] = array(
     '#type' => 'submit',
     '#value' => t('Choose'),
-    '#attributes' => array('class' => array('no-js')),
+    '#attributes' => array('class' => array('no-js', 'html.js')),
   );
   $form['plugin']['#prefix'] = '<div class="clear-fix" id="feeds-tamper-plugin">';
   $form['plugin']['#suffix'] = '</div>';
@@ -297,10 +298,6 @@ function feeds_tamper_ui_add_plugin_form_submit($form, &$form_state) {
 }
 
 function feeds_tamper_ui_edit_plugin_form($form, &$form_state, $instance) {
-  if (!$instance) {
-    drupal_set_message(t('Invalid plugin id.'), 'error');
-    return;
-  }
   // Set breadcrumb.
   $importer = feeds_importer($instance->importer);
   $crumb = drupal_get_breadcrumb();
