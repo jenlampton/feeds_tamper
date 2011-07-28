@@ -58,7 +58,7 @@ function feeds_tamper_feeds_parser_sources_alter(&$sources, $content_type) {
   $sources['feeds_tamper_blank'] = array(
     'name' => t('Blank source'),
     'description' => t("A source provided by Feeds Tamper with no value of it's own."),
-    'callback' => 'feeds_tamper_temp',
+    'callback' => 'feeds_tamper_not_a_callback',
   );
 }
 
@@ -66,6 +66,7 @@ function feeds_tamper_feeds_parser_sources_alter(&$sources, $content_type) {
  * Do nothing callback.
  */
 function feeds_tamper_temp() {
+  return '';
 }
 
 /**
