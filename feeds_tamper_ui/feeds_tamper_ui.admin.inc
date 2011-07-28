@@ -76,6 +76,10 @@ function feeds_tamper_ui_list_form_submit($form, &$form_state) {
         $weight = (int) $value['weight-' . $id];
         $disabled[$id] = !(bool) $value['enabled'];
         if ($instance->weight != $weight) {
+          if ($weight < 0) {
+            drupal_set_message(t('Weight must be greater than or equal to zero.'), 'error');
+            return;
+          }
           $instance->weight = $weight;
           feeds_tamper_save_instance($instance);
         }
@@ -371,7 +375,14 @@ function feeds_tamper_ui_delete_form($form, &$form_state, $instance) {
 
 function feeds_tamper_ui_delete_form_submit($form, &$form_state) {
   feeds_tamper_delete_instance($form_state['instance']);
-  drupal_set_message(t('The plugin %plugin has been deleted from %source.', array('%plugin' => $form_state['instance']->description, '%source' => $form_state['instance']->source)));
+  switch ($form_state['instance']->export_type) {
+    case EXPORT_IN_DATABASE:
+      drupal_set_message(t('The plugin %plugin has been deleted from %source.', array('%plugin' => $form_state['instance']->description, '%source' => $form_state['instance']->source)));
+      break;
+    case EXPORT_IN_CODE | EXPORT_IN_DATABASE:
+      drupal_set_message(t('The plugin %plugin has been reverted.', array('%plugin' => $form_state['instance']->description)));
+      break;
+  }
   $form_state['redirect'] = 'admin/structure/feeds/tamper/list/' . $form_state['instance']->importer;
 }
 
