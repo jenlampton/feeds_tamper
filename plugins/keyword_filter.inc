@@ -38,16 +38,17 @@ function feeds_tamper_keyword_filter_form($importer, $element_key, $settings) {
 }
 
 function feeds_tamper_keyword_filter_validate(&$settings) {
+  global $multibyte;
   $settings['words'] = str_replace("\r", '', $settings['words']);
   $settings['word_list'] = explode("\n", $settings['words']);
   $settings['word_list'] = array_map('trim', $settings['word_list']);
   $settings['regex'] = FALSE;
 
   if (!$settings['word_boundaries'] && $settings['case_sensitive']) {
-    $settings['func'] = 'strpos';
+    $settings['func'] = $multibyte ? 'mb_strpos' : 'strpos';
   }
   elseif (!$settings['word_boundaries'] && !$settings['case_sensitive']) {
-    $settings['func'] = 'stripos';
+    $settings['func'] = $multibyte ? 'mb_stripos' : 'stripos';
   }
   else {
     foreach ($settings['word_list'] as &$word) {
@@ -57,6 +58,9 @@ function feeds_tamper_keyword_filter_validate(&$settings) {
       $word = '/\b\Q' . $word . '\E\b/';
       if (!$settings['case_sensitive']) {
         $word .= 'i';
+      }
+      if ($multibyte) {
+        $word .= 'u';
       }
     }
     $settings['regex'] = TRUE;
