@@ -16,17 +16,17 @@ class FeedsTamperUnitTestCase extends DrupalUnitTestCase {
     $this->plugin_info = feeds_tamper_get_plugin($this->plugin_id);
   }
 
-  function form($importer, $element_key, $settings) {
+  function form($importer, $element_key, $settings = array()) {
     return $this->plugin_info['form']($importer, $element_key, $settings);
   }
 
-  function validate(&$settings) {
+  function validate(&$settings = array()) {
     if (!empty($this->plugin_info['validate'])) {
       $this->plugin_info['validate']($settings);
     }
   }
 
-  function callback($result, $item_key, $element_key, &$field, $settings) {
+  function callback($result, $item_key, $element_key, &$field, $settings = array()) {
     $this->plugin_info['callback']($result, $item_key, $element_key, $field, $settings);
   }
 
@@ -336,6 +336,33 @@ class FeedsTamperFindReplaceREGEXTestCase extends FeedsTamperUnitTestCase {
     $this->execute('The Cat went to the park.', 'The dog went to the park.', $settings);
     $settings['find'] = '/cat\b/i';
     $this->execute('The Catwent to the park.', 'The Catwent to the park.', $settings);
+  }
+}
+
+/**
+ * Tests for hash.inc
+ */
+class FeedsTamperHashTestCase extends FeedsTamperUnitTestCase {
+
+  protected $plugin_id = 'hash';
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Plugins: Hash',
+      'description' => 'Unit tests for "Calculate hash" plugin.',
+      'group' => 'Feeds Tamper',
+    );
+  }
+
+  public function test() {
+    $result = new stdClass();
+    $result->items = array();
+    $item = array('title' => 'Yay title!', 'body' => 'Yay body!', 'hash' => 'asdfasf');
+    $result->items[] = $item;
+    $this->callback($result, 0, 'hash', $result->items[0]['hash']);
+    // Callback sets it's own field to NULL before hashing.
+    $item['hash'] = NULL;
+    $this->assertEqual($result->items[0]['hash'], md5(serialize($item)));
   }
 }
 
