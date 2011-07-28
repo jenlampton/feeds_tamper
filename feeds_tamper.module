@@ -18,6 +18,12 @@ function feeds_tamper_feeds_after_parse(FeedsSource $source, FeedsParserResult $
   $plugins = feeds_tamper_get_plugins();
   foreach ($result->items as $item_key => &$item) {
     foreach ($importer_instances as $element_key => $instances) {
+      // Add in empty source, it was lowercased by above. This is a big ol'
+      // hack, but it's necessary to accomplish certain things.
+      if (strpos($element_key, 'blank source ') === 0) {
+        $element_key = drupal_ucfirst($element_key);
+        $item[$element_key] = '';
+      }
       if (isset($item[$element_key])) {
         foreach ($instances as $instance) {
           $plugin = $plugins[$instance->plugin_id];
@@ -55,18 +61,48 @@ function feeds_tamper_feeds_processor_targets_alter(&$targets, $entity_type, $bu
  * Implements hook_feeds_parser_sources_alter().
  */
 function feeds_tamper_feeds_parser_sources_alter(&$sources, $content_type) {
-  $sources['feeds_tamper_blank'] = array(
-    'name' => t('Blank source'),
+  $sources['Blank source 1'] = array(
     'description' => t("A source provided by Feeds Tamper with no value of it's own."),
-    'callback' => 'feeds_tamper_not_a_callback',
   );
 }
 
 /**
  * Do nothing callback.
  */
-function feeds_tamper_temp() {
-  return '';
+function feeds_tamper_temp() {}
+
+/**
+ * Implements hook_form_feeds_ui_mapping_form_alter().
+ *
+ * This is an interesting bit of work. Each source name has to be unique,
+ * but we have no idea how many to create with
+ * feeds_tamper_feeds_parser_sources_alter() because we don't know how many
+ * targets there are going to be.
+ *
+ * The solution is to keep track in the form how many have been added.
+ */
+function feeds_tamper_form_feeds_ui_mapping_form_alter(&$form, &$form_state) {
+  $newest_mapping = array();
+  //$instances_to_delete = feeds_tamper_load_by_importer($form['#importer']->id, TRUE);
+  foreach ($form['#mappings'] as $mapping) {
+    if (strpos($mapping['source'], 'Blank source ') === 0) {
+      $newest_mapping = $mapping;
+    }
+    //unset($instances_to_delete[$mapping['source']]);
+  }
+  if (!empty($newest_mapping)) {
+    list(, , $count) = explode(' ', $newest_mapping['source']);
+    unset($form['source']['#options']['Blank source 1']);
+    $form['source']['#options']['Blank source ' . ++$count] = 'Blank source';
+  }
+  else {
+    $form['source']['#options']['Blank source 1'] = 'Blank source';
+  }
+  //foreach ($instances_to_delete as $instances) {
+  //  foreach ($instances as $instance) {
+  //    feeds_tamper_delete_instance($instance);
+  //  }
+  //}
 }
 
 /**
@@ -124,6 +160,11 @@ function feeds_tamper_delete_instance($instance) {
   ctools_export_crud_delete('feeds_tamper', $instance);
 }
 
+/**
+ * Load instances by importer id.
+ * @return
+ * An array of plugin instances, keyed by source.
+ */
 function feeds_tamper_load_by_importer($importer_id, $disabled = FALSE, $lower = FALSE) {
   $mappings = feeds_importer($importer_id)->processor->config['mappings'];
   $sources = array();
