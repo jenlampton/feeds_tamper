@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Convert text value to boolean value.
  */
 

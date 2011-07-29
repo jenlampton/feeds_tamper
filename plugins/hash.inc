@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Calculate a hash of a feed item.
  */
 

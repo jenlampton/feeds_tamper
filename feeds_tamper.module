@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Feeds Tamper - basic API functions and hook implementations.
+ */
+
+/**
  * Feeds hooks.
  */
 
@@ -100,12 +105,12 @@ function feeds_tamper_permission() {
  *
  * @param string|FeedsImporter $importer
  *   The importer or importer id being tampered with.
- *
  * @param string|stdClass $instance
- *   If set, the importer attached to $instance will be used.
+ *   (optional) If set, the importer attached to $instance will be tried first.
+ *   Defaults to NULL.
  *
  * @return bool
- *   Whether or not the user has access.
+ *   TRUE if the user has acces, FALSE if not.
  */
 function feeds_tamper_access($importer, $instance = NULL) {
   if (isset($instance)) {
@@ -165,17 +170,19 @@ function feeds_tamper_form_feeds_ui_mapping_form_alter(&$form, &$form_state) {
 }
 
 /**
- * Feeds Tamper api functions.
+ * @defgroup feeds_tamper_api Feeds Tamper API
+ * @{
+ * API functions for dealing with plugins and plugin instances.
  */
 
 /**
  * Load all plugin instances.
  *
  * @param bool $load_disabled
- *   Whether to load disabled plugin instances.
+ *   (optional) If TRUE, load disabled plugin instances. Defaults to FALSE.
  *
  * @return array
- *   An array of plugin instances keyed to their id.
+ *   An associative array of plugin instances keyed to their id.
  */
 function feeds_tamper_load_all_instances($load_disabled = FALSE) {
   $instances = array();
@@ -211,7 +218,7 @@ function feeds_tamper_load_instance($id) {
  * @param stdClass $instance
  *   A plugin instance object.
  *
- * @return
+ * @return mixed
  *   If the plugin save failed, returns FALSE. If it succeeded, returns
  *   SAVED_NEW or SAVED_UPDATED, depending on the operation performed.
  */
@@ -250,15 +257,14 @@ function feeds_tamper_delete_instance($instance) {
  *
  * @param string|FeedsImporter $importer
  *   The importer id, or object to reference.
- *
  * @param bool $disabled
- *   Load disabled plugin instances.
- *
+ *   (optional) If TRUE load disabled plugin instances. Defaults to FALSE.
  * @param bool $lower
- *   Make the keys lowercase. Only used internally.
+ *   (optional) If TRUE make the keys lowercase. Only used internally. Defaults
+ *   to FALSE.
  *
- * @return
- *   An array of plugin instances, keyed by source.
+ * @return array
+ *   An associative array of plugin instances, keyed by source.
  */
 function feeds_tamper_load_by_importer($importer, $disabled = FALSE, $lower = FALSE) {
   if (is_scalar($importer)) {
@@ -308,8 +314,8 @@ function _feeds_tamper_cmp($a, $b) {
  * Get all available plugins.
  *
  * @return array
- *   An array where the keys are the plugin keys and the values
- *   are the plugin info arrays as defined in a plugin include file.
+ *   An associative array where the keys are the plugin keys and the values are
+ *   the plugin info arrays as defined in a plugin include file.
  */
 function feeds_tamper_get_plugins() {
   ctools_include('plugins');
@@ -329,6 +335,24 @@ function feeds_tamper_get_plugin($id) {
   ctools_include('plugins');
   return ctools_get_plugins('feeds_tamper', 'plugins', $id);
 }
+
+/**
+ * Return a machine name safe version of a string.
+ *
+ * @param string $string
+ *   String to get machine nameized.
+ *
+ * @return string
+ *   A lowercase string with all values not in [a-zA-Z0-9] replaced with an
+ *   underscore and shortened to 128 characters.
+ */
+function feeds_tamper_make_machine($string) {
+  return drupal_substr(preg_replace('/[^a-z0-9-]/', '_', drupal_strtolower($string)), 0, 127);
+}
+
+/**
+ * @} End of "feeds_tamper_api".
+ */
 
 /**
  * CTools stuff.
@@ -368,18 +392,4 @@ function feeds_tamper_ctools_plugin_type() {
       ),
     ),
   );
-}
-
-/**
- * Return a machine name safe version of a string.
- *
- * @param string $string
- *   String to get machine nameized.
- *
- * @return string
- *   A lowercase string with all values not in [a-z0-9] replaced with an
- *   underscore and shortened to 128 characters.
- */
-function feeds_tamper_make_machine($string) {
-  return drupal_substr(preg_replace('/[^a-z0-9-]/', '_', drupal_strtolower($string)), 0, 127);
 }
