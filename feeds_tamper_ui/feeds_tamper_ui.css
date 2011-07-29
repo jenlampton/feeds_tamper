@@ -49,8 +49,9 @@ tr.feeds-tamper-add td {
     background-color: #F5F5F5;
 }
 
-/* Add form styles. */
+/* Style add plugin form. */
 
+/* hide the next button when not degrading to non-javascript browser */
 html.js .no-js {
   display: none;
 }

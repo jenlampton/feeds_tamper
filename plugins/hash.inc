@@ -13,7 +13,7 @@ $plugin = array(
   'category' => 'Other',
 );
 
-function feeds_tamper_hash_form($importer, $element_key, $settings){
+function feeds_tamper_hash_form($importer, $element_key, $settings) {
   return array(
     'help' => array(
       '#markup' => t('Makes the value a hash of the values being imported. This allows for importing content that does not have a unique ID.')
