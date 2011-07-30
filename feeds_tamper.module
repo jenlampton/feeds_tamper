@@ -84,8 +84,7 @@ function feeds_tamper_feeds_parser_sources_alter(&$sources, $content_type) {
  * Implements hook_feeds_processor_targets_alter().
  */
 function feeds_tamper_feeds_processor_targets_alter(&$targets, $entity_type, $bundle_name) {
-  $targets['feeds_tamper_store'] = array(
-    'name' => t('Temporary target'),
+  $targets['Temporary target 1'] = array(
     'description' => t('A field that stores the source data temporarily so that it can be used with the Feeds Tamper rewrite plugin.'),
     'callback' => '_feeds_tamper_do_nothing',
   );
@@ -170,19 +169,31 @@ function feeds_tamper_form_feeds_ui_mapping_form_alter(&$form, &$form_state) {
   if ($form['source']['#type'] == 'textfield') {
     return;
   }
-  $newest_mapping = array();
+  $newest_source = NULL;
+  $newest_target = NULL;
   foreach ($form['#mappings'] as $mapping) {
     if (strpos($mapping['source'], 'Blank source ') === 0) {
-      $newest_mapping = $mapping;
+      $newest_source = $mapping['source'];
+    }
+    elseif (strpos($mapping['target'], 'Temporary target ') === 0) {
+      $newest_target = $mapping['target'];
     }
   }
-  if (!empty($newest_mapping)) {
-    list(, , $count) = explode(' ', $newest_mapping['source']);
+  if (!empty($newest_source)) {
+    list(, , $count) = explode(' ', $newest_source);
     unset($form['source']['#options']['Blank source 1']);
     $form['source']['#options']['Blank source ' . ++$count] = 'Blank source';
   }
   else {
     $form['source']['#options']['Blank source 1'] = 'Blank source';
+  }
+  if (!empty($newest_target)) {
+    list(, , $count) = explode(' ', $newest_target);
+    unset($form['target']['#options']['Temporary target 1']);
+    $form['target']['#options']['Temporary target ' . ++$count] = 'Temporary target';
+  }
+  else {
+    $form['target']['#options']['Temporary target 1'] = 'Temporary target';
   }
 }
 
