@@ -110,9 +110,12 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
     }
   }
 
-  $form['submit'] = array(
+  $form['actions'] = array(
+    '#type' => 'actions'
+  );
+  $form['actions']['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Save changes'),
+    '#value' => t('Save')
   );
   return $form;
 }
@@ -306,6 +309,7 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
     '#ajax' => array(
       'callback' => 'feeds_tamper_ajax_callback',
       'wrapper' => 'feeds-tamper-plugin',
+      'progress' => 'none',
     ),
   );
   $form['update'] = array(

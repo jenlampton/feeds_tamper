@@ -18,10 +18,7 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     );
   }
   public function setUp() {
-    parent::setUp(array('feeds_tamper_ui'), array('administer feeds_tamper', 'access administration pages', 'administer permissions'));
-    // Set the front page to show 30 nodes so we can easily see what is aggregated.
-    $edit = array('default_nodes_main' => 30);
-    $this->drupalPost('admin/config/system/site-information', $edit, 'Save configuration');
+    parent::setUp(array('feeds_tamper_ui'), array('administer feeds_tamper'));
   }
 
   public function testBasic() {
@@ -170,7 +167,7 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     $url = FEEDS_TAMPER_UI_BASE . '/list/' . $importer_id;
 
     $name = rawurlencode($source) . '[table][' . $id . '][enabled]';
-    $this->drupalPost($url, array($name => $enable), 'Save changes');
+    $this->drupalPost($url, array($name => $enable), 'Save');
     $this->assertFieldByName($name, $enable);
     $this->assertText('Your changes have been saved.');
   }
@@ -178,7 +175,7 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
   function setTamperPluginWeight($importer_id, $source, $id, $weight) {
     $url = FEEDS_TAMPER_UI_BASE . '/list/' . $importer_id;
     $name = rawurlencode($source) . '[table][' . $id . '][weight]';
-    $this->drupalPost($url, array($name => $weight), 'Save changes');
+    $this->drupalPost($url, array($name => $weight), 'Save');
     $this->assertFieldByName($name, $weight);
     $this->assertText('Your changes have been saved.');
   }

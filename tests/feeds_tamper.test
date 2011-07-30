@@ -212,6 +212,7 @@ class FeedsTamperCSVTestCase extends FeedsTamperWebTestHelper {
       '2' => array(
         'source' => 'GUID',
         'target' => 'guid',
+        'unique' => TRUE,
       ),
     );
     $this->addMappings($importer, $mappings);
@@ -227,6 +228,8 @@ class FeedsTamperCSVTestCase extends FeedsTamperWebTestHelper {
 
     $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'feeds_tamper') . '/tests/feeds_tamper/';
     $nid = $this->createFeedNode($importer, $path . 'csv_test.csv', 'Testing CSV Parser');
+    $this->assertText('Basic page Testing CSV Parser has been created.');
+    $this->assertText('Created 2 nodes.');
     $this->drupalGet('node');
     $this->assertText('HELLO WORLD');
     $this->assertText('THIS IS A GREAT BODY.');
@@ -235,6 +238,7 @@ class FeedsTamperCSVTestCase extends FeedsTamperWebTestHelper {
     $this->disableTamperPlugin($id);
     $this->disableTamperPlugin($id2);
     $this->drupalPost('node/' . $nid . '/import', array(), 'Import');
+    $this->assertText('Updated 2 nodes.');
     $this->drupalGet('node');
     $this->assertText('Hello world');
     $this->assertText('This is a great body.');
