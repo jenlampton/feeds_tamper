@@ -166,13 +166,15 @@ function feeds_tamper_access($importer, $instance = NULL) {
  * The solution is to keep track in the form how many have been added.
  */
 function feeds_tamper_form_feeds_ui_mapping_form_alter(&$form, &$form_state) {
+  // Don't alter the form for parsers that use manual input.
+  if ($form['source']['#type'] == 'textfield') {
+    return;
+  }
   $newest_mapping = array();
-  //$instances_to_delete = feeds_tamper_load_by_importer($form['#importer']->id, TRUE);
   foreach ($form['#mappings'] as $mapping) {
     if (strpos($mapping['source'], 'Blank source ') === 0) {
       $newest_mapping = $mapping;
     }
-    //unset($instances_to_delete[$mapping['source']]);
   }
   if (!empty($newest_mapping)) {
     list(, , $count) = explode(' ', $newest_mapping['source']);
@@ -182,11 +184,6 @@ function feeds_tamper_form_feeds_ui_mapping_form_alter(&$form, &$form_state) {
   else {
     $form['source']['#options']['Blank source 1'] = 'Blank source';
   }
-  //foreach ($instances_to_delete as $instances) {
-  //  foreach ($instances as $instance) {
-  //    feeds_tamper_delete_instance($instance);
-  //  }
-  //}
 }
 
 /**
