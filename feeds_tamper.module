@@ -16,19 +16,39 @@
  * processing, this gets called and modifies the data based on the configuration.
  */
 function feeds_tamper_feeds_after_parse(FeedsSource $source, FeedsParserResult $result) {
-  $importer_instances = feeds_tamper_load_by_importer($source->importer->id, FALSE, TRUE);
+  $importer_instances = feeds_tamper_load_by_importer($source->importer->id, FALSE);
+
   if (empty($importer_instances)) {
     return;
   }
+
+  $csv = FALSE;
+  if (get_class($source->importer->parser) == 'FeedsCSVParser') {
+    $csv = TRUE;
+  }
+
+  // Look for any "Blank source" mappings as those will be treated specially.
+  $mappings = $source->importer->processor->config['mappings'];
+  $blank_mappings = array();
+
+  foreach ($importer_instances as $element_key => $instance) {
+    if (strpos($element_key, 'Blank source ') === 0) {
+      $blank_mappings[] = $element_key;
+    }
+    // Special case for FeedsCSVParser.
+    elseif ($csv) {
+      unset($importer_instances[$element_key]);
+      $importer_instances[drupal_strtolower($element_key)] = $instance;
+    }
+  }
+
   $plugins = feeds_tamper_get_plugins();
   foreach ($result->items as $item_key => &$item) {
+    // Add the blank sources to the item.
+    foreach ($blank_mappings as $blank) {
+      $item[$blank] = '';
+    }
     foreach ($importer_instances as $element_key => $instances) {
-      // Add in empty source, it was lowercased by above. This is a big ol'
-      // hack, but it's necessary to accomplish certain things.
-      if (strpos($element_key, 'blank source ') === 0) {
-        $element_key = drupal_ucfirst($element_key);
-        $item[$element_key] = '';
-      }
       if (isset($item[$element_key])) {
         foreach ($instances as $instance) {
           $plugin = $plugins[$instance->plugin_id];
@@ -91,10 +111,10 @@ function feeds_tamper_permission() {
     ),
   );
   foreach (feeds_importer_load_all() as $importer) {
-    $name = array('@name' => $importer->config['name']);
+    $name = array('%name' => $importer->config['name']);
     $perms['tamper ' . $importer->id] = array(
-      'title' => t('Tamper @name feeds', $name),
-      'description' => t('Create, edit and delete plugins for @name.', $name),
+      'title' => t('Tamper %name feeds', $name),
+      'description' => t('Create, edit and delete plugins for %name feeds.', $name),
     );
   }
   return $perms;
@@ -176,6 +196,17 @@ function feeds_tamper_form_feeds_ui_mapping_form_alter(&$form, &$form_state) {
  */
 
 /**
+ * Create a new plugin instance with default values filled in.
+ *
+ * @return stdClass
+ *   A new plugin instance object.
+ */
+function feeds_tamper_new_instance() {
+  ctools_include('export');
+  return ctools_export_crud_new('feeds_tamper');
+}
+
+/**
  * Load all plugin instances.
  *
  * @param bool $load_disabled
@@ -221,10 +252,11 @@ function feeds_tamper_load_instance($id) {
  *   SAVED_NEW or SAVED_UPDATED, depending on the operation performed.
  */
 function feeds_tamper_save_instance($instance) {
+  ctools_include('export');
   // It's a new instance, give it the heaviest weight.
-  if (empty($instance->weight)) {
-    $all = feeds_tamper_load_by_importer($instance->importer, TRUE);
-    $all = !empty($all[$instance->source]) ? $all[$instance->source] : array();
+  if (!isset($instance->weight)) {
+    $conditions = array('importer' => $instance->importer, 'source' => $instance->source);
+    $all = ctools_export_load_object('feeds_tamper', 'conditions', $conditions);
     $weight = 0;
     foreach ($all as $i) {
       if ($i->weight >= $weight) {
@@ -233,7 +265,9 @@ function feeds_tamper_save_instance($instance) {
     }
     $instance->weight = $weight;
   }
-  ctools_include('export');
+  $disabled = variable_get('default_feeds_tamper', array());
+  $disabled[$instance->id] = !empty($instance->disabled) ? TRUE : FALSE;
+  variable_set('default_feeds_tamper', $disabled);
   return ctools_export_crud_save('feeds_tamper', $instance);
 }
 
@@ -259,14 +293,11 @@ function feeds_tamper_delete_instance($instance) {
  *   The importer id, or object to reference.
  * @param bool $disabled
  *   (optional) If TRUE load disabled plugin instances. Defaults to FALSE.
- * @param bool $lower
- *   (optional) If TRUE make the keys lowercase. Only used internally. Defaults
- *   to FALSE.
  *
  * @return array
  *   An associative array of plugin instances, keyed by source.
  */
-function feeds_tamper_load_by_importer($importer, $disabled = FALSE, $lower = FALSE) {
+function feeds_tamper_load_by_importer($importer, $disabled = FALSE) {
   if (is_scalar($importer)) {
     $importer = feeds_importer($importer);
   }
@@ -283,12 +314,7 @@ function feeds_tamper_load_by_importer($importer, $disabled = FALSE, $lower = FA
     // Filter disabled and only pull plugins that actually have a corresponding
     // source since we don't delete them with a mapping.
     if (($disabled || empty($i->disabled)) && in_array($i->source, $sources)) {
-      if ($lower) {
-        $instances[drupal_strtolower($i->source)][] = $i;
-      }
-      else {
-        $instances[$i->source][] = $i;
-      }
+      $instances[$i->source][] = $i;
     }
   }
   foreach ($instances as &$instance_list) {

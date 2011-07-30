@@ -6,9 +6,106 @@
  */
 
 /**
- * Test Feeds Tamper.
+ * Base class for Feeds Tamper tests.
  */
-class FeedsTamperWebTestCase extends FeedsWebTestCase {
+class FeedsTamperWebTestHelper extends FeedsWebTestCase {
+
+  public function setUp() {
+    $args = func_get_args();
+    $modules = array();
+    $perms = array();
+    if (isset($args[0]) && is_array($args[0])) {
+      $modules = $args[0];
+    }
+    if (isset($args[1]) && is_array($args[1])) {
+      $perms = $args[1];
+    }
+    $modules[] = 'feeds_tamper';
+    parent::setUp($modules, $perms);
+    // Set the front page to show 30 nodes so we can easily see what is aggregated.
+    $edit = array('default_nodes_main' => 30);
+    $this->drupalPost('admin/config/system/site-information', $edit, 'Save configuration');
+    // Create user that can administer feeds but not tamer.
+    $this->auth_user = $this->drupalCreateUser(array('administer feeds'));
+  }
+
+  function addTamperPlugin($importer_id, $source, $plugin_id, $settings = array(), $description = '', $id = NULL) {
+    $plugin_info = feeds_tamper_get_plugin($plugin_id);
+    if ($plugin_info['validate']) {
+      $plugin_info['validate']($settings);
+    }
+    $plugin = feeds_tamper_new_instance();
+    if (!empty($settings)) {
+      $plugin->settings = $settings;
+    }
+    $plugin->importer = $importer_id;
+    $plugin->source = $source;
+    $plugin->plugin_id = $plugin_id;
+    if (!isset($description)) {
+      $description = $this->randomString(255);
+    }
+    if (!isset($id)) {
+      $id = $this->randomName();
+    }
+    $plugin->id = $id;
+    $plugin->description = $description;
+    $this->assertEqual(SAVED_NEW, feeds_tamper_save_instance($plugin));
+    $plugin = feeds_tamper_load_instance($id);
+    // test that default weight is added.
+    $this->assertTrue(($plugin->weight >= 0));
+    $this->assertEqual($plugin->description, $description);
+    return $id;
+  }
+
+  function disableTamperPlugin($id) {
+    $plugin = feeds_tamper_load_instance($id);
+    $plugin->disabled = TRUE;
+    $this->assertEqual(SAVED_UPDATED, feeds_tamper_save_instance($plugin));
+    // reload and test that changes were kept.
+    $plugin = feeds_tamper_load_instance($id);
+    $this->assertIdentical(TRUE, $plugin->disabled);
+  }
+
+  function setTamperPluginWeight($importer_id, $source, $id, $weight) {
+  }
+
+  function deleteTamperPlugin($id) {
+    feeds_tamper_delete_instance($id);
+    //$source = db_query("SELECT * FROM {feeds_source} WHERE feed_nid = :nid", array(':nid' => $nid))->fetchObject();
+  }
+
+  function assertUppercaseDevseedFeedContent() {
+    $this->drupalGet('node');
+    $this->assertText('SCALING THE OPEN ATRIUM UI');
+    $this->assertText("PERU&#039;S SOFTWARE FREEDOM DAY: IMPRESSIONS &amp; PHOTOS");
+    $this->assertText('WEEK IN DC TECH: SEPTEMBER 21 EDITION');
+    $this->assertText('INTEGRATING THE SITEMINDER ACCESS SYSTEM IN AN OPEN ATRIUM-BASED INTRANET');
+    $this->assertText('OPEN DATA FOR MICROFINANCE: THE NEW MIXMARKET.ORG');
+    $this->assertText('WEEK IN DC TECH: SEPTEMBER 28TH EDITION');
+    $this->assertText('SEPTEMBER GEODC MEETUP TONIGHT');
+    $this->assertText('MAPPING INNOVATION AT THE WORLD BANK WITH OPEN ATRIUM');
+    $this->assertText('WEEK IN DC TECH: OCTOBER 5TH EDITION');
+    $this->assertText('OPEN ATRIUM TRANSLATION WORKFLOW: TWO WAY TRANSLATION UPDATES');
+  }
+  function assertDevseedFeedContent() {
+    $this->drupalGet('node');
+    $this->asserttext('Scaling the Open Atrium UI');
+    $this->asserttext("Peru&#039;s Software Freedom Day: Impressions &amp; Photos");
+    $this->asserttext('Week in DC Tech: September 21 Edition');
+    $this->asserttext('Integrating the Siteminder Access System in an Open Atrium-based Intranet');
+    $this->asserttext('Open Data for Microfinance: The New MIXMarket.org');
+    $this->asserttext('Week in DC Tech: September 28th Edition');
+    $this->asserttext('September GeoDC Meetup Tonight');
+    $this->asserttext('Mapping Innovation at the World Bank with Open Atrium');
+    $this->asserttext('Week in DC Tech: October 5th Edition');
+    $this->asserttext('Open Atrium Translation Workflow: Two Way Translation Updates');
+  }
+}
+
+/**
+ * Simple tests for api functionality.
+ */
+class FeedsTamperWebTestCase extends FeedsTamperWebTestHelper {
 
   public static function getInfo() {
     return array(
@@ -17,17 +114,9 @@ class FeedsTamperWebTestCase extends FeedsWebTestCase {
       'group' => 'Feeds Tamper',
     );
   }
-  public function setUp() {
-    parent::setUp(array('feeds_tamper_ui'), array('administer feeds_tamper'));
-    // Set the front page to show 30 nodes so we can easily see what is aggregated.
-    $edit = array('default_nodes_main' => 30);
-    $this->drupalPost('admin/config/system/site-information', $edit, 'Save configuration');
-  }
 
   public function testBasic() {
     $this->createImporterConfiguration();
-    $this->drupalGet(FEEDS_TAMPER_UI_BASE . '/list/syndication');
-    $this->assertText('There are no mappings defined for this importer.');
     $this->addMappings('syndication',
       array(
         array(
@@ -47,108 +136,23 @@ class FeedsTamperWebTestCase extends FeedsWebTestCase {
         ),
       )
     );
+    // Set update existing.
+    $this->setSettings('syndication', 'FeedsNodeProcessor', array('update_existing' => 1));
 
-    // Check that tamper operation exists on feeds page.
-    $this->drupalGet(FEEDS_TAMPER_UI_FEEDS_BASE . '/list');
-    $this->assertText('Edit | Export | Clone | Delete | Tamper');
-    // Check that configure link exists on mappings page.
-    $this->drupalGet(FEEDS_TAMPER_UI_FEEDS_BASE . '/edit/syndication/mapping');
-    $this->assertRaw('<a href="/' . FEEDS_TAMPER_UI_BASE . '/list/syndication">Configure Feeds Tamper</a>');
-    // Check help text when there are no mappings.
-    $this->drupalGet(FEEDS_TAMPER_UI_BASE . '/list/syndication');
-    $this->assertRaw('Configure plugins to modify Feeds data before it gets saved. Each <a href="/' . FEEDS_TAMPER_UI_FEEDS_BASE . '/edit/syndication/mapping">mapping</a> can be manipulated individually.');
     // Test basic plugin adding.
     $settings = array(
-      'settings[mode]' => 0,
+      'mode' => 0,
     );
     $id = $this->addTamperPlugin('syndication', 'title', 'convert_case', $settings);
     // Create feed node, running import automatically.
-    $this->createFeedNode();
+    $nid = $this->createFeedNode();
     // Assert that all titles were uppercased.
-    $this->drupalGet('node');
     $this->assertUppercaseDevseedFeedContent();
-    $this->toggleTamperPlugin('syndication', 'title', $id);
-    $this->toggleTamperPlugin('syndication', 'title', $id, TRUE);
-    $this->setTamperPluginWeight('syndication', 'title', $id, 2);
-    $this->deleteTamperPlugin($id);
-    $settings = array(
-      'settings[mode]' => 0,
-    );
-    $case = $this->addTamperPlugin('syndication', 'title', 'convert_case', $settings);
-    $settings = array(
-      'settings[side]' => 'trim',
-    );
-    $trim = $this->addTamperPlugin('syndication', 'title', 'trim', $settings);
-    $this->toggleTamperPlugin('syndication', 'title', $case);
-    $this->toggleTamperPlugin('syndication', 'title', $case, TRUE);
-    $this->setTamperPluginWeight('syndication', 'title', $case, 2);
-  }
-
-  function addTamperPlugin($importer_id, $source, $plugin_id, $settings, $description = NULL, $id = NULL) {
-    $plugin = feeds_tamper_get_plugin($plugin_id);
-    $default_description = !empty($plugin['default description']) ? $plugin['default description'] : $plugin['name'];
-    $default_id = feeds_tamper_make_machine($default_description);
-    $url = FEEDS_TAMPER_UI_BASE . '/add/' . $importer_id . '/' . $source;
-    $this->drupalPost($url, array('plugin_id' => $plugin_id), 'Choose');
-
-    // Check that default values were added to form.
-    $this->assertFieldByName('id', $default_id);
-    $this->assertFieldByName('description', $default_description);
-    // Set settings.
-    $edit = array('plugin_id' => $plugin_id);
-    if (!empty($description)) {
-      $edit['description'] = $description;
-    }
-    if (!empty($id)) {
-      $edit['id'] = $id;
-    }
-    $this->drupalPost(NULL, $edit + $settings, 'Add');
-    $description = !empty($description) ? $description : $default_description;
-    $id = !empty($id) ? $id : $default_id;
-    $id = $importer_id . '-' . feeds_tamper_make_machine($source) . '-' . $id;
-    $instance = feeds_tamper_load_instance($id);
-    $source_name = feeds_tamper_ui_source_name($instance);
-    $this->assertText('Plugin ' . $description . ' was successfully added to ' . $source_name . '.');
-    return $id;
-  }
-
-  function toggleTamperPlugin($importer_id, $source, $id, $enable = FALSE) {
-    $url = FEEDS_TAMPER_UI_BASE . '/list/' . $importer_id;
-    $name = $source . '[table][' . $id . '][enabled]';
-    $this->drupalPost($url, array($name => $enable), 'Save changes');
-    $this->assertFieldByName($name, $enable);
-    $this->assertText('Your changes have been saved.');
-  }
-
-  function setTamperPluginWeight($importer_id, $source, $id, $weight) {
-    $url = FEEDS_TAMPER_UI_BASE . '/list/' . $importer_id;
-    $name = $source . '[table][' . $id . '][weight-' . $id . ']';
-    $this->drupalPost($url, array($name => $weight), 'Save changes');
-    $this->assertFieldByName($name, $weight);
-    $this->assertText('Your changes have been saved.');
-  }
-
-  function deleteTamperPlugin($id) {
-    $url = FEEDS_TAMPER_UI_BASE . '/delete/' . $id;
-    $this->drupalGet($url);
-    $instance = feeds_tamper_load_instance($id);
-    $this->assertText('Would you really like to delete the plugin ' . $instance->description . '?');
-    $this->assertText('This action cannot be undone.');
-    $this->drupalPost(NULL, array(), 'Delete');
-    $source_name = feeds_tamper_ui_source_name($instance);
-    $this->assertText('The plugin ' . $instance->description . ' has been deleted from ' . $source_name . '.');
-  }
-
-  function assertUppercaseDevseedFeedContent() {
-    $this->assertText('OPEN ATRIUM TRANSLATION WORKFLOW: TWO WAY TRANSLATION UPDATES');
-    $this->assertText("PERU&#039;S SOFTWARE FREEDOM DAY: IMPRESSIONS &amp; PHOTOS");
-    $this->assertText('WEEK IN DC TECH: SEPTEMBER 21 EDITION');
-    $this->assertText('INTEGRATING THE SITEMINDER ACCESS SYSTEM IN AN OPEN ATRIUM-BASED INTRANET');
-    $this->assertText('OPEN DATA FOR MICROFINANCE: THE NEW MIXMARKET.ORG');
-    $this->assertText('WEEK IN DC TECH: SEPTEMBER 28TH EDITION');
-    $this->assertText('SEPTEMBER GEODC MEETUP TONIGHT');
-    $this->assertText('MAPPING INNOVATION AT THE WORLD BANK WITH OPEN ATRIUM');
-    $this->assertText('WEEK IN DC TECH: OCTOBER 5TH EDITION');
-    $this->assertText('OPEN ATRIUM TRANSLATION WORKFLOW: TWO WAY TRANSLATION UPDATES');
+    // Disable plugin.
+    $this->disableTamperPlugin($id);
+    //$this->deleteTamperPlugin($id);
+    $this->drupalPost('node/' . $nid . '/import', array(), 'Import');
+    $this->assertText('Updated 10 nodes.');
+    $this->assertDevseedFeedContent();
   }
 }
