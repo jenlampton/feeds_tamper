@@ -3,6 +3,9 @@
 /**
  * @file
  *  Unit tests for feeds tamper plugins.
+ *
+ * @todo
+ * Check for form errors in validation.
  */
 
 /**
@@ -248,6 +251,10 @@ class FeedsTamperExplodeTestCase extends FeedsTamperUnitTestCase {
     $settings['limit'] = NULL;
     $this->execute(array('a,b,c,d', 'e,f,g,h'), array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'), $settings);
     $this->execute(array('abcd', 'e,f,g,h'), array('abcd', 'e', 'f', 'g', 'h'), $settings);
+    // Test negative values.
+    //$settings['limit'] = 2;
+    //$this->execute('a,b,c,d', array('a', 'b,c,d'), $settings);
+    //$this->execute('a.b.c.d', array('a.b.c.d'), $settings);
   }
 }
 
@@ -721,6 +728,29 @@ class FeedsTamperStrToTimeTestCase extends FeedsTamperUnitTestCase {
     $this->execute('1986-05-09', 515995200);
     $this->execute('May 9, 1986', 515995200);
     $this->execute('Fri, 09 May 1986 04:00:00 GMT', 515995200);
+  }
+}
+
+/**
+ * Tests for timetodate.inc
+ */
+class FeedsTamperTimeToDateTestCase extends FeedsTamperUnitTestCase {
+
+  protected $plugin_id = 'timetodate';
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Plugins: Unix timestamp to Date',
+      'description' => 'Unit tests for the "Unix timestamp to Date" plugin.',
+      'group' => 'Feeds Tamper',
+    );
+  }
+
+  public function test() {
+    $settings = array(
+      'date_format' => "\I\\t'\s g \o'\c\l\o\c\k \J\i\m\.",
+    );
+    $this->execute(1313276944, "It's 7 o'clock Jim.", $settings);
   }
 }
 
