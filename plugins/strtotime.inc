@@ -10,7 +10,7 @@ $plugin = array(
   'callback' => 'feeds_tamper_strtotime_callback',
   'name' => 'String to Unix timestamp',
   'multi' => 'loop',
-  'category' => 'Text',
+  'category' => 'Date/time',
 );
 
 function feeds_tamper_strtotime_form($importer, $element_key, $settings) {

@@ -25,12 +25,12 @@ function feeds_tamper_timetodate_form($importer, $element_key, $settings) {
   return $form;
 }
 
-function feeds_tamper_timetodate_callback($result, $item_key, $element_key, &$field, $settings) {
-  $field = date($settings['date_format'], $field);
-}
-
 function feeds_tamper_timetodate_validate(&$settings) {
   if (empty($settings['date_format'])) {
     form_set_error('settings][date_format', t('Please enter a valid date format string.'));
   }
+}
+
+function feeds_tamper_timetodate_callback($result, $item_key, $element_key, &$field, $settings) {
+  $field = date($settings['date_format'], $field);
 }
