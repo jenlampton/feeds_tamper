@@ -23,7 +23,7 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
 
   public function testBasic() {
     $importer = $this->randomName();
-    $importer_name = $this->randomString();
+    $importer_name = $this->randomName();
     $mapping_url = FEEDS_TAMPER_UI_FEEDS_BASE . '/edit/' . $importer . '/mapping';
     $this->createImporterConfiguration($importer_name, $importer);
     $this->drupalGet(FEEDS_TAMPER_UI_BASE . '/list/' . $importer);

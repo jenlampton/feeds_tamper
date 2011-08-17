@@ -34,6 +34,15 @@ class FeedsTamperWebTestHelper extends FeedsWebTestCase {
     }
     $modules[] = 'feeds_tamper';
     parent::setUp($modules, $permissions);
+    // Detect if Feeds menu structure has changed. This will take a while to be
+    // released, but since I run dev it needs to work.
+    $feeds_menu = feeds_ui_menu();
+    if (isset($feeds_menu['admin/structure/feeds/list'])) {
+      $this->feeds_base = 'admin/structure/feeds/edit';
+    }
+    else {
+      $this->feeds_base = 'admin/structure/feeds';
+    }
   }
 
   function addTamperPlugin($importer_id, $source, $plugin_id, $settings = array(), $description = '', $id = NULL) {
@@ -195,7 +204,7 @@ class FeedsTamperCSVTestCase extends FeedsTamperWebTestHelper {
 
   public function test() {
     $importer = $this->randomName();
-    $importer_name = $this->randomString();
+    $importer_name = $this->randomName();
     // Set up an importer.
     $this->createImporterConfiguration($importer_name, $importer);
     // Set and configure plugins and mappings.
