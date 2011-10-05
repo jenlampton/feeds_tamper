@@ -26,6 +26,11 @@ class FeedsTamperUnitTestCase extends DrupalUnitTestCase {
   function validate(&$settings = array()) {
     if (!empty($this->plugin_info['validate'])) {
       $this->plugin_info['validate']($settings);
+      if ($errors = form_get_errors()) {
+        foreach ($errors as $key => $value) {
+          $this->error(t('Input error on %key with value %value.', array('%key' => $key, '%value' => $value)));
+        }
+      }
     }
   }
 
@@ -244,6 +249,8 @@ class FeedsTamperExplodeTestCase extends FeedsTamperUnitTestCase {
       'limit' => NULL,
     );
     $this->execute('a,b,c,d', array('a', 'b', 'c', 'd'), $settings);
+    $this->execute('1,2,3,4', array('1', '2', '3', '4'), $settings);
+    $this->execute('123,1.23,abc,456 ,789,def890', array('123', '1.23', 'abc', '456 ','789','def890'), $settings);
     $settings['limit'] = 2;
     $this->execute('a,b,c,d', array('a', 'b,c,d'), $settings);
     $this->execute('a.b.c.d', array('a.b.c.d'), $settings);
@@ -545,6 +552,36 @@ class FeedsTamperKeyWordFilterTestCase extends FeedsTamperUnitTestCase {
     $this->validate($settings);
     $this->callback($result, 0, NULL, $result->items[0][$element_key], $settings);
     $this->assertEqual($result->items, $output);
+  }
+}
+
+/**
+ * Tests for math.inc
+ */
+class FeedsTamperMathTestCase extends FeedsTamperUnitTestCase {
+
+  protected $plugin_id = 'math';
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Plugins: Math',
+      'description' => 'Unit tests for "Math" plugin.',
+      'group' => 'Feeds Tamper',
+    );
+  }
+
+  public function test() {
+    $settings = array(
+      'operation' => 'addition',
+      'value' => '2',
+    );
+    $this->execute(2, 4, $settings);
+    $settings['operation'] = 'subtraction';
+    $this->execute(2, 0, $settings);
+    $settings['operation'] = 'multiplication';
+    $this->execute(2, 4, $settings);
+    $settings['operation'] = 'division';
+    $this->execute(2, 1, $settings);
   }
 }
 

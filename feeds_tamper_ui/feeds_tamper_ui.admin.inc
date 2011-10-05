@@ -28,7 +28,8 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
     $source = $mapping['source'];
     $target = $mapping['target'];
 
-    // Sources may have spaces in them.
+    // Sources may have spaces in them and other nefarious things. Blast you
+    // CSV parser!
     $i = rawurlencode($source);
 
     // We will skip building the table if it has been built for a source, but
@@ -301,7 +302,7 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
   $plugin = feeds_tamper_get_plugin($machine_name);
 
   $form['plugin_id'] = array(
-    '#title' => 'The plugin to add',
+    '#title' => t('The plugin to add'),
     '#type' => 'select',
     '#options' => $plugins,
     '#default_value' => '',
