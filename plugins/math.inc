@@ -25,7 +25,7 @@ function feeds_tamper_math_form($importer, $element_key, $settings) {
       'addition'        =>  '+',
       'subtraction'     =>  '-',
       'multiplication'  =>  '*',
-      'division'        =>  '/'
+      'division'        =>  '/',
     ),
     '#default_value' => isset($settings['operation']) ? $settings['operation'] : '',
   );
@@ -49,7 +49,7 @@ function feeds_tamper_math_validate(&$settings) {
 }
 
 function feeds_tamper_math_callback($result, $item_key, $element_key, &$field, $settings) {
-  switch($settings['operation']) {
+  switch ($settings['operation']) {
     case 'addition':
       $field = $field + $settings['value'];
       break;

@@ -32,7 +32,7 @@ function feeds_tamper_keyword_filter_form($importer, $element_key, $settings) {
     '#type' => 'checkbox',
     '#title' => t('Case sensitive'),
     '#default_value' => isset($settings['case_sensitive']) ? $settings['case_sensitive'] : FALSE,
-    '#description' => t('If checked, then "book" will match "book" but not "Book" or "BOOK".')
+    '#description' => t('If checked, then "book" will match "book" but not "Book" or "BOOK".'),
   );
   $form['invert'] = array(
     '#type' => 'checkbox',

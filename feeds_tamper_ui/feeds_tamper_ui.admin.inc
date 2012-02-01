@@ -6,6 +6,9 @@
  * UI.
  */
 
+ /**
+  * List of plugins for current importer.
+  */
 function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
   $mappings = $importer->processor->config['mappings'];
   $sources = $importer->parser->getMappingSources();
@@ -106,21 +109,24 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
       // Enable/disable checkbox.
       $map[$i]['table'][$instance->id]['enabled'] = array(
         '#type' => 'checkbox',
-        '#default_value' => !$instance->disabled
+        '#default_value' => !$instance->disabled,
       );
     }
   }
 
   $form['actions'] = array(
-    '#type' => 'actions'
+    '#type' => 'actions',
   );
   $form['actions']['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Save')
+    '#value' => t('Save'),
   );
   return $form;
 }
 
+/**
+ * Validate handler for plugin list.
+ */
 function feeds_tamper_ui_list_form_validate($form, &$form_state) {
   $mappings = element_children($form['mappings']);
   foreach ($mappings as $i) {
@@ -139,6 +145,9 @@ function feeds_tamper_ui_list_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Submit handler for plugin list.
+ */
 function feeds_tamper_ui_list_form_submit($form, &$form_state) {
   $mappings = element_children($form['mappings']);
   foreach ($mappings as $i) {
@@ -155,6 +164,9 @@ function feeds_tamper_ui_list_form_submit($form, &$form_state) {
   drupal_set_message(t('Your changes have been saved.'));
 }
 
+/**
+ * Theme callback for plugin list tables.
+ */
 function theme_feeds_tamper_ui_list_form($variables) {
   $form = $variables['form'];
   // Shortcut to save typing and screen space.
@@ -167,7 +179,7 @@ function theme_feeds_tamper_ui_list_form($variables) {
     t('Plugin'),
     t('Status'),
     t('Operations'),
-    t('Enabled')
+    t('Enabled'),
   );
   // Remove weight column for empty tables. It looks nicer.
   $header_empty = $header_normal;
@@ -271,6 +283,9 @@ function theme_feeds_tamper_ui_list_form($variables) {
   return drupal_render_children($form);
 }
 
+/**
+ * Add plugin form.
+ */
 function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source) {
   // Set breadcrumb.
   $crumb = drupal_get_breadcrumb();
@@ -354,6 +369,9 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
   return $form;
 }
 
+/**
+ * Add plugin form validate handler.
+ */
 function feeds_tamper_ui_add_plugin_form_validate($form, &$form_state) {
   if ($form_state['triggering_element']['#value'] == t('Add')) {
     if (feeds_tamper_machine_name_callback($form_state['values']['id'], $form, $form_state)) {
@@ -365,19 +383,18 @@ function feeds_tamper_ui_add_plugin_form_validate($form, &$form_state) {
     if ($plugin['validate'] && isset($form_state['values']['settings'])) {
       $plugin['validate']($form_state['values']['settings']);
     }
-    $form_state['values']['id'] =
-      $form_state['importer']->id .
-      '-' .
-      feeds_tamper_make_machine($form_state['source']) .
-      '-' .
-      $form_state['values']['id'];
-      return;
+    $id = $form_state['values']['id'];
+    $form_state['values']['id'] = feeds_tamper_machine_name_callback($id, $form, $form_state);
+    return;
   }
   unset($form_state['input']['id']);
   unset($form_state['input']['description']);
   unset($form_state['input']['settings']);
 }
 
+/**
+ * Add plugin form submit handler.
+ */
 function feeds_tamper_ui_add_plugin_form_submit($form, &$form_state) {
   if ($form_state['triggering_element']['#value'] == t('Add')) {
     $obj = feeds_tamper_new_instance();
@@ -399,6 +416,11 @@ function feeds_tamper_ui_add_plugin_form_submit($form, &$form_state) {
   $form_state['rebuild'] = TRUE;
 }
 
+/**
+ * Edit plugin form.
+ *
+ * @todo Combine add and edit forms?
+ */
 function feeds_tamper_ui_edit_plugin_form($form, &$form_state, $instance) {
   // Set breadcrumb.
   $importer = feeds_importer($instance->importer);
@@ -430,6 +452,9 @@ function feeds_tamper_ui_edit_plugin_form($form, &$form_state, $instance) {
   return $form;
 }
 
+/**
+ * Edit plugin form validate handler.
+ */
 function feeds_tamper_ui_edit_plugin_form_validate($form, &$form_state) {
   $plugin_id = $form_state['instance']->plugin_id;
   $plugin = feeds_tamper_get_plugin($plugin_id);
@@ -438,6 +463,9 @@ function feeds_tamper_ui_edit_plugin_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Edit plugin form submit handler.
+ */
 function feeds_tamper_ui_edit_plugin_form_submit($form, &$form_state) {
   $instance = $form_state['instance'];
   if (isset($form_state['values']['settings'])) {
@@ -450,6 +478,9 @@ function feeds_tamper_ui_edit_plugin_form_submit($form, &$form_state) {
   $form_state['redirect'] = FEEDS_TAMPER_UI_BASE . '/list/' . $instance->importer;
 }
 
+/**
+ * Delete plugin form.
+ */
 function feeds_tamper_ui_delete_form($form, &$form_state, $instance) {
   // Set breadcrumb.
   if (!$instance) {
@@ -480,6 +511,9 @@ function feeds_tamper_ui_delete_form($form, &$form_state, $instance) {
   );
 }
 
+/**
+ * Delete plugin form submit handler.
+ */
 function feeds_tamper_ui_delete_form_submit($form, &$form_state) {
   $instance = $form_state['instance'];
   feeds_tamper_delete_instance($instance);
@@ -498,16 +532,16 @@ function feeds_tamper_ui_delete_form_submit($form, &$form_state) {
 /**
  * Helper functions for ajax.
  */
-
 function feeds_tamper_machine_name_callback($id, $form, $form_state) {
-  $real_id = $form_state['importer']->id .
-    '-' .
-    feeds_tamper_make_machine($form_state['source']) .
-    '-' .
-    $id;
-  return feeds_tamper_load_instance($real_id);
+  // Importer id's are machine safe.
+  $importer_id = $form_state['importer']->id;
+  $source = feeds_tamper_make_machine($form_state['source']);
+  return feeds_tamper_load_instance("$importer_id-$source-$id");
 }
 
+/**
+ * Ajax callback for add plugin form.
+ */
 function feeds_tamper_ajax_callback($form, $form_state) {
   // The form has already been submitted and updated. We can return the replaced
   // item as it is.

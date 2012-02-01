@@ -19,7 +19,7 @@ function feeds_tamper_convert_boolean_form($importer, $element_key, $settings) {
   $form['true_value'] = array(
     '#type' => 'textfield',
     '#title' => t('Truth value'),
-    '#default_value' => isset($settings['true_value']) ? $settings['true_value'] : 'true'
+    '#default_value' => isset($settings['true_value']) ? $settings['true_value'] : 'true',
   );
   $form['false_value'] = array(
     '#type' => 'textfield',
@@ -44,7 +44,7 @@ function feeds_tamper_convert_boolean_form($importer, $element_key, $settings) {
     '#default_value' => isset($settings['other_text']) ? $settings['other_text'] : '',
     '#states' => array(
       'visible' => array(
-       'input[name="settings[no_match]"]' => array('value' => 'other'),
+        'input[name="settings[no_match]"]' => array('value' => 'other'),
       ),
     ),
   );
