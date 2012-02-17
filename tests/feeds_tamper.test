@@ -203,12 +203,12 @@ class FeedsTamperCSVTestCase extends FeedsTamperWebTestHelper {
   }
 
   public function test() {
-    $importer = $this->randomName();
     $importer_name = $this->randomName();
+    $importer_id = strtolower($importer_name);
     // Set up an importer.
-    $this->createImporterConfiguration($importer_name, $importer);
+    $this->createImporterConfiguration($importer_name, $importer_id);
     // Set and configure plugins and mappings.
-    $this->setPlugin($importer, 'FeedsCSVParser');
+    $this->setPlugin($importer_id, 'FeedsCSVParser');
     // We have a space in the source cause that was a problem at one point.
     $mappings = array(
       '0' => array(
@@ -225,19 +225,19 @@ class FeedsTamperCSVTestCase extends FeedsTamperWebTestHelper {
         'unique' => TRUE,
       ),
     );
-    $this->addMappings($importer, $mappings);
+    $this->addMappings($importer_id, $mappings);
     // Set update existing.
-    $this->setSettings($importer, 'FeedsNodeProcessor', array('update_existing' => 1));
+    $this->setSettings($importer_id, 'FeedsNodeProcessor', array('update_existing' => 1));
 
     // Test basic plugin adding.
     $settings = array(
       'mode' => 0,
     );
-    $id = $this->addTamperPlugin($importer, 'a Title', 'convert_case', $settings);
-    $id2 = $this->addTamperPlugin($importer, 'a Body', 'convert_case', $settings);
+    $id = $this->addTamperPlugin($importer_id, 'a Title', 'convert_case', $settings);
+    $id2 = $this->addTamperPlugin($importer_id, 'a Body', 'convert_case', $settings);
 
     $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'feeds_tamper') . '/tests/feeds_tamper/';
-    $nid = $this->createFeedNode($importer, $path . 'csv_test.csv', 'Testing CSV Parser');
+    $nid = $this->createFeedNode($importer_id, $path . 'csv_test.csv', 'Testing CSV Parser');
     $this->assertText('Basic page Testing CSV Parser has been created.');
     $this->assertText('Created 2 nodes.');
     $this->drupalGet('node');

@@ -15,6 +15,7 @@ class FeedsTamperUnitTestCase extends DrupalUnitTestCase {
   protected $plugin_id = '';
 
   public function setUp() {
+    module_enable(array('feeds_tamper'));
     parent::setUp();
     $this->plugin_info = feeds_tamper_get_plugin($this->plugin_id);
   }
@@ -480,6 +481,8 @@ class FeedsTamperKeyWordFilterTestCase extends FeedsTamperUnitTestCase {
       'title' => 'This is a title',
       'body' => 'hello body',
     );
+
+    // Test stripos(), filter.
     $settings = array(
       'words' => 'booya',
       'word_boundaries' => FALSE,
@@ -487,6 +490,8 @@ class FeedsTamperKeyWordFilterTestCase extends FeedsTamperUnitTestCase {
       'invert' => FALSE,
     );
     $this->executeKey($item, array(), 'title', $settings);
+
+    // Test stripos(), pass.
     $settings = array(
       'words' => 'this',
       'word_boundaries' => FALSE,
@@ -494,26 +499,57 @@ class FeedsTamperKeyWordFilterTestCase extends FeedsTamperUnitTestCase {
       'invert' => FALSE,
     );
     $this->executeKey($item, array($item), 'title', $settings);
-    $settings['case_sensitive'] = TRUE;
+
+    // Test strpos(), filter.
+    $settings = array(
+      'words' => 'this',
+      'word_boundaries' => FALSE,
+      'case_sensitive' => TRUE,
+      'invert' => FALSE,
+    );
     $this->executeKey($item, array(), 'title', $settings);
+
+    // Test exact, filter.
+    $settings = array(
+      'words' => 'a title',
+      'word_boundaries' => TRUE,
+      'case_sensitive' => FALSE,
+      'invert' => FALSE,
+      'exact' => TRUE,
+    );
+    $this->executeKey($item, array(), 'title', $settings);
+
+    // Test exact, filter.
+    $settings = array(
+      'words' => 'This is a title',
+      'word_boundaries' => TRUE,
+      'case_sensitive' => FALSE,
+      'invert' => FALSE,
+      'exact' => TRUE,
+    );
+    $this->executeKey($item, array($item), 'title', $settings);
+
+    // Test word boundaries.
     $item = array(
       'title' => 'This is atitle',
       'body' => 'hello body',
     );
+
     $settings = array(
       'words' => 'title',
-      'word_boundaries' => FALSE,
+      'word_boundaries' => TRUE,
       'case_sensitive' => FALSE,
       'invert' => FALSE,
     );
-    $this->executeKey($item, array($item), 'title', $settings);
-    $settings['word_boundaries'] = TRUE;
     $this->executeKey($item, array(), 'title', $settings);
-    // invert = TRUE.
+
+    // Test invert = TRUE.
     $item = array(
       'title' => 'This is a title',
       'body' => 'hello body',
     );
+
+    // Test stripos() pass.
     $settings = array(
       'words' => 'booya',
       'word_boundaries' => FALSE,
@@ -521,6 +557,8 @@ class FeedsTamperKeyWordFilterTestCase extends FeedsTamperUnitTestCase {
       'invert' => TRUE,
     );
     $this->executeKey($item, array($item), 'title', $settings);
+
+    // Test stripos() filter.
     $settings = array(
       'words' => 'this',
       'word_boundaries' => FALSE,
@@ -528,20 +566,47 @@ class FeedsTamperKeyWordFilterTestCase extends FeedsTamperUnitTestCase {
       'invert' => TRUE,
     );
     $this->executeKey($item, array(), 'title', $settings);
-    $settings['case_sensitive'] = TRUE;
+
+    // Test strpos(), pass.
+    $settings = array(
+      'words' => 'this',
+      'word_boundaries' => FALSE,
+      'case_sensitive' => TRUE,
+      'invert' => TRUE,
+    );
     $this->executeKey($item, array($item), 'title', $settings);
+
+    // Test exact, pass.
+    $settings = array(
+      'words' => 'a title',
+      'word_boundaries' => TRUE,
+      'case_sensitive' => FALSE,
+      'invert' => TRUE,
+      'exact' => TRUE,
+    );
+    $this->executeKey($item, array($item), 'title', $settings);
+
+    // Test exact, filter.
+    $settings = array(
+      'words' => 'This is a title',
+      'word_boundaries' => TRUE,
+      'case_sensitive' => FALSE,
+      'invert' => TRUE,
+      'exact' => TRUE,
+    );
+    $this->executeKey($item, array(), 'title', $settings);
+
+    // Test word boundaries, pass.
     $item = array(
       'title' => 'This is atitle',
       'body' => 'hello body',
     );
     $settings = array(
       'words' => 'title',
-      'word_boundaries' => FALSE,
+      'word_boundaries' => TRUE,
       'case_sensitive' => FALSE,
       'invert' => TRUE,
     );
-    $this->executeKey($item, array(), 'title', $settings);
-    $settings['word_boundaries'] = TRUE;
     $this->executeKey($item, array($item), 'title', $settings);
   }
 
@@ -762,8 +827,8 @@ class FeedsTamperStrToTimeTestCase extends FeedsTamperUnitTestCase {
   }
 
   public function test() {
-    $this->execute('1986-05-09', 515995200);
-    $this->execute('May 9, 1986', 515995200);
+    $this->execute('1986-05-09 04:00:00 GMT', 515995200);
+    $this->execute('May 9, 1986 04:00:00 GMT', 515995200);
     $this->execute('Fri, 09 May 1986 04:00:00 GMT', 515995200);
   }
 }
