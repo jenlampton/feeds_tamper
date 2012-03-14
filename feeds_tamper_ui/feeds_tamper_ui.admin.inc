@@ -384,7 +384,9 @@ function feeds_tamper_ui_add_plugin_form_validate($form, &$form_state) {
       $plugin['validate']($form_state['values']['settings']);
     }
     $id = $form_state['values']['id'];
-    $form_state['values']['id'] = feeds_tamper_machine_name_callback($id, $form, $form_state);
+    $importer_id = $form_state['importer']->id;
+    $source = feeds_tamper_make_machine($form_state['source']);
+    $form_state['values']['id'] = "$importer_id-$source-$id";
     return;
   }
   unset($form_state['input']['id']);
