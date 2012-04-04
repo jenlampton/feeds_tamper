@@ -79,11 +79,11 @@ function feeds_tamper_convert_boolean_callback($result, $item_key, $element_key,
     $match_field = drupal_strtolower($match_field);
   }
   if ($match_field == $settings['true_value']) {
-    $field = TRUE;
+    $field = 1;
     return;
   }
   if ($match_field == $settings['false_value']) {
-    $field = FALSE;
+    $field = 0;
     return;
   }
   if ($settings['no_match'] == 'pass') {

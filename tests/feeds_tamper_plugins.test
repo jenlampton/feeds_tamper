@@ -66,6 +66,10 @@ class FeedsTamperAbsoluteURLTestCase extends FeedsTamperUnitTestCase {
     $this->executeAbs('http://example.com/cat/chicken', '<a href="dog"></a>', '<a href="http://example.com/cat/chicken/dog"></a>');
     $this->executeAbs('http://example.com/cat', '<a href="/dog"></a>', '<a href="http://example.com/dog"></a>');
     $this->executeAbs('http://example.com', '<a href="/dog"></a><img src="/kitty" />', '<a href="http://example.com/dog"></a><img src="http://example.com/kitty" />');
+    $this->executeAbs('http://example.com', '<img src="/kitty" />', '<img src="http://example.com/kitty" />');
+    $this->executeAbs('http://example.com', '<img src="kitty" />', '<img src="http://example.com/kitty" />');
+    $this->executeAbs('http://example.com', '<img src="/kitty.png" />', '<img src="http://example.com/kitty.png" />');
+    $this->executeAbs('http://example.com', '<img src="/frog/kitty.png" />', '<img src="http://example.com/frog/kitty.png" />');
   }
 
   function executeAbs($link, $html_in, $html_out) {
