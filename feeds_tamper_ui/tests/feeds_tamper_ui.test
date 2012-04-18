@@ -56,7 +56,7 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     $this->assertRaw('<a href="/' . FEEDS_TAMPER_UI_BASE . '/list/' . $importer_id . '">Configure Feeds Tamper</a>');
     // Check help text when there are no mappings.
     $this->drupalGet(FEEDS_TAMPER_UI_BASE . '/list/' . $importer_id);
-    $this->assertRaw('Configure plugins to modify Feeds data before it gets saved. Each <a href="/' . FEEDS_TAMPER_UI_FEEDS_BASE . '/edit/' . $importer . '/mapping">mapping</a> can be manipulated individually.');
+    $this->assertRaw('Configure plugins to modify Feeds data before it gets saved. Each <a href="/' . FEEDS_TAMPER_UI_FEEDS_BASE . '/edit/' . $importer_id . '/mapping">mapping</a> can be manipulated individually.');
     // Test basic plugin adding.
     $settings = array(
       'settings[mode]' => 0,
