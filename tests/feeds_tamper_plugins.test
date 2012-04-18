@@ -15,9 +15,12 @@ class FeedsTamperUnitTestCase extends DrupalUnitTestCase {
   protected $plugin_id = '';
 
   public function setUp() {
-    module_enable(array('feeds_tamper'));
     parent::setUp();
-    $this->plugin_info = feeds_tamper_get_plugin($this->plugin_id);
+    GLOBAL $plugin;
+    $plugin = NULL;
+    require_once $file = drupal_get_path('module', 'feeds_tamper') . '/plugins/' . $this->plugin_id . '.inc';
+    $this->plugin_info = $plugin;
+    //$this->plugin_info = feeds_tamper_get_plugin($this->plugin_id);
   }
 
   function form($importer, $element_key, $settings = array()) {
