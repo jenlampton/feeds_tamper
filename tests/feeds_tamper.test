@@ -204,7 +204,7 @@ class FeedsTamperCSVTestCase extends FeedsTamperWebTestHelper {
 
   public function test() {
     $importer_name = $this->randomName();
-    $importer_id = strtolower($importer_name);
+    $importer_id = drupal_strtolower($importer_name);
     // Set up an importer.
     $this->createImporterConfiguration($importer_name, $importer_id);
     // Set and configure plugins and mappings.
