@@ -53,9 +53,11 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     $this->assertText('Edit | Export | Clone | Delete | Tamper');
     // Check that configure link exists on mappings page.
     $this->drupalGet($mapping_url);
-    $this->assertRaw('<a href="/' . FEEDS_TAMPER_UI_BASE . '/list/' . $importer_id . '">Configure Feeds Tamper</a>');
+    $this->assertLinkByHref(FEEDS_TAMPER_UI_BASE . '/list/' . $importer_id);
+    $this->assertText('Configure Feeds Tamper');
     // Check help text when there are no mappings.
     $this->drupalGet(FEEDS_TAMPER_UI_BASE . '/list/' . $importer_id);
+    $this->assertLinkByHref(FEEDS_TAMPER_UI_FEEDS_BASE . '/edit/' . $importer_id . '/mapping');
     $this->assertText('Configure plugins to modify Feeds data before it gets saved. Each mapping can be manipulated individually.');
     // Test basic plugin adding.
     $settings = array(
