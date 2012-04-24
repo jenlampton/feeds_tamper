@@ -859,7 +859,8 @@ class FeedsTamperTimeToDateTestCase extends FeedsTamperUnitTestCase {
     $settings = array(
       'date_format' => "\I\\t'\s g \o'\c\l\o\c\k \J\i\m\.",
     );
-    $this->execute(1313276944, "It's 7 o'clock Jim.", $settings);
+    // Use mktime() so that test works in different timezones.
+    $this->execute(mktime(7), "It's 7 o'clock Jim.", $settings);
   }
 }
 
