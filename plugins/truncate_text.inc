@@ -39,8 +39,5 @@ function feeds_tamper_truncate_text_validate($settings) {
 }
 
 function feeds_tamper_truncate_text_callback($result, $item_key, $element_key, &$field, $settings) {
-  $field = drupal_substr($field, 0, $settings['num_char']);
-  if ($settings['ellipses']) {
-    $field .= '...';
-  }
+  $field = truncate_utf8($field, $settings['num_char'], FALSE, $settings['ellipses']);
 }
