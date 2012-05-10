@@ -24,7 +24,7 @@ function feeds_tamper_rewrite_form($importer, $element_key, $settings) {
   $replace = array();
 
   foreach ($mappings as $mapping) {
-    if ($is_csv) {
+    if ($is_csv && strpos($mapping['source'], 'Blank source ') !== 0) {
       $replace[] = '[' . drupal_strtolower($mapping['source']) . ']';
     }
     else {
