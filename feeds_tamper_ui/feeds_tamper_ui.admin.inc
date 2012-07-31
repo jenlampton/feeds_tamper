@@ -41,9 +41,9 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
     // CSV parser!
     $i = rawurlencode($source);
 
-    // We will skip building the table if it has been built for a source, but
-    // we need to add the target label to indicate to the user that more than
-    // one field will be affected.
+    // We will skip building the table if it has been built for a source, but we
+    // need to add the target label to indicate to the user that more than one
+    // field will be affected.
     $target_label = !empty($targets[$target]['name']) ? check_plain($targets[$target]['name']) : check_plain($target);
 
     $map[$i]['#title']['targets'][] = $target_label;
@@ -143,8 +143,8 @@ function feeds_tamper_ui_list_form_validate($form, &$form_state) {
     foreach ($form_state['values'][$i]['table'] as $id => $value) {
       // I'm anal.
       $value['weight'] = (int) $value['weight'];
-      // Someone would have to type this in manually, but that's not too far
-      // of of a stretch.
+      // Someone would have to type this in manually, but that's not too far of
+      // a stretch.
       if ($value['weight'] < 0) {
         form_set_error($i . '][table][' . $id . '][weight', t('Weight must be greater than or equal to zero.'));
       }
@@ -515,6 +515,7 @@ function feeds_tamper_ui_delete_form_submit($form, &$form_state) {
   $instance = $form_state['instance'];
   feeds_tamper_delete_instance($instance);
   $source_name = feeds_tamper_ui_source_name($instance);
+
   switch ($instance->export_type) {
     case EXPORT_IN_DATABASE:
       drupal_set_message(t('The plugin %plugin has been deleted from %source.', array('%plugin' => $instance->description, '%source' => $source_name)));
