@@ -42,7 +42,7 @@ function feeds_tamper_explode_validate(&$settings) {
   }
 }
 
-function feeds_tamper_explode_callback($result, $item_key, $element_key, &$field, $settings) {
+function feeds_tamper_explode_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   $out = array();
   if (!is_array($field)) {
     $field = array($field);

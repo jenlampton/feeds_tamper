@@ -55,6 +55,6 @@ function feeds_tamper_find_replace_regex_validate(&$settings) {
   }
 }
 
-function feeds_tamper_find_replace_regex_callback($result, $item_key, $element_key, &$field, $settings) {
+function feeds_tamper_find_replace_regex_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   $field = preg_replace($settings['find'], $settings['replace'], $field, $settings['real_limit']);
 }

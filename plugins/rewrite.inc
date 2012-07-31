@@ -47,7 +47,7 @@ function feeds_tamper_rewrite_form($importer, $element_key, $settings) {
   return $form;
 }
 
-function feeds_tamper_rewrite_callback($result, $item_key, $element_key, &$field, $settings) {
+function feeds_tamper_rewrite_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   $trans = array();
   $item = $result->items[$item_key];
   foreach ($item as $key => $value) {

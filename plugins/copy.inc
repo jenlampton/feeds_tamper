@@ -37,7 +37,7 @@ function feeds_tamper_copy_form($importer, $element_key, $settings) {
   return $form;
 }
 
-function feeds_tamper_copy_callback($result, $item_key, $element_key, &$field, $settings) {
+function feeds_tamper_copy_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   switch ($settings['to_from']) {
     case 'to':
       $result->items[$item_key][$settings['source']] = $field;

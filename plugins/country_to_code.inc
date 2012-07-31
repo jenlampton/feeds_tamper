@@ -22,7 +22,7 @@ function feeds_tamper_country_to_code_form($importer, $element_key, $settings) {
   return $form;
 }
 
-function feeds_tamper_country_to_code_callback($result, $item_key, $element_key, &$field, $settings) {
+function feeds_tamper_country_to_code_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   include_once DRUPAL_ROOT . '/includes/locale.inc';
   static $countries = array();
 

@@ -48,7 +48,7 @@ function feeds_tamper_math_validate(&$settings) {
   }
 }
 
-function feeds_tamper_math_callback($result, $item_key, $element_key, &$field, $settings) {
+function feeds_tamper_math_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   switch ($settings['operation']) {
     case 'addition':
       $field = $field + $settings['value'];

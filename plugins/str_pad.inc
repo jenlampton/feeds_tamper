@@ -52,6 +52,6 @@ function feeds_tamper_str_pad_validate(&$settings) {
   }
 }
 
-function feeds_tamper_str_pad_callback($result, $item_key, $element_key, &$field, $settings) {
+function feeds_tamper_str_pad_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   $field = str_pad($field, $settings['pad_length'], $settings['real_pad_string'], $settings['pad_type']);
 }

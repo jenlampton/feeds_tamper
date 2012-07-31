@@ -87,7 +87,7 @@ function feeds_tamper_keyword_filter_validate(&$settings) {
   }
 }
 
-function feeds_tamper_keyword_filter_callback($result, $item_key, $element_key, &$field, $settings) {
+function feeds_tamper_keyword_filter_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   if ($settings['regex']) {
     foreach ($settings['word_list'] as $word) {
       if (preg_match($word, $field) > 0) {

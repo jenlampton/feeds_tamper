@@ -21,6 +21,6 @@ function feeds_tamper_strtotime_form($importer, $element_key, $settings) {
   return $form;
 }
 
-function feeds_tamper_strtotime_callback($result, $item_key, $element_key, &$field, $settings) {
+function feeds_tamper_strtotime_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   $field = strtotime($field);
 }

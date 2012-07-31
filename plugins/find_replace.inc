@@ -72,7 +72,7 @@ function feeds_tamper_find_replace_validate(&$settings) {
   }
 }
 
-function feeds_tamper_find_replace_callback($result, $item_key, $element_key, &$field, $settings) {
+function feeds_tamper_find_replace_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   if ($settings['regex']) {
     $field = preg_replace($settings['regex_find'], $settings['replace'], $field);
   }

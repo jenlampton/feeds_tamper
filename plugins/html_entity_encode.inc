@@ -21,6 +21,6 @@ function feeds_tamper_html_entity_encode_form($importer, $element_key, $settings
   return $form;
 }
 
-function feeds_tamper_html_entity_encode_callback($result, $item_key, $element_key, &$field, $settings) {
+function feeds_tamper_html_entity_encode_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   $field = check_plain($field);
 }

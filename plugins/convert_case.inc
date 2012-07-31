@@ -28,6 +28,6 @@ function feeds_tamper_convert_case_form($importer, $element_key, $settings) {
   return $form;
 }
 
-function feeds_tamper_convert_case_callback($result, $item_key, $element_key, &$field, $settings) {
+function feeds_tamper_convert_case_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   $field = mb_convert_case($field, $settings['mode'], 'UTF-8');
 }

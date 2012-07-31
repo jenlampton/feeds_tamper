@@ -21,6 +21,6 @@ function feeds_tamper_html_entity_decode_form($importer, $element_key, $settings
   return $form;
 }
 
-function feeds_tamper_html_entity_decode_callback($result, $item_key, $element_key, &$field, $settings) {
+function feeds_tamper_html_entity_decode_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   $field = html_entity_decode($field, ENT_QUOTES, 'UTF-8');
 }

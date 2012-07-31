@@ -31,6 +31,6 @@ function feeds_tamper_timetodate_validate(&$settings) {
   }
 }
 
-function feeds_tamper_timetodate_callback($result, $item_key, $element_key, &$field, $settings) {
+function feeds_tamper_timetodate_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   $field = date($settings['date_format'], $field);
 }

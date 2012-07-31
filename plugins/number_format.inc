@@ -46,7 +46,7 @@ function feeds_tamper_number_format_validate(&$settings) {
   }
 }
 
-function feeds_tamper_number_format_callback($result, $item_key, $element_key, &$field, $settings) {
+function feeds_tamper_number_format_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   if (is_numeric($field)) {
     $field = number_format($field, $settings['decimals'], $settings['dec_point'], $settings['thousands_sep']);
   }
