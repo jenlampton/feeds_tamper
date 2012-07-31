@@ -38,7 +38,7 @@ function feeds_tamper_number_format_form($importer, $element_key, $settings) {
 }
 
 function feeds_tamper_number_format_validate(&$settings) {
-  if (!ctype_digit($settings['decimals'])) {
+  if (!is_int($settings['decimals']) && ($settings['decimals'] !== (string) (int) $settings['decimals'])) {
     form_set_error('settings][decimals', t('Decimals field must be an integer.'));
   }
   else {

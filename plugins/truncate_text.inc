@@ -33,7 +33,7 @@ function feeds_tamper_truncate_text_form($importer, $element_key, $settings) {
 
 function feeds_tamper_truncate_text_validate($settings) {
   $settings['num_char'] = trim($settings['num_char']);
-  if (!ctype_digit($settings['num_char'])) {
+  if (!is_int($settings['num_char']) && ($settings['num_char'] !== (string) (int) $settings['num_char'])) {
     form_set_error('settings][num_char', t('Needs to be an integer.'));
   }
 }
