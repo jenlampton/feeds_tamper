@@ -13,8 +13,8 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
   $mappings = $importer->processor->config['mappings'];
 
   if (!$mappings) {
-    $message = 'There are no <a href="/admin/structure/feeds/!importer/mapping">mappings</a> defined for this importer.';
-    drupal_set_message(t($message, array('!importer' => $importer->id)), 'warning');
+    $message = 'There are no <a href="/admin/structure/feeds/@importer/mapping">mappings</a> defined for this importer.';
+    drupal_set_message(t($message, array('@importer' => $importer->id)), 'warning');
     return $form;
   }
 
