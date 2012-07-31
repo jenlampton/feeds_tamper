@@ -349,14 +349,13 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
   $form['plugin']['id'] = array(
     '#title' => t('Machine name'),
     '#type' => 'machine_name',
-    '#default_value' => feeds_tamper_make_machine($form['plugin']['description']['#default_value']),
     '#maxlength' => 32,
     '#machine_name' => array(
       'exists' => 'feeds_tamper_machine_name_callback',
       'source' => array('plugin', 'description'),
     ),
-    '#disabled' => FALSE,
-    '#size' => 60,
+    // '#disabled' => FALSE,
+    // '#size' => 60,
   );
   $form['plugin']['settings'] = array(
     '#title' => t('Configure @name', array('@name' => $plugin['name'])),

@@ -37,8 +37,8 @@ class FeedsTamperUnitTestCase extends DrupalUnitTestCase {
     }
   }
 
-  function callback($result, $item_key, $element_key, &$field, $settings = array()) {
-    $this->plugin_info['callback']($result, $item_key, $element_key, $field, $settings);
+  function callback($result, $item_key, $element_key, &$field, $settings = array(), $source = new stdClass()) {
+    $this->plugin_info['callback']($result, $item_key, $element_key, $field, $settings, $source);
   }
 
   function execute($input, $output, $settings = array()) {
