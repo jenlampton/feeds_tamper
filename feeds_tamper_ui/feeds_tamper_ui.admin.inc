@@ -11,19 +11,25 @@
   */
 function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
   $mappings = $importer->processor->config['mappings'];
+
+  if (!$mappings) {
+    $message = 'There are no <a href="/admin/structure/feeds/!importer/mapping">mappings</a> defined for this importer.';
+    drupal_set_message(t($message, array('!importer' => $importer->id)), 'warning');
+    return $form;
+  }
+
   $sources = $importer->parser->getMappingSources();
   $targets = $importer->processor->getMappingTargets();
   $instances = feeds_tamper_load_by_importer($importer->id, TRUE);
 
   // Help message at the top. I have a seceret, I added the link back to the
   // mappings because it makes my life a lot easier while testing this.
-  $link = l(t('mapping'), FEEDS_TAMPER_UI_FEEDS_BASE . '/edit/' . $importer->id . '/mapping');
-  $message = 'Configure plugins to modify Feeds data before it gets saved. Each !mapping can be manipulated individually.';
-  $message = t($message, array('!mapping' => $link));
+  $message = 'Configure plugins to modify Feeds data before it gets saved. Each <a href="/admin/structure/feeds/!importer/mapping">mapping</a> can be manipulated individually.';
+  $message = t($message, array('!importer' => $importer->id));
   $form['help']['#markup'] = '<div class="help"><p>' . $message . '</p></div>';
 
-  $form['mappings'] = array();
   // Helpful shortcut.
+  $form['mappings'] = array();
   $map = &$form['mappings'];
   $form['#importer'] = $importer;
 
@@ -39,6 +45,7 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
     // we need to add the target label to indicate to the user that more than
     // one field will be affected.
     $target_label = !empty($targets[$target]['name']) ? check_plain($targets[$target]['name']) : check_plain($target);
+
     $map[$i]['#title']['targets'][] = $target_label;
     // We don't need to build the table again for this source.
     if (isset($map[$i]['table'])) {
@@ -50,7 +57,7 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
     $map[$i]['#tree'] = TRUE;
     $map[$i]['table'] = array();
     // "Add plugin" link.
-    $add = FEEDS_TAMPER_UI_BASE . '/add/' . $importer->id . '/' . $i;
+    $add = 'admin/structure/feeds/' . $importer->id . '/tamper/add/' . $i;
     $map[$i]['#add_link'] = l(t('Add plugin'), $add);
 
     // There are no plugins for this source. We've built all we need to.
@@ -96,12 +103,12 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
       $map[$i]['table'][$instance->id]['#status'] = $status;
 
       // Build Edit | Delete, Edit | Revert, Override links.
-      $ops = l(t($edit), FEEDS_TAMPER_UI_BASE . '/edit/' . $instance->id);
+      $ops = l(t($edit), 'admin/structure/feeds/' . $importer->id . '/tamper/' . $instance->id . '/edit');
 
       // Plugins provided in code can't be deleted but they can be reverted.
       if (!empty($delete)) {
         $ops .= ' | ';
-        $ops .= l(t($delete), FEEDS_TAMPER_UI_BASE . '/delete/' . $instance->id);
+        $ops .= l(t($delete), 'admin/structure/feeds/' . $importer->id . '/tamper/' . $instance->id . '/delete');
       }
 
       $map[$i]['table'][$instance->id]['#edit'] = $ops;
@@ -147,6 +154,8 @@ function feeds_tamper_ui_list_form_validate($form, &$form_state) {
 
 /**
  * Submit handler for plugin list.
+ *
+ * Sets weight and enabled/disabled status of plugin instances.
  */
 function feeds_tamper_ui_list_form_submit($form, &$form_state) {
   $mappings = element_children($form['mappings']);
@@ -156,8 +165,10 @@ function feeds_tamper_ui_list_form_submit($form, &$form_state) {
     }
     foreach ($form_state['values'][$i]['table'] as $id => $value) {
       $instance = feeds_tamper_load_instance($id);
+
       $instance->disabled = !(bool) $value['enabled'];
       $instance->weight = $value['weight'];
+
       feeds_tamper_save_instance($instance);
     }
   }
@@ -170,6 +181,11 @@ function feeds_tamper_ui_list_form_submit($form, &$form_state) {
 function theme_feeds_tamper_ui_list_form($variables) {
   $form = $variables['form'];
   // Shortcut to save typing and screen space.
+
+  if (empty($form['mappings'])) {
+    return;
+  }
+
   $map = &$form['mappings'];
   $mappings = element_children($map);
 
@@ -185,16 +201,6 @@ function theme_feeds_tamper_ui_list_form($variables) {
   $header_empty = $header_normal;
   unset($header_empty[1]);
 
-  if (empty($mappings)) {
-    // Can't use drupal_set_message here.
-    $link = FEEDS_TAMPER_UI_FEEDS_BASE . '/edit/' . $form['#importer']->id . '/mapping';
-    $link = l(t('mappings'), $link);
-    $output = '<div class="messages warning">';
-    $message = 'There are no !mappings defined for this importer.';
-    $output .= t($message, array('!mappings' => $link));
-    $output .= '</div>';
-    return $output;
-  }
   foreach ($mappings as $key => $i) {
     $table_rows = $disabled_rows = array();
     // We used to use the source name in the table id, but it just needs to be
@@ -288,10 +294,6 @@ function theme_feeds_tamper_ui_list_form($variables) {
  */
 function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source) {
   $source = rawurldecode($source);
-  // Set breadcrumb.
-  $crumb = drupal_get_breadcrumb();
-  $crumb[] = l(t('Tamper: @importer', array('@importer' => $importer->config['name'])), FEEDS_TAMPER_UI_BASE . '/list/' . $importer->id);
-  drupal_set_breadcrumb($crumb);
 
   // Set importer and source for use in validate and submit.
   $form_state['importer'] = $importer;
@@ -411,7 +413,7 @@ function feeds_tamper_ui_add_plugin_form_submit($form, &$form_state) {
     $obj->id = $form_state['values']['id'];
 
     feeds_tamper_save_instance($obj);
-    $form_state['redirect'] = FEEDS_TAMPER_UI_BASE . '/list/' . $obj->importer;
+    $form_state['redirect'] = 'admin/structure/feeds/' . $obj->importer . '/tamper';
     $source_name = feeds_tamper_ui_source_name($obj);
     drupal_set_message(t('Plugin %description was successfully added to %source.', array('%description' => $obj->description, '%source' => $source_name)));
     return;
@@ -427,9 +429,6 @@ function feeds_tamper_ui_add_plugin_form_submit($form, &$form_state) {
 function feeds_tamper_ui_edit_plugin_form($form, &$form_state, $instance) {
   // Set breadcrumb.
   $importer = feeds_importer($instance->importer);
-  $crumb = drupal_get_breadcrumb();
-  $crumb[] = l(t('Tamper: @importer', array('@importer' => $importer->config['name'])), FEEDS_TAMPER_UI_BASE . '/list/' . $instance->importer);
-  drupal_set_breadcrumb($crumb);
 
   $form_state['instance'] = $instance;
   $plugin = feeds_tamper_get_plugin($instance->plugin_id);
@@ -478,22 +477,17 @@ function feeds_tamper_ui_edit_plugin_form_submit($form, &$form_state) {
 
   feeds_tamper_save_instance($instance);
   drupal_set_message(t('The plugin %plugin has been updated.', array('%plugin' => $instance->description)));
-  $form_state['redirect'] = FEEDS_TAMPER_UI_BASE . '/list/' . $instance->importer;
+  $form_state['redirect'] = 'admin/structure/feeds/' . $instance->importer . '/tamper';
 }
 
 /**
  * Delete plugin form.
  */
 function feeds_tamper_ui_delete_form($form, &$form_state, $instance) {
-  // Set breadcrumb.
   if (!$instance) {
     drupal_set_message(t('Invalid plugin id.'), 'error');
     return;
   }
-  $importer = feeds_importer($instance->importer);
-  $crumb = drupal_get_breadcrumb();
-  $crumb[] = l(t('Tamper: @importer', array('@importer' => $importer->config['name'])), FEEDS_TAMPER_UI_BASE . '/list/' . $instance->importer);
-  drupal_set_breadcrumb($crumb);
 
   $form_state['instance'] = $instance;
 
@@ -508,7 +502,7 @@ function feeds_tamper_ui_delete_form($form, &$form_state, $instance) {
   return confirm_form(
     $form,
     $question,
-    FEEDS_TAMPER_UI_BASE . '/list/' . $instance->importer,
+    'admin/structure/feeds/' . $instance->importer . '/tamper',
     NULL,
     $button_label
   );
@@ -529,7 +523,7 @@ function feeds_tamper_ui_delete_form_submit($form, &$form_state) {
       drupal_set_message(t('The plugin %plugin has been reverted.', array('%plugin' => $instance->description)));
       break;
   }
-  $form_state['redirect'] = FEEDS_TAMPER_UI_BASE . '/list/' . $instance->importer;
+  $form_state['redirect'] = 'admin/structure/feeds/' . $instance->importer . '/tamper';
 }
 
 /**
