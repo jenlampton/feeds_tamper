@@ -15,8 +15,16 @@ $plugin = array(
 function feeds_tamper_copy_form($importer, $element_key, $settings) {
   $form = $sources = array();
   $source_configs = $importer->parser->getMappingSources();
+
   foreach ($importer->processor->config['mappings'] as $mapping) {
-    $sources[$mapping['source']] = isset($source_configs[$mapping['source']]) ? $source_configs[$mapping['source']]['name'] : $mapping['source'];
+    $source = $mapping['source'];
+
+    if (isset($source_configs[$source]) && !empty($source_configs[$source]['name'])) {
+      $sources[$source] = $source_configs[$source]['name'];
+    }
+    else {
+      $sources[$source] = $source;
+    }
   }
 
   $form['to_from'] = array(
@@ -29,7 +37,7 @@ function feeds_tamper_copy_form($importer, $element_key, $settings) {
 
   $form['source'] = array(
     '#type' => 'radios',
-    '#default_value' => isset($settings['source']) ? $settings['source'] :key($sources),
+    '#default_value' => isset($settings['source']) ? $settings['source'] : key($sources),
     '#options' => $sources,
     '#title' => t('Source'),
   );
