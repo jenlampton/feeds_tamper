@@ -118,7 +118,7 @@ function feeds_tamper_ui_form_feeds_ui_overview_form_alter(&$form, &$form_state)
  * @return string
  *   The sanitized name to display for a Feeds source.
  */
-function feeds_tamper_ui_source_name($instance) {
+function feeds_tamper_ui_source_name(stdClass $instance) {
   if (!is_object($instance)) {
     $instance = feeds_tamper_get_plugin($instance);
   }

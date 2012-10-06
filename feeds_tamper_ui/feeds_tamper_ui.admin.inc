@@ -333,6 +333,10 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
   );
   $form['update'] = array(
     '#type' => 'submit',
+    '#limit_validation_errors' => array(
+      array('plugin_id')
+    ),
+    '#submit' => array('feeds_tamper_ui_add_plugin_form_submit'),
     '#value' => t('Choose'),
     '#attributes' => array('class' => array('no-js', 'html.js')),
   );
@@ -354,6 +358,7 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
       'exists' => 'feeds_tamper_machine_name_callback',
       'source' => array('plugin', 'description'),
     ),
+    '#default_value' => $machine_name,
     // '#disabled' => FALSE,
     // '#size' => 60,
   );

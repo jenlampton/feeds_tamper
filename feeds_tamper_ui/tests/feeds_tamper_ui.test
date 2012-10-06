@@ -34,20 +34,19 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     $this->assertText('There are no mappings defined for this importer.');
     $this->addMappings($importer_id,
       array(
-        array(
+        0 => array(
           'source' => 'title',
           'target' => 'title',
           'unique' => FALSE,
         ),
-        array(
+        1 => array(
           'source' => 'guid',
           'target' => 'guid',
           'unique' => TRUE,
         ),
-        array(
+        2 => array(
           'source' => 'description',
           'target' => 'body',
-          'unique' => FALSE,
         ),
       )
     );
@@ -118,7 +117,7 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     $this->drupalPost($mapping_url, $settings, 'Save');
     $this->addMappings($importer_id,
       array(
-        array(
+        2 => array(
           'source' => 'Blank source 1',
           'target' => 'title',
         ),
@@ -151,15 +150,15 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     $this->setPlugin($importer_id, 'FeedsCSVParser');
     // We have a space in the source cause that was a problem at one point.
     $mappings = array(
-      '0' => array(
+      0 => array(
         'source' => 'a Title',
         'target' => 'title',
       ),
-      '1' => array(
+      1 => array(
         'source' => 'a Body',
         'target' => 'body',
       ),
-      '2' => array(
+      2 => array(
         'source' => 'a GUID',
         'target' => 'guid',
         'unique' => TRUE,
@@ -201,12 +200,11 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
   function addTamperPlugin($importer_id, $source, $plugin_id, $settings = array(), $description = NULL, $id = NULL) {
     $plugin = feeds_tamper_get_plugin($plugin_id);
     $default_description = !empty($plugin['default description']) ? $plugin['default description'] : $plugin['name'];
-    $default_id = feeds_tamper_make_machine($default_description);
+
     $url = 'admin/structure/feeds/' . $importer_id . '/tamper/add/' . $source;
     $this->drupalPost($url, array('plugin_id' => $plugin_id), 'Choose');
 
     // Check that default values were added to form.
-    $this->assertFieldByName('id', $default_id);
     $this->assertFieldByName('description', $default_description);
     // Set settings.
     $edit = array('plugin_id' => $plugin_id);
@@ -218,8 +216,9 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     }
     $this->drupalPost(NULL, $edit + $settings, 'Add');
     $description = !empty($description) ? $description : $default_description;
-    $id = !empty($id) ? $id : $default_id;
-    $id = $importer_id . '-' . feeds_tamper_make_machine($source) . '-' . $id;
+
+    $id = $importer_id . '-' . feeds_tamper_make_machine($source) . '-' . $plugin_id;
+
     $instance = feeds_tamper_load_instance($id);
     $source_name = feeds_tamper_ui_source_name($instance);
     $this->assertText('Plugin ' . $description . ' was successfully added to ' . $source_name . '.');
