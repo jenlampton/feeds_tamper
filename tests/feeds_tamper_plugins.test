@@ -86,6 +86,38 @@ class FeedsTamperAbsoluteURLTestCase extends FeedsTamperUnitTestCase {
 }
 
 /**
+ * Tests for absolute_url.inc
+ */
+class FeedsTamperCastToIntTestCase extends FeedsTamperUnitTestCase {
+
+  protected $plugin_id = 'cast_to_int';
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Plugins: Cast to int',
+      'description' => 'Unit tests for "Cast to integer" plugin.',
+      'group' => 'Feeds Tamper',
+    );
+  }
+
+  public function test() {
+    $this->execute('1', 1);
+    $this->execute('asdfsdf', 0);
+    $this->execute('1.2324', 1);
+    $this->execute(1.234, 1);
+    $this->execute(TRUE, 1);
+    $this->execute(FALSE, 0);
+    $this->execute('23456', 23456);
+  }
+
+  function executeCastToInt($input, $output, $settings = array()) {
+    $this->validate($settings);
+    $this->callback(NULL, NULL, NULL, $input, $settings);
+    $this->assertIdentical($input, $output);
+  }
+}
+
+/**
  * Tests for convert_boolean.inc
  */
 class FeedsTamperCovertBooleanTestCase extends FeedsTamperUnitTestCase {
