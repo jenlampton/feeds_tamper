@@ -112,16 +112,13 @@ function feeds_tamper_ui_form_feeds_ui_overview_form_alter(&$form, &$form_state)
 /**
  * Calculate display name for source.
  *
- * @param string|stdClass $instance
- *   Either the plugin instance id or a plugin instance object.
+ * @param stdClass $instance
+ *   A plugin instance object.
  *
  * @return string
  *   The sanitized name to display for a Feeds source.
  */
 function feeds_tamper_ui_source_name(stdClass $instance) {
-  if (!is_object($instance)) {
-    $instance = feeds_tamper_get_plugin($instance);
-  }
   $importer = feeds_importer($instance->importer);
   $sources = $importer->parser->getMappingSources();
   return !empty($sources[$instance->source]['name']) ? check_plain($sources[$instance->source]['name']) : check_plain($instance->source);
