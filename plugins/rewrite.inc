@@ -40,8 +40,8 @@ function feeds_tamper_rewrite_form($importer, $element_key, $settings) {
   $form['help'] = array(
     '#type' => 'fieldset',
     '#title' => t('Available Replacement Patterns'),
-    '#collapsed' => TRUE,
-    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+    '#collapsible' => FALSE,
     '#value' => theme('item_list', array('items' => $replace)),
   );
   return $form;
