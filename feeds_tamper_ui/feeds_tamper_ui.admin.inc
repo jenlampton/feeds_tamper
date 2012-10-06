@@ -56,9 +56,10 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
 
     $map[$i]['#tree'] = TRUE;
     $map[$i]['table'] = array();
-    // "Add plugin" link.
-    $add = 'admin/structure/feeds/' . $importer->id . '/tamper/add/' . $i;
-    $map[$i]['#add_link'] = l(t('Add plugin'), $add);
+    // "Add plugin" link. We are not using l() here so that we can double
+    // encode $source which may contain slashes.
+    $add = '/admin/structure/feeds/' . check_plain($importer->id) . '/tamper/add/' . check_plain(rawurlencode($i));
+    $map[$i]['#add_link'] = '<a href="' . $add . '">' . t('Add plugin') . '</a>';
 
     // There are no plugins for this source. We've built all we need to.
     if (!isset($instances[$source])) {
@@ -293,6 +294,8 @@ function theme_feeds_tamper_ui_list_form($variables) {
  * Add plugin form.
  */
 function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source) {
+
+  // We double encoded $source before.
   $source = rawurldecode($source);
 
   // Set importer and source for use in validate and submit.
@@ -412,6 +415,7 @@ function feeds_tamper_ui_add_plugin_form_submit($form, &$form_state) {
       $obj->settings = $form_state['values']['settings'];
     }
     $obj->importer = $form_state['importer']->id;
+
     $obj->source = $form_state['source'];
     $obj->description = $form_state['values']['description'];
     $obj->id = $form_state['values']['id'];
