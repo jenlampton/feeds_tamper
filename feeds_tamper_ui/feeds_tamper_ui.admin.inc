@@ -58,7 +58,7 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
     $map[$i]['table'] = array();
     // "Add plugin" link. We are not using l() here so that we can double
     // encode $source which may contain slashes.
-    $add = '/admin/structure/feeds/' . check_plain($importer->id) . '/tamper/add/' . check_plain(rawurlencode($i));
+    $add = url('admin/structure/feeds/' . check_plain($importer->id) . '/tamper/add/' . $i);
     $map[$i]['#add_link'] = '<a href="' . $add . '">' . t('Add plugin') . '</a>';
 
     // There are no plugins for this source. We've built all we need to.
