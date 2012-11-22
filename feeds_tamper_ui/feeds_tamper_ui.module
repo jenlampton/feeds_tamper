@@ -27,6 +27,21 @@ function feeds_tamper_ui_menu() {
     'weight' => 10,
   ) + $defaults;
 
+  $items['admin/structure/feeds/%feeds_importer/tamper/manage'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+
+  $items['admin/structure/feeds/%feeds_importer/tamper/export'] = array(
+    'title' => 'Export',
+    'title arguments' => array(),
+    'page arguments' => array('feeds_tamper_ui_export_form', 3),
+    'access callback' => 'user_access',
+    'access arguments' => array('administer feeds_tamper'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 10,
+  ) + $defaults;
+
   $items['admin/structure/feeds/%feeds_importer/tamper/add/%'] = array(
     'title callback' => 'feeds_tamper_ui_add_title',
     'title arguments' => array(6),
