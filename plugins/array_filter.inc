@@ -23,6 +23,6 @@ function feeds_tamper_array_filter_form($importer, $element_key, $settings) {
 
 function feeds_tamper_array_filter_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   if (is_array($field)) {
-    $field = array_filter($field);
+    $field = array_values(array_filter($field));
   }
 }
