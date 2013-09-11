@@ -254,28 +254,32 @@ function feeds_tamper_form_feeds_ui_mapping_form_alter(&$form, &$form_state) {
   if ($form['source']['#type'] == 'textfield') {
     return;
   }
-  $newest_source = NULL;
-  $newest_target = NULL;
+  $max_source = 0;
+  $max_target = 0;
   foreach ($form['#mappings'] as $mapping) {
     if (strpos($mapping['source'], 'Blank source ') === 0) {
-      $newest_source = $mapping['source'];
+      list(, , $source_value) = explode(' ', $mapping['source']);
+      if ($source_value > $max_source) {
+        $max_source = $source_value;
+      }
     }
-    elseif (strpos($mapping['target'], 'Temporary target ') === 0) {
-      $newest_target = $mapping['target'];
+    if (strpos($mapping['target'], 'Temporary target ') === 0) {
+      list(, , $target_value) = explode(' ', $mapping['target']);
+      if ($target_value > $max_target) {
+        $max_target = $target_value;
+      }
     }
   }
-  if (!empty($newest_source)) {
-    list(, , $count) = explode(' ', $newest_source);
+  if ($max_source) {
     unset($form['source']['#options']['Blank source 1']);
-    $form['source']['#options']['Blank source ' . ++$count] = 'Blank source';
+    $form['source']['#options']['Blank source ' . ++$max_source] = 'Blank source';
   }
   else {
     $form['source']['#options']['Blank source 1'] = 'Blank source';
   }
-  if (!empty($newest_target)) {
-    list(, , $count) = explode(' ', $newest_target);
+  if ($max_target) {
     unset($form['target']['#options']['Temporary target 1']);
-    $form['target']['#options']['Temporary target ' . ++$count] = 'Temporary target';
+    $form['target']['#options']['Temporary target ' . ++$max_target] = 'Temporary target';
   }
   else {
     $form['target']['#options']['Temporary target 1'] = 'Temporary target';
