@@ -49,39 +49,9 @@ function feeds_tamper_rewrite_form($importer, $element_key, $settings) {
 
 function feeds_tamper_rewrite_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   $trans = array();
-
-  static $sources;
-  if (!$sources) {
-    $sources = _feeds_tamper_rewrite_get_source_list($source);
-  }
-
   $item = $result->items[$item_key];
-  foreach ($sources as $source) {
-    if (isset($item[$source])) {
-      $trans["[$source]"] = $item[$source];
-    }
-    else {
-      $trans["[$source]"] = '';
-    }
+  foreach ($item as $key => $value) {
+    $trans['[' . $key . ']'] = $value;
   }
   $field = strtr($settings['text'], $trans);
-}
-
-function _feeds_tamper_rewrite_get_source_list($source) {
-  $is_csv = FALSE;
-  if (get_class($source->importer->parser) == 'FeedsCSVParser') {
-    $is_csv = TRUE;
-  }
-
-  $sources = array();
-  foreach ($source->importer->processor->getMappings() as $mapping) {
-    if ($is_csv) {
-      $sources[] = drupal_strtolower($mapping['source']);
-    }
-    else {
-      $sources[] = $mapping['source'];
-    }
-  }
-
-  return array_unique($sources);
 }

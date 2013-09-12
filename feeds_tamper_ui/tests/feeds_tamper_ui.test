@@ -199,8 +199,6 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
 
   function addTamperPlugin($importer_id, $source, $plugin_id, $settings = array(), $description = NULL, $id = NULL) {
     $plugin = feeds_tamper_get_plugin($plugin_id);
-    debug($description);
-    debug($plugin);
     $default_description = !empty($plugin['default description']) ? $plugin['default description'] : $plugin['name'];
 
     $url = 'admin/structure/feeds/' . $importer_id . '/tamper/add/' . $source;
@@ -210,14 +208,14 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     $this->assertFieldByName('description', $default_description);
     // Set settings.
     $edit = array('plugin_id' => $plugin_id);
-    if ($description) {
+    if (!empty($description)) {
       $edit['description'] = $description;
     }
-    if ($id) {
+    if (!empty($id)) {
       $edit['id'] = $id;
     }
     $this->drupalPost(NULL, $edit + $settings, 'Add');
-    $description = $description ? $description : $default_description;
+    $description = !empty($description) ? $description : $default_description;
 
     $id = $importer_id . '-' . feeds_tamper_make_machine($source) . '-' . $plugin_id;
 

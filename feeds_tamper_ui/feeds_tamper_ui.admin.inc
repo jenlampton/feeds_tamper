@@ -32,37 +32,34 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
   $form['mappings'] = array();
   $map = &$form['mappings'];
   $form['#importer'] = $importer;
-  $mapped = array();
-  foreach ($mappings as $delta => $mapping) {
+
+  foreach ($mappings as $mapping) {
     $source = $mapping['source'];
     $target = $mapping['target'];
 
+    // Sources may have spaces in them and other nefarious things. Blast you
+    // CSV parser!
     $i = rawurlencode($source);
 
     // We will skip building the table if it has been built for a source, but we
     // need to add the target label to indicate to the user that more than one
     // field will be affected.
     $target_label = !empty($targets[$target]['name']) ? check_plain($targets[$target]['name']) : check_plain($target);
-    $prev = $delta;
-    if (isset($mapped[$source])) {
-      $prev = $mapped[$source];
-    }
-    $map[$prev]['#title']['targets'][] = $target_label;
+
+    $map[$i]['#title']['targets'][] = $target_label;
     // We don't need to build the table again for this source.
-    if (isset($mapped[$source])) {
+    if (isset($map[$i]['table'])) {
       continue;
     }
-    $mapped[$source] = $delta;
-
     $source_label = !empty($sources[$source]['name']) ? check_plain($sources[$source]['name']) : check_plain($source);
-    $map[$delta]['#title']['source'] = $source_label;
+    $map[$i]['#title']['source'] = $source_label;
 
-    $map[$delta]['#tree'] = TRUE;
-    $map[$delta]['table'] = array();
+    $map[$i]['#tree'] = TRUE;
+    $map[$i]['table'] = array();
     // "Add plugin" link. We are not using l() here so that we can double
     // encode $source which may contain slashes.
     $add = url('admin/structure/feeds/' . check_plain($importer->id) . '/tamper/add/' . $i);
-    $map[$delta]['#add_link'] = '<a href="' . $add . '">' . t('Add plugin') . '</a>';
+    $map[$i]['#add_link'] = '<a href="' . $add . '">' . t('Add plugin') . '</a>';
 
     // There are no plugins for this source. We've built all we need to.
     if (!isset($instances[$source])) {
@@ -72,10 +69,10 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
 
       // Plugin instance description.
       $description = !empty($instance->description) ? check_plain($instance->description) : $instance->id;
-      $map[$delta]['table'][$instance->id]['#description'] = $description;
+      $map[$i]['table'][$instance->id]['#description'] = $description;
 
       // Weight field.
-      $map[$delta]['table'][$instance->id]['weight'] = array(
+      $map[$i]['table'][$instance->id]['weight'] = array(
         '#type' => 'textfield',
         '#size' => 5,
         '#default_value' => $instance->weight,
@@ -84,7 +81,7 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
 
       // Name of plugin.
       $plugin = feeds_tamper_get_plugin($instance->plugin_id);
-      $map[$delta]['table'][$instance->id]['#name'] = $plugin['name'];
+      $map[$i]['table'][$instance->id]['#name'] = $plugin['name'];
 
       // Calculate where the plugin lives and it's corresponding operations.
       if ($instance->export_type == EXPORT_IN_CODE) {
@@ -104,7 +101,7 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
       }
 
       // Status column, Default, Normal, Overridden.
-      $map[$delta]['table'][$instance->id]['#status'] = $status;
+      $map[$i]['table'][$instance->id]['#status'] = $status;
 
       // Build Edit | Delete, Edit | Revert, Override links.
       $ops = l(t($edit), 'admin/structure/feeds/' . $importer->id . '/tamper/' . $instance->id . '/edit');
@@ -115,10 +112,10 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
         $ops .= l(t($delete), 'admin/structure/feeds/' . $importer->id . '/tamper/' . $instance->id . '/delete');
       }
 
-      $map[$delta]['table'][$instance->id]['#edit'] = $ops;
+      $map[$i]['table'][$instance->id]['#edit'] = $ops;
 
       // Enable/disable checkbox.
-      $map[$delta]['table'][$instance->id]['enabled'] = array(
+      $map[$i]['table'][$instance->id]['enabled'] = array(
         '#type' => 'checkbox',
         '#default_value' => !$instance->disabled,
       );
