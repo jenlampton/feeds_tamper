@@ -16,14 +16,18 @@ function feeds_tamper_copy_form($importer, $element_key, $settings) {
   $form = $sources = array();
   $source_configs = $importer->parser->getMappingSources();
 
-  foreach ($importer->processor->config['mappings'] as $mapping) {
+  // The CSV parser automagically lowercases all sources.
+  $is_csv = get_class($importer->parser) == 'FeedsCSVParser';
+
+  foreach ($importer->processor->getMappings() as $mapping) {
     $source = $mapping['source'];
 
+    $mapsource = $is_csv ? drupal_strtolower($mapping['source']) : $mapping['source'];
     if (isset($source_configs[$source]) && !empty($source_configs[$source]['name'])) {
-      $sources[$source] = $source_configs[$source]['name'];
+      $sources[$mapsource] = $source_configs[$source]['name'];
     }
     else {
-      $sources[$source] = $source;
+      $sources[$mapsource] = $source;
     }
   }
 
