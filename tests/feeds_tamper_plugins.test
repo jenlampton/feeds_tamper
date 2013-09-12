@@ -2,7 +2,7 @@
 
 /**
  * @file
- *  Unit tests for feeds tamper plugins.
+ * Unit tests for feeds tamper plugins.
  *
  * @todo
  * Check for form errors in validation.
@@ -22,11 +22,11 @@ class FeedsTamperUnitTestCase extends DrupalUnitTestCase {
     $this->plugin_info = $plugin;
   }
 
-  function form($importer, $element_key, $settings = array()) {
+  protected function form($importer, $element_key, $settings = array()) {
     return $this->plugin_info['form']($importer, $element_key, $settings);
   }
 
-  function validate(&$settings = array()) {
+  protected function validate(&$settings = array()) {
     if (!empty($this->plugin_info['validate'])) {
       $this->plugin_info['validate']($settings);
       if ($errors = form_get_errors()) {
@@ -37,14 +37,14 @@ class FeedsTamperUnitTestCase extends DrupalUnitTestCase {
     }
   }
 
-  function callback($result, $item_key, $element_key, &$field, $settings = array(), $source = NULL) {
+  protected function callback($result, $item_key, $element_key, &$field, $settings = array(), $source = NULL) {
     if (is_null($source)) {
       $source = new stdClass();
     }
     $this->plugin_info['callback']($result, $item_key, $element_key, $field, $settings, $source);
   }
 
-  function execute($input, $output, $settings = array()) {
+  protected function execute($input, $output, $settings = array()) {
     $this->validate($settings);
     $this->callback(NULL, NULL, NULL, $input, $settings);
     $this->assertEqual($input, $output);
@@ -106,7 +106,7 @@ class FeedsTamperArrayFilterTestCase extends FeedsTamperUnitTestCase {
     $this->executeFilter(array('asdf', 0, FALSE, '', 1234), array('asdf', 1234));
   }
 
-  function executeFilter($in_array, $out_array) {
+  protected function executeFilter($in_array, $out_array) {
     $this->callback(NULL, NULL, NULL, $in_array);
     $this->assertEqual($in_array, $out_array);
   }
@@ -137,7 +137,7 @@ class FeedsTamperCastToIntTestCase extends FeedsTamperUnitTestCase {
     $this->execute('23456', 23456);
   }
 
-  function executeCastToInt($input, $output, $settings = array()) {
+  protected function executeCastToInt($input, $output, $settings = array()) {
     $this->validate($settings);
     $this->callback(NULL, NULL, NULL, $input, $settings);
     $this->assertIdentical($input, $output);
@@ -244,7 +244,7 @@ class FeedsTamperCopyTestCase extends FeedsTamperUnitTestCase {
     $this->executeCop($item, 'title', $settings);
   }
 
-  function executeCop($input, $element_key, $settings) {
+  protected function executeCop($input, $element_key, $settings) {
     $result = new stdClass();
     $result->items = array();
     $result->items[] = $input;
@@ -824,6 +824,27 @@ class FeedsTamperRewriteTestCase extends FeedsTamperUnitTestCase {
       'combined' => 'Blah, blah, blah',
     );
     $this->executeRew($input, "HI YA! - I'm the coolest.", 'combined', $settings);
+  }
+}
+
+/**
+ * Tests for sprintf.inc
+ */
+class FeedsTamperSprintfTestCase extends FeedsTamperUnitTestCase {
+  protected $plugin_id = 'sprintf';
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Plugins: Format string',
+      'description' => 'Unit tests for the "sprintf" plugin.',
+      'group' => 'Feeds Tamper',
+    );
+  }
+
+  public function test() {
+    $this->execute('abc0123def', 'abc0123def', array('format' => '%s'));
+    $this->execute('0123', '00000123', array('format' => '%08d'));
+    $this->execute('65', 'A', array('format' => '%c'));
   }
 }
 
