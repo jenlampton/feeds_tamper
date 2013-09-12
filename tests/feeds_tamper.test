@@ -57,10 +57,10 @@ class FeedsTamperWebTestHelper extends FeedsWebTestCase {
     $plugin->importer = $importer_id;
     $plugin->source = $source;
     $plugin->plugin_id = $plugin_id;
-    if (!isset($description)) {
+    if (!$description) {
       $description = $this->randomString(255);
     }
-    if (!isset($id)) {
+    if (!$id) {
       $id = $this->randomName();
     }
     $plugin->id = $id;
@@ -164,7 +164,6 @@ class FeedsTamperWebTestCase extends FeedsTamperWebTestHelper {
         array(
           'source' => 'description',
           'target' => 'body',
-          'unique' => FALSE,
         ),
       )
     );
@@ -173,7 +172,7 @@ class FeedsTamperWebTestCase extends FeedsTamperWebTestHelper {
 
     // Test basic plugin adding.
     $settings = array(
-      'mode' => 0,
+      'mode' => MB_CASE_UPPER,
     );
     $id = $this->addTamperPlugin('syndication', 'title', 'convert_case', $settings);
     // Create feed node, running import automatically.
@@ -211,15 +210,15 @@ class FeedsTamperCSVTestCase extends FeedsTamperWebTestHelper {
     $this->setPlugin($importer_id, 'FeedsCSVParser');
     // We have a space in the source cause that was a problem at one point.
     $mappings = array(
-      '0' => array(
+      0 => array(
         'source' => 'a Title',
         'target' => 'title',
       ),
-      '1' => array(
+      1 => array(
         'source' => 'a Body',
         'target' => 'body',
       ),
-      '2' => array(
+      2 => array(
         'source' => 'a GUID',
         'target' => 'guid',
         'unique' => TRUE,
@@ -231,7 +230,7 @@ class FeedsTamperCSVTestCase extends FeedsTamperWebTestHelper {
 
     // Test basic plugin adding.
     $settings = array(
-      'mode' => 0,
+      'mode' => MB_CASE_UPPER,
     );
     $id = $this->addTamperPlugin($importer_id, 'a Title', 'convert_case', $settings);
     $id2 = $this->addTamperPlugin($importer_id, 'a Body', 'convert_case', $settings);

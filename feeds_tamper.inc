@@ -118,11 +118,11 @@ function feeds_tamper_load_by_importer($importer, $disabled = FALSE) {
   if (is_scalar($importer)) {
     $importer = feeds_importer($importer);
   }
-  $mappings = $importer->processor->config['mappings'];
   $sources = array();
-  foreach ($mappings as $mapping) {
+  foreach ($importer->processor->getMappings() as $mapping) {
     $sources[] = $mapping['source'];
   }
+  $sources = array_unique($sources);
   ctools_include('export');
   $t = ctools_export_load_object('feeds_tamper', 'conditions', array('importer' => $importer->id));
   // Sort into array, keyed by source.
@@ -141,7 +141,14 @@ function feeds_tamper_load_by_importer($importer, $disabled = FALSE) {
   foreach ($instances as &$instance_list) {
     usort($instance_list, '_feeds_tamper_cmp');
   }
-  return $instances;
+
+  $return = array();
+  foreach ($sources as $source) {
+    if (isset($instances[$source])) {
+      $return[$source] = $instances[$source];
+    }
+  }
+  return $return;
 }
 
 /**
