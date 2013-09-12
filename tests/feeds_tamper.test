@@ -212,11 +212,11 @@ class FeedsTamperCSVTestCase extends FeedsTamperWebTestHelper {
     // We have a space in the source cause that was a problem at one point.
     $mappings = array(
       '0' => array(
-        'source' => 'a Title',
+        'source' => 'a /Title',
         'target' => 'title',
       ),
       '1' => array(
-        'source' => 'a Body',
+        'source' => 'a Body.',
         'target' => 'body',
       ),
       '2' => array(
@@ -233,8 +233,8 @@ class FeedsTamperCSVTestCase extends FeedsTamperWebTestHelper {
     $settings = array(
       'mode' => 0,
     );
-    $id = $this->addTamperPlugin($importer_id, 'a Title', 'convert_case', $settings);
-    $id2 = $this->addTamperPlugin($importer_id, 'a Body', 'convert_case', $settings);
+    $id = $this->addTamperPlugin($importer_id, 'a /Title', 'convert_case', $settings);
+    $id2 = $this->addTamperPlugin($importer_id, 'a Body.', 'convert_case', $settings);
 
     $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'feeds_tamper') . '/tests/feeds_tamper/';
     $nid = $this->createFeedNode($importer_id, $path . 'csv_test.csv', 'Testing CSV Parser');

@@ -70,9 +70,9 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     // Assert that all titles were uppercased.
     $this->drupalGet('node');
     $this->assertUppercaseDevseedFeedContent();
-    $this->toggleTamperPlugin($importer_id, 'title', $id);
-    $this->toggleTamperPlugin($importer_id, 'title', $id, TRUE);
-    $this->setTamperPluginWeight($importer_id, 'title', $id, 2);
+    $this->toggleTamperPlugin($importer_id, 0, $id);
+    $this->toggleTamperPlugin($importer_id, 0, $id, TRUE);
+    $this->setTamperPluginWeight($importer_id, 0, $id, 2);
     $this->deleteTamperPlugin($id);
     $settings = array(
       'settings[mode]' => 0,
@@ -82,9 +82,9 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
       'settings[side]' => 'trim',
     );
     $trim = $this->addTamperPlugin($importer_id, 'title', 'trim', $settings);
-    $this->toggleTamperPlugin($importer_id, 'title', $case);
-    $this->toggleTamperPlugin($importer_id, 'title', $case, TRUE);
-    $this->setTamperPluginWeight($importer_id, 'title', $case, 2);
+    $this->toggleTamperPlugin($importer_id, 0, $case);
+    $this->toggleTamperPlugin($importer_id, 0, $case, TRUE);
+    $this->setTamperPluginWeight($importer_id, 0, $case, 2);
     $this->deleteTamperPlugin($case);
     $this->deleteTamperPlugin($trim);
 
@@ -95,9 +95,6 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     $this->drupalGet('admin/structure/feeds');
     $this->assertText('Edit | Export | Clone | Delete');
     $this->assertNoText('Tamper');
-    // Check that configure link does not exist.
-    $this->drupalGet($mapping_url);
-    $this->assertNoText('Configure Feeds Tamper');
 
     // Check that "tamper importer_id" permissions work. Reset permission static
     // cache.
@@ -151,11 +148,12 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     // We have a space in the source cause that was a problem at one point.
     $mappings = array(
       0 => array(
-        'source' => 'a Title',
+        'source' => 'a /Title',
         'target' => 'title',
       ),
       1 => array(
-        'source' => 'a Body',
+        // The period is intentional.
+        'source' => 'a Body.',
         'target' => 'body',
       ),
       2 => array(
@@ -172,8 +170,8 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     $settings = array(
       'settings[mode]' => 0,
     );
-    $id = $this->addTamperPlugin($importer_id, 'a Title', 'convert_case', $settings);
-    $id2 = $this->addTamperPlugin($importer_id, 'a Body', 'convert_case', $settings);
+    $id = $this->addTamperPlugin($importer_id, 'a /Title', 'convert_case', $settings);
+    $id2 = $this->addTamperPlugin($importer_id, 'a Body.', 'convert_case', $settings);
 
     $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'feeds_tamper') . '/tests/feeds_tamper/';
     $nid = $this->createFeedNode($importer_id, $path . 'csv_test.csv', 'Testing CSV Parser');
@@ -193,15 +191,17 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     $this->assertText('This is a great body.');
     $this->assertText('World does not respond');
     $this->assertText('This is a sad body.');
-    $this->toggleTamperPlugin($importer_id, 'a Title', $id);
-    $this->toggleTamperPlugin($importer_id, 'a Body', $id2);
+    $this->toggleTamperPlugin($importer_id, 0, $id, TRUE);
+    $this->toggleTamperPlugin($importer_id, 1, $id2, TRUE);
+    $this->toggleTamperPlugin($importer_id, 0, $id);
+    $this->toggleTamperPlugin($importer_id, 1, $id2);
   }
 
   function addTamperPlugin($importer_id, $source, $plugin_id, $settings = array(), $description = NULL, $id = NULL) {
     $plugin = feeds_tamper_get_plugin($plugin_id);
     $default_description = !empty($plugin['default description']) ? $plugin['default description'] : $plugin['name'];
 
-    $url = 'admin/structure/feeds/' . $importer_id . '/tamper/add/' . $source;
+    $url = 'admin/structure/feeds/' . $importer_id . '/tamper/add/' . rawurlencode($source);
     $this->drupalPost($url, array('plugin_id' => $plugin_id), 'Choose');
 
     // Check that default values were added to form.
@@ -225,18 +225,18 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     return $id;
   }
 
-  function toggleTamperPlugin($importer_id, $source, $id, $enable = FALSE) {
+  function toggleTamperPlugin($importer_id, $delta, $id, $enable = FALSE) {
     $url = 'admin/structure/feeds/' . $importer_id . '/tamper';
 
-    $name = rawurlencode($source) . '[table][' . $id . '][enabled]';
+    $name = $delta . '[table][' . $id . '][enabled]';
     $this->drupalPost($url, array($name => $enable), 'Save');
     $this->assertFieldByName($name, $enable);
     $this->assertText('Your changes have been saved.');
   }
 
-  function setTamperPluginWeight($importer_id, $source, $id, $weight) {
+  function setTamperPluginWeight($importer_id, $delta, $id, $weight) {
     $url = 'admin/structure/feeds/' . $importer_id . '/tamper';
-    $name = rawurlencode($source) . '[table][' . $id . '][weight]';
+    $name = $delta . '[table][' . $id . '][weight]';
     $this->drupalPost($url, array($name => $weight), 'Save');
     $this->assertFieldByName($name, $weight);
     $this->assertText('Your changes have been saved.');
