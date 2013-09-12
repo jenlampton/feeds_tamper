@@ -122,7 +122,7 @@ function _feeds_tamper_join_url($parts) {
       $url .= '@';
     }
     // IPv6.
-    if (preg_match('/!^[\da-f]*:[\da-f.:]+$!ui/', $parts['host'])) {
+    if (preg_match('/^[\da-f]*:[\da-f.:]+$/ui', $parts['host'])) {
       $url .= '[' . $parts['host'] . ']';
     }
     else {
