@@ -164,7 +164,6 @@ class FeedsTamperWebTestCase extends FeedsTamperWebTestHelper {
         array(
           'source' => 'description',
           'target' => 'body',
-          'unique' => FALSE,
         ),
       )
     );
