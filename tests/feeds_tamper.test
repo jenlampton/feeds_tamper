@@ -186,6 +186,7 @@ class FeedsTamperWebTestCase extends FeedsTamperWebTestHelper {
     $this->assertText('Updated 10 nodes.');
     $this->assertDevseedFeedContent();
   }
+
 }
 
 /**
@@ -210,18 +211,22 @@ class FeedsTamperCSVTestCase extends FeedsTamperWebTestHelper {
     $this->setPlugin($importer_id, 'FeedsCSVParser');
     // We have a space in the source cause that was a problem at one point.
     $mappings = array(
-      '0' => array(
+      0 => array(
         'source' => 'a /Title',
         'target' => 'title',
       ),
-      '1' => array(
+      1 => array(
         'source' => 'a Body.',
         'target' => 'body',
       ),
-      '2' => array(
+      2 => array(
         'source' => 'a GUID',
         'target' => 'guid',
         'unique' => TRUE,
+      ),
+      3 => array(
+        'source' => 'Blank source 1',
+        'target' => 'uid',
       ),
     );
     $this->addMappings($importer_id, $mappings);
@@ -234,6 +239,9 @@ class FeedsTamperCSVTestCase extends FeedsTamperWebTestHelper {
     );
     $id = $this->addTamperPlugin($importer_id, 'a /Title', 'convert_case', $settings);
     $id2 = $this->addTamperPlugin($importer_id, 'a Body.', 'convert_case', $settings);
+
+    // Verify that Blank source works for CSV parser.
+    $this->addTamperPlugin($importer_id, 'Blank source 1', 'default_value', array('default_value' => $this->admin_user->uid));
 
     $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'feeds_tamper') . '/tests/feeds_tamper/';
     $nid = $this->createFeedNode($importer_id, $path . 'csv_test.csv', 'Testing CSV Parser');
@@ -253,5 +261,47 @@ class FeedsTamperCSVTestCase extends FeedsTamperWebTestHelper {
     $this->assertText('This is a great body.');
     $this->assertText('World does not respond');
     $this->assertText('This is a sad body.');
+
+    $this->drupalGet('node/2/edit');
+    $this->assertFieldByName('name', $this->admin_user->name);
   }
+
+  public function testRewrite() {
+    $importer_name = $this->randomName();
+    $importer_id = drupal_strtolower($importer_name);
+    // Set up an importer.
+    $this->createImporterConfiguration($importer_name, $importer_id);
+    // Set and configure plugins and mappings.
+    $this->setPlugin($importer_id, 'FeedsCSVParser');
+    // We have a space in the source cause that was a problem at one point.
+    $mappings = array(
+      0 => array(
+        'source' => 'a /Title',
+        'target' => 'title',
+      ),
+      1 => array(
+        'source' => 'a Body.',
+        'target' => 'Temporary target 1',
+      ),
+      2 => array(
+        'source' => 'Blank source 1',
+        'target' => 'body',
+      ),
+    );
+    $this->addMappings($importer_id, $mappings);
+
+    // Copy the field to the node's body field.
+    $this->addTamperPlugin($importer_id, 'Blank source 1', 'rewrite', array('text' => '[a body.]'));
+
+    $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'feeds_tamper') . '/tests/feeds_tamper/';
+    $nid = $this->createFeedNode($importer_id, $path . 'csv_test.csv', 'Testing CSV Parser');
+    $this->assertText('Basic page Testing CSV Parser has been created.');
+    $this->assertText('Created 2 nodes.');
+    $this->drupalGet('node');
+    $this->assertText('Hello world');
+    $this->assertText('This is a great body.');
+    $this->assertText('World does not respond');
+    $this->assertText('This is a sad body.');
+  }
+
 }

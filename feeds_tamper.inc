@@ -122,7 +122,7 @@ function feeds_tamper_load_by_importer($importer, $disabled = FALSE) {
   ctools_include('export');
   $t = ctools_export_load_object('feeds_tamper', 'conditions', array('importer' => $importer->id));
 
-  $sources = feeds_tamper_get_unique_source_list($importer);
+  $sources = feeds_tamper_get_unique_source_list($importer, FALSE);
 
   $instances = array();
   foreach ($t as $i) {
@@ -160,10 +160,17 @@ function feeds_tamper_load_by_importer($importer, $disabled = FALSE) {
  * @return array
  *   A list of sources.
  */
-function feeds_tamper_get_unique_source_list($importer) {
+function feeds_tamper_get_unique_source_list($importer, $lower = TRUE) {
   $sources = array();
+  $is_csv = $lower && get_class($importer->parser) == 'FeedsCSVParser';
+
   foreach ($importer->processor->getMappings() as $mapping) {
-    $sources[] = $mapping['source'];
+    if ($is_csv) {
+      $sources[] = drupal_strtolower($mapping['source']);
+    }
+    else {
+      $sources[] = $mapping['source'];
+    }
   }
 
   return array_unique($sources);
