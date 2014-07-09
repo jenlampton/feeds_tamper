@@ -373,7 +373,7 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
     '#type' => 'fieldset',
     '#tree' => TRUE,
   );
-  $form['plugin']['settings'] += $plugin['form']($importer, $source, array());
+  $form['plugin']['settings'] += $plugin['form']($importer, $source, array(), $form_state);
 
   $form['add'] = array(
     '#type' => 'submit',
@@ -456,7 +456,7 @@ function feeds_tamper_ui_edit_plugin_form($form, &$form_state, $instance) {
     '#type' => 'fieldset',
     '#tree' => TRUE,
   );
-  $form['settings'] += $plugin['form']($importer, $instance->source, $instance->settings);
+  $form['settings'] += $plugin['form']($importer, $instance->source, $instance->settings, $form_state);
 
   $form['save'] = array(
     '#type' => 'submit',
