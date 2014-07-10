@@ -143,9 +143,14 @@ function feeds_tamper_efq_finder_callback($result, $item_key, $element_key, &$fi
   $query->fieldCondition($settings['field'], $settings['column'], $field, '=');
   $query->range(0, 1);
 
-  $result = $query->execute();
+  $query_result = $query->execute();
 
-  if (isset($result[$settings['entity_type']])) {
-    $field = key($result[$settings['entity_type']]);
+  if (isset($query_result[$settings['entity_type']])) {
+    $field = key($query_result[$settings['entity_type']]);
+  }
+  else {
+    // We didn't find a value, remove the item.
+    // @todo Fallback.
+    unset($result->items[$item_key][$element_key]);
   }
 }
