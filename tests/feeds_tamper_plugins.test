@@ -711,7 +711,14 @@ class FeedsTamperKeyWordFilterTestCase extends FeedsTamperUnitTestCase {
     $result->items = array();
     $result->items[] = $item;
     $this->validate($settings);
-    $this->callback($result, 0, NULL, $result->items[0][$element_key], $settings);
+    if (is_array($result->items[0][$element_key])) {
+      foreach ($result->items[0][$element_key] as $value) {
+        $this->callback($result, 0, NULL, $value, $settings);
+      }
+    }
+    else {
+      $this->callback($result, 0, NULL, $result->items[0][$element_key], $settings);
+    }
     $this->assertEqual($result->items, $output);
   }
 

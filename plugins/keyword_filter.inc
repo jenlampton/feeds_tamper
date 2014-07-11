@@ -10,7 +10,7 @@ $plugin = array(
   'callback' => 'feeds_tamper_keyword_filter_callback',
   'validate' => 'feeds_tamper_keyword_filter_validate',
   'name' => 'Keyword filter',
-  'multi' => 'direct',
+  'multi' => 'loop',
   'category' => 'Filter',
 );
 
@@ -86,17 +86,6 @@ function feeds_tamper_keyword_filter_validate(&$settings) {
 }
 
 function feeds_tamper_keyword_filter_callback($result, $item_key, $element_key, &$field, array $settings) {
-  if (!is_array($field)) {
-    _feeds_tamper_keyword_filter_callback($result, $item_key, $element_key, $field, $settings);
-  }
-  else {
-    foreach ($field as $value) {
-      _feeds_tamper_keyword_filter_callback($result, $item_key, $element_key, $value, $settings);
-    }
-  }
-}
-
-function _feeds_tamper_keyword_filter_callback($result, $item_key, $element_key, $field, array $settings) {
   if ($settings['regex']) {
     foreach ($settings['word_list'] as $word) {
       if (preg_match($word, $field) > 0) {
