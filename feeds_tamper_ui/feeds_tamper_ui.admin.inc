@@ -13,8 +13,8 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
   $mappings = $importer->processor->config['mappings'];
 
   if (!$mappings) {
-    $message = 'There are no <a href="@url">mappings</a> defined for this importer.';
-    drupal_set_message(t($message, array('@url' => url('admin/structure/feeds/' . $importer->id . '/mapping'))), 'warning');
+    $args = array('@url' => url('admin/structure/feeds/' . $importer->id . '/mapping'));
+    drupal_set_message(t('There are no <a href="@url">mappings</a> defined for this importer.', $args), 'warning');
     return $form;
   }
 
@@ -24,8 +24,8 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
 
   // Help message at the top. I have a seceret, I added the link back to the
   // mappings because it makes my life a lot easier while testing this.
-  $message = 'Configure plugins to modify Feeds data before it gets saved. Each <a href="@url">mapping</a> can be manipulated individually.';
-  $message = t($message, array('@url' => url('admin/structure/feeds/' . $importer->id . '/mapping')));
+  $args = array('@url' => url('admin/structure/feeds/' . $importer->id . '/mapping'));
+  $message = t('Configure plugins to modify Feeds data before it gets saved. Each <a href="@url">mapping</a> can be manipulated individually.', $args);
   $form['help']['#markup'] = '<div class="help"><p>' . $message . '</p></div>';
 
   // Helpful shortcut.
