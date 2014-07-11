@@ -691,6 +691,19 @@ class FeedsTamperKeyWordFilterTestCase extends FeedsTamperUnitTestCase {
       'invert' => TRUE,
     );
     $this->executeKey($item, array($item), 'title', $settings);
+
+    // Test multiple values.
+    $item = array(
+      'title' => array('This is a Title'),
+      'body' => 'hello body',
+    );
+    $settings = array(
+      'words' => 'title',
+      'word_boundaries' => TRUE,
+      'case_sensitive' => FALSE,
+      'invert' => TRUE,
+    );
+    $this->executeKey($item, array(), 'title', $settings);
   }
 
   public function executeKey($item, $output, $element_key, $settings) {
