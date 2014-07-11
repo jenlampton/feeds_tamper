@@ -57,6 +57,7 @@ function feeds_tamper_load_all_instances($disabled = FALSE, $reset = FALSE) {
  *   A plugin instance object.
  */
 function feeds_tamper_load_instance($id) {
+  $id = drupal_substr($id, 0, 127);
   ctools_include('export');
   return ctools_export_crud_load('feeds_tamper', $id);
 }
@@ -72,6 +73,8 @@ function feeds_tamper_load_instance($id) {
  *   SAVED_NEW or SAVED_UPDATED, depending on the operation performed.
  */
 function feeds_tamper_save_instance($instance) {
+  $instance->id = drupal_substr($instance->id, 0, 127);
+
   ctools_include('export');
   // It's a new instance, give it the heaviest weight.
   if (!isset($instance->weight)) {
