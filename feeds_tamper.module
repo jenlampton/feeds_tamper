@@ -46,7 +46,6 @@ function feeds_tamper_feeds_after_parse(FeedsSource $source, FeedsParserResult $
 
       // Plugins assume that everything lives in the item array.
       $result->items[$item_key][$element_key] = $parser->getSourceElement($source, $result, $element_key);
-      $is_array = is_array($result->items[$item_key][$element_key]);
 
       foreach ($instances as $instance) {
         // If the item was unset by previous plugin, jump ahead.
@@ -54,6 +53,8 @@ function feeds_tamper_feeds_after_parse(FeedsSource $source, FeedsParserResult $
           break 2;
         }
 
+        // Array-ness can change depending on what the plugin is doing.
+        $is_array = is_array($result->items[$item_key][$element_key]);
         $plugin = $plugins[$instance->plugin_id];
 
         if ($is_array && $plugin['multi'] == 'loop') {
