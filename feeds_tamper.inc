@@ -28,14 +28,17 @@ function feeds_tamper_new_instance() {
  *
  * @param bool $disabled
  *   (optional) If TRUE, load disabled plugin instances. Defaults to FALSE.
+ * @param bool $reset
+ *   (optional) If TRUE, the static cache of all objects will be flushed prior
+ *   to loading. Defaults to FALSE.
  *
  * @return array
  *   An associative array of plugin instances keyed to their id.
  */
-function feeds_tamper_load_all_instances($disabled = FALSE) {
+function feeds_tamper_load_all_instances($disabled = FALSE, $reset = FALSE) {
   $instances = array();
   ctools_include('export');
-  $configs = ctools_export_crud_load_all('feeds_tamper');
+  $configs = ctools_export_crud_load_all('feeds_tamper', $reset);
   foreach ($configs as $instance_id => $config) {
     if (!empty($config->id) && ($disabled || empty($config->disabled))) {
       $instances[$instance_id] = $config;
@@ -89,9 +92,35 @@ function feeds_tamper_save_instance($instance) {
 }
 
 /**
+ * Removes plugin instances whos source was removed.
+ *
+ * @param FeedsImporter $importer
+ *   The importer to rectify against.
+ */
+function feeds_tamper_rectify_instances(FeedsImporter $importer) {
+  ctools_include('export');
+  $instances = ctools_export_load_object('feeds_tamper', 'conditions', array('importer' => $importer->id));
+  $sources = feeds_tamper_get_unique_source_list($importer, FALSE);
+
+  foreach ($instances as $instance) {
+    if (in_array($instance->source, $sources)) {
+      continue;
+    }
+
+    if ($instance->export_type == EXPORT_IN_DATABASE) {
+      feeds_tamper_delete_instance($instance);
+    }
+    else {
+      $instance->disabled = TRUE;
+      feeds_tamper_save_instance($instance);
+    }
+  }
+}
+
+/**
  * Delete a single plugin instance.
  *
- * @param string|stdClass $instance
+ * @param string|object $instance
  *   A plugin instance object or the id of a plugin instance.
  */
 function feeds_tamper_delete_instance($instance) {
@@ -283,7 +312,9 @@ function feeds_tamper_access($importer, $instance = NULL) {
  *
  * The solution is to keep track in the form how many have been added.
  */
-function feeds_tamper_form_feeds_ui_mapping_form_alter(&$form, &$form_state) {
+function feeds_tamper_form_feeds_ui_mapping_form_alter(array &$form, array &$form_state) {
+  $form['#submit'][] = 'feeds_tamper_form_feeds_ui_mapping_form_submit';
+
   // Don't alter the form for parsers that use manual input.
   if ($form['source']['#type'] == 'textfield') {
     return;
@@ -318,6 +349,13 @@ function feeds_tamper_form_feeds_ui_mapping_form_alter(&$form, &$form_state) {
   else {
     $form['target']['#options']['Temporary target 1'] = 'Temporary target';
   }
+}
+
+/**
+ * Submit callback for feeds_ui_mapping_form().
+ */
+function feeds_tamper_form_feeds_ui_mapping_form_submit(array &$form, array &$form_state) {
+  feeds_tamper_rectify_instances(feeds_importer($form['#importer']));
 }
 
 /**
