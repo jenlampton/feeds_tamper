@@ -57,7 +57,7 @@ class FeedsTamperWebTestHelper extends FeedsWebTestCase {
     $plugin->importer = $importer_id;
     $plugin->source = $source;
     $plugin->plugin_id = $plugin_id;
-    if (!isset($description)) {
+    if (!strlen($description)) {
       $description = $this->randomString(255);
     }
     if (!isset($id)) {
@@ -211,15 +211,23 @@ class FeedsTamperWebTestCase extends FeedsTamperWebTestHelper {
       ),
     ));
 
+    // Test copy to.
     // The case should get converted for the title, but not the body.
-    $this->addTamperPlugin('syndication', 'title', 'copy', array('to_from' => 'to', 'source' => 'Blank source 1'));
-    $this->addTamperPlugin('syndication', 'title', 'convert_case', array('mode' => 0));
+    $copy = $this->addTamperPlugin('syndication', 'title', 'copy', array('to_from' => 'to', 'source' => 'Blank source 1'));
+    $convert_case = $this->addTamperPlugin('syndication', 'title', 'convert_case', array('mode' => 0));
 
     // Create feed node, running import automatically.
     $nid = $this->createFeedNode();
     $this->drupalGet('node/2/edit');
     $this->assertFieldByXPath("//textarea[@name='body[und][0][value]']", 'Open Atrium Translation Workflow: Two Way Translation Updates', 'The textfield widget is populated.');
     $this->assertFieldByName('title', 'OPEN ATRIUM TRANSLATION WORKFLOW: TWO WAY TRANSLATION UPDATES');
+
+    $this->disableTamperPlugin($convert_case);
+    $this->addTamperPlugin('syndication', 'Blank source 1', 'convert_case', array('mode' => 0));
+    $this->drupalPost('node/' . $nid . '/import', array(), 'Import');
+    $this->drupalGet('node/2/edit');
+    $this->assertFieldByXPath("//textarea[@name='body[und][0][value]']", 'OPEN ATRIUM TRANSLATION WORKFLOW: TWO WAY TRANSLATION UPDATES', 'The textfield widget is populated.');
+    $this->assertFieldByName('title', 'Open Atrium Translation Workflow: Two Way Translation Updates');
   }
 
 }
