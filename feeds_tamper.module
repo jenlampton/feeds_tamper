@@ -8,7 +8,7 @@
 /**
  * Load version agnostic code.
  */
-include_once('feeds_tamper.inc');
+require_once dirname(__FILE__) . '/feeds_tamper.inc';
 
 /**
  * Implements hook_feeds_after_parse().
