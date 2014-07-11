@@ -37,8 +37,6 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
     $source = $mapping['source'];
     $target = $mapping['target'];
 
-    $i = rawurlencode($source);
-
     // We will skip building the table if it has been built for a source, but we
     // need to add the target label to indicate to the user that more than one
     // field will be affected.
@@ -59,10 +57,7 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
 
     $map[$delta]['#tree'] = TRUE;
     $map[$delta]['table'] = array();
-    // "Add plugin" link. We are not using l() here so that we can double
-    // encode $source which may contain slashes.
-    $add = url('admin/structure/feeds/' . check_plain($importer->id) . '/tamper/add/' . $i);
-    $map[$delta]['#add_link'] = '<a href="' . $add . '">' . t('Add plugin') . '</a>';
+    $map[$delta]['#add_link'] = l(t('Add plugin'), 'admin/structure/feeds/' . $importer->id . '/tamper/add/' . bin2hex($source));
 
     // There are no plugins for this source. We've built all we need to.
     if (!isset($instances[$source])) {
@@ -297,10 +292,6 @@ function theme_feeds_tamper_ui_list_form($variables) {
  * Add plugin form.
  */
 function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source) {
-
-  // We double encoded $source before.
-  $source = rawurldecode($source);
-
   // Set importer and source for use in validate and submit.
   $form_state['importer'] = $importer;
   $form_state['source'] = $source;
@@ -379,6 +370,7 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
     '#type' => 'submit',
     '#value' => t('Add'),
   );
+
   return $form;
 }
 

@@ -260,7 +260,7 @@ function feeds_tamper_get_plugin($id) {
  *   underscore and shortened to 128 characters.
  */
 function feeds_tamper_make_machine($string) {
-  return drupal_substr(preg_replace('/[^a-z0-9-]/', '_', drupal_strtolower($string)), 0, 127);
+  return drupal_substr(preg_replace('/[^a-z0-9-]/u', '_', drupal_strtolower($string)), 0, 127);
 }
 
 /**
