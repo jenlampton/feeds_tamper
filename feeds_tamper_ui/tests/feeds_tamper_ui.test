@@ -138,7 +138,8 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
       'remove_flags[2]' => TRUE,
     );
     $this->drupalPost($mapping_url, $settings, 'Save');
-    $this->assertTrue(empty(feeds_tamper_load_all_instances(TRUE, TRUE)), 'Hash plugin removed with mapping');
+    $plugins = feeds_tamper_load_all_instances(TRUE, TRUE);
+    $this->assertTrue(empty($plugins), 'Hash plugin removed with mapping');
 
     // Get to a somewhat clean state.
     $this->drupalPost('node/' . $nid . '/delete-items', array(), 'Delete');
