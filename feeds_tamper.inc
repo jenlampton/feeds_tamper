@@ -124,6 +124,8 @@ function feeds_tamper_load_by_importer($importer, $disabled = FALSE) {
 
   $sources = feeds_tamper_get_unique_source_list($importer, FALSE);
 
+  $plugins = feeds_tamper_get_plugins();
+
   $instances = array();
   foreach ($t as $i) {
     // Add an empty settings array, if the plugin instance doesn't provide any settings itself.
@@ -132,7 +134,7 @@ function feeds_tamper_load_by_importer($importer, $disabled = FALSE) {
     }
     // Filter disabled and only pull plugins that actually have a corresponding
     // source since we don't delete them with a mapping.
-    if (($disabled || empty($i->disabled)) && in_array($i->source, $sources)) {
+    if (($disabled || empty($i->disabled)) && in_array($i->source, $sources) && function_exists($plugins[$i->plugin_id]['callback'])) {
       $instances[$i->source][] = $i;
     }
   }
