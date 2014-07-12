@@ -335,7 +335,7 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
     ),
     '#submit' => array('feeds_tamper_ui_add_plugin_form_submit'),
     '#value' => t('Choose'),
-    '#attributes' => array('class' => array('no-js', 'html.js')),
+    '#attributes' => array('class' => array('no-js')),
   );
   $form['plugin']['#prefix'] = '<div class="clear-fix" id="feeds-tamper-plugin">';
   $form['plugin']['#suffix'] = '</div>';
@@ -454,6 +454,9 @@ function feeds_tamper_ui_edit_plugin_form($form, &$form_state, $instance) {
     '#type' => 'submit',
     '#value' => t('Save'),
   );
+
+  $form['#attached']['css'][] = drupal_get_path('module', 'feeds_tamper_ui') . '/feeds_tamper_ui.css';
+
   return $form;
 }
 

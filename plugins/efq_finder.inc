@@ -27,6 +27,13 @@ function feeds_tamper_efq_finder_form($importer, $element_key, array $settings, 
   $entity_type = !$entity_type && !empty($settings['entity_type']) ? $settings['entity_type'] : $entity_type;
   $entity_type = !$entity_type ? key($entity_types) : $entity_type;
 
+  $form['update'] = array(
+    '#type' => 'submit',
+    '#submit' => array('feeds_tamper_ui_add_plugin_form_submit'),
+    '#value' => t('Update'),
+    '#attributes' => array('class' => array('no-js')),
+  );
+
   $form['entity_type'] = array(
     '#type' => 'select',
     '#title' => t('Entity type'),
@@ -67,6 +74,11 @@ function feeds_tamper_efq_finder_form($importer, $element_key, array $settings, 
   );
 
   $fields = array();
+  $entity_info = entity_get_info($entity_type);
+  foreach ($entity_info['schema_fields_sql']['base table'] as $base_field) {
+    $fields[$base_field] = $base_field;
+  }
+
   foreach (field_info_instances($entity_type, $bundle) as $key => $info) {
     $fields[$key] = check_plain($info['label']);
   }
@@ -90,7 +102,7 @@ function feeds_tamper_efq_finder_form($importer, $element_key, array $settings, 
   );
 
   // If a bundle doesn't have any fields, then there won't be any columns.
-  if (!$field) {
+  if (in_array($field, $entity_info['schema_fields_sql']['base table'])) {
     return $form;
   }
 
@@ -112,20 +124,14 @@ function feeds_tamper_efq_finder_form($importer, $element_key, array $settings, 
     '#title' => t('Column'),
     '#options' => $columns,
     '#default_value' => $column,
-    '#ajax' => array(
-      'callback' => 'feeds_tamper_efq_finder_ajax',
-      'wrapper' => 'feeds-tamper-efq-finder-wrapper',
-    ),
   );
 
   return $form;
 }
 
 function feeds_tamper_efq_finder_validate(array &$settings) {
-  // Ensure we can do a full entity query.
-  if (empty($settings['column'])) {
-    form_set_error('', t("This bundle doesn't have any fields."));
-  }
+  $entity_info = entity_get_info($settings['entity_type']);
+  $settings['property'] = in_array($settings['field'], $entity_info['schema_fields_sql']['base table']);
 }
 
 function feeds_tamper_efq_finder_ajax(array $form, array &$form_state) {
@@ -140,12 +146,17 @@ function feeds_tamper_efq_finder_callback($result, $item_key, $element_key, &$fi
 
   // @todo: Implement choice of behavior when multiple entities are found.
   // Currently we only use the first.
-  $query->fieldCondition($settings['field'], $settings['column'], $field, '=');
+  if ($settings['property']) {
+    $query->propertyCondition($settings['field'], $field);
+  }
+  else {
+    $query->fieldCondition($settings['field'], $settings['column'], $field);
+  }
   $query->range(0, 1);
 
   $query_result = $query->execute();
 
-  if (isset($query_result[$settings['entity_type']])) {
+  if (!empty($query_result[$settings['entity_type']])) {
     $field = key($query_result[$settings['entity_type']]);
   }
   else {
