@@ -20,7 +20,7 @@ function feeds_tamper_keyword_filter_form($importer, $element_key, $settings) {
     '#type' => 'textarea',
     '#title' => t('Words or phrases to filter on'),
     '#default_value' => isset($settings['words']) ? $settings['words'] : '',
-    '#description' => t('A list of words/phrases that need to appear in the text.'),
+    '#description' => t('A list of words/phrases that need to appear in the text. Enter one value per line.'),
   );
   $form['word_boundaries'] = array(
     '#type' => 'checkbox',
