@@ -38,6 +38,12 @@ function feeds_tamper_feeds_after_parse(FeedsSource $source, FeedsParserResult $
     $result->items[$item_key] += $sources;
 
     foreach ($importer_instances as $element_key => $instances) {
+      // Break if the previous element's plugins removed the item, otherwise the
+      // value will be re-populated.
+      if (!isset($result->items[$item_key])) {
+        break;
+      }
+
       if ($is_csv) {
         $element_key = drupal_strtolower($element_key);
       }
