@@ -299,6 +299,10 @@ class FeedsTamperDefaultValueTestCase extends FeedsTamperUnitTestCase {
   public function test() {
     $this->execute('asdfasdf', 'HELLO', array('default_value' => 'HELLO'));
     $this->execute(array('asdfasdf'), 'HELLO', array('default_value' => 'HELLO'));
+
+    // Test default value.
+    $this->execute(array(), 'HELLO', array('default_value' => 'HELLO', 'only_if_empty' => TRUE));
+    $this->execute(array(1), array(1), array('default_value' => 'HELLO', 'only_if_empty' => TRUE));
   }
 
 }
