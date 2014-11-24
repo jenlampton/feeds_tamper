@@ -115,12 +115,17 @@ function feeds_tamper_permission() {
       'description' => t('Create, edit and delete plugins for any importer.'),
     ),
   );
-  foreach (feeds_importer_load_all() as $importer) {
-    $name = array('%name' => $importer->config['name']);
-    $perms['tamper ' . $importer->id] = array(
-      'title' => t('Tamper %name feeds', $name),
-      'description' => t('Create, edit and delete plugins for %name feeds.', $name),
-    );
+
+  // For whatever reason, this gets called withtout the Feeds module being
+  // loaded in certain odd circumstances.
+  if (function_exists('feeds_importer_load_all')) {
+    foreach (feeds_importer_load_all() as $importer) {
+      $name = array('%name' => $importer->config['name']);
+      $perms['tamper ' . $importer->id] = array(
+        'title' => t('Tamper %name feeds', $name),
+        'description' => t('Create, edit and delete plugins for %name feeds.', $name),
+      );
+    }
   }
   return $perms;
 }
