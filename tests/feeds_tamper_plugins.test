@@ -1045,6 +1045,7 @@ class FeedsTamperTruncateTextTestCase extends FeedsTamperUnitTestCase {
     $this->execute('Hello, how are you today?', 'Hello', array('num_char' => 5, 'ellipses' => FALSE));
     $this->execute('Hello, how are you today?', 'He...', array('num_char' => 5, 'ellipses' => TRUE));
     $this->execute('Hello', 'Hello', array('num_char' => 5, 'ellipses' => TRUE));
+    $this->execute('Hello, how are you today?', 'Hello, how', array('num_char' => 12, 'ellipses' => FALSE, 'wordsafe' => TRUE));
   }
 
 }
