@@ -176,3 +176,25 @@ function feeds_tamper_export($importer_id, $indent = '') {
     return trim(implode("\n", $output));
   }
 }
+
+/**
+ * Implements hook_features_pipe_COMPONENT_alter().
+ */
+function feeds_tamper_features_pipe_feeds_importer_alter(&$pipe, $data, $export) {
+  // Automatically add tamper plugins when a Feed importer is selected in
+  // Features.
+  foreach ($data as $importer_id) {
+    // Find tamper plugins for this importer.
+    $tamper_plugins = feeds_tamper_load_by_importer($importer_id, TRUE);
+
+    if (!$tamper_plugins) {
+      continue;
+    }
+
+    foreach ($tamper_plugins as $source_plugins) {
+      foreach ($source_plugins as $plugin) {
+        $pipe['feeds_tamper'][] = $plugin->id;
+      }
+    }
+  }
+}
