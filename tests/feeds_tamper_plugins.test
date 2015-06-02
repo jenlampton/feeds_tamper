@@ -748,13 +748,35 @@ class FeedsTamperMathTestCase extends FeedsTamperUnitTestCase {
       'operation' => 'addition',
       'value' => '2',
     );
+
     $this->execute(2, 4, $settings);
+
+    // Test TRUE, FALSE, and NULL.
+    $this->execute(TRUE, 3, $settings);
+    $this->execute(FALSE, 2, $settings);
+    $this->execute(NULL, 2, $settings);
+
     $settings['operation'] = 'subtraction';
     $this->execute(2, 0, $settings);
+
     $settings['operation'] = 'multiplication';
     $this->execute(2, 4, $settings);
+
     $settings['operation'] = 'division';
     $this->execute(2, 1, $settings);
+
+    // Test flip.
+    $settings['flip'] = TRUE;
+    $settings['value'] = 3;
+
+    $settings['operation'] = 'division';
+    $this->execute(2, 3 / 2, $settings);
+
+    $settings['operation'] = 'subtraction';
+    $this->execute(2, 1, $settings);
+
+    // Test invalid value.
+    $this->execute('boo', 'boo', $settings);
   }
 
 }
