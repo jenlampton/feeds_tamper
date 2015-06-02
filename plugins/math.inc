@@ -81,8 +81,8 @@ function feeds_tamper_math_callback($result, $item_key, $element_key, &$field, $
   if (!is_numeric($field)) {
 
     if (!empty($settings['log'])) {
-      $source->log('feeds_tamper:math', 'Math plugin failed because @key was not numeric.', array('@key' => $element_key));
-      drupal_set_message(t('Math plugin failed because @key was not numeric.', array('@key' => $element_key)));
+      $source->log('feeds_tamper:math', 'Math plugin failed because @key was not numeric. Value: @field', array('@key' => $element_key, '@field' => $field));
+      drupal_set_message(t('Math plugin failed because @key was not numeric. Value: @field', array('@key' => $element_key, '@field' => $field)));
     }
 
     return;
