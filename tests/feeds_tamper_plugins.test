@@ -423,16 +423,26 @@ class FeedsTamperFindReplaceREGEXTestCase extends FeedsTamperUnitTestCase {
   }
 
   public function test() {
-    $settings = array(
-      'find' => '/cat/',
-      'replace' => 'dog',
-      'limit' => '',
-    );
+    $settings = array('find' => '/cat/', 'replace' => 'dog', 'limit' => '');
     $this->execute('The cat went to the park.', 'The dog went to the park.', $settings);
+
     $settings['find'] = '/cat/i';
     $this->execute('The Cat went to the park.', 'The dog went to the park.', $settings);
+
     $settings['find'] = '/cat\b/i';
     $this->execute('The Catwent to the park.', 'The Catwent to the park.', $settings);
+
+    $settings['find'] = '/cat\n/';
+    $this->execute("The cat\n went to the park.", 'The dog went to the park.', $settings);
+
+    $settings['find'] = '/cat\s/';
+    $this->execute("The cat\n went to the park.", 'The dog went to the park.', $settings);
+
+    $settings['find'] = '/cat\r\n/';
+    $this->execute("The cat\r\n went to the park.", 'The dog went to the park.', $settings);
+
+    $settings['find'] = '/cat\t/';
+    $this->execute("The cat\t went to the park.", 'The dog went to the park.', $settings);
   }
 
 }
