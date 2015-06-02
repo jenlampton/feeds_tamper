@@ -584,7 +584,6 @@ class FeedsTamperKeyWordFilterTestCase extends FeedsTamperUnitTestCase {
       'words' => 'booya',
       'word_boundaries' => FALSE,
       'case_sensitive' => FALSE,
-      'invert' => FALSE,
     );
     $this->executeKey($item, array(), 'title', $settings);
 
@@ -593,8 +592,8 @@ class FeedsTamperKeyWordFilterTestCase extends FeedsTamperUnitTestCase {
       'words' => 'this',
       'word_boundaries' => FALSE,
       'case_sensitive' => FALSE,
-      'invert' => FALSE,
     );
+
     $this->executeKey($item, array($item), 'title', $settings);
 
     // Test strpos(), filter.
@@ -602,8 +601,8 @@ class FeedsTamperKeyWordFilterTestCase extends FeedsTamperUnitTestCase {
       'words' => 'this',
       'word_boundaries' => FALSE,
       'case_sensitive' => TRUE,
-      'invert' => FALSE,
     );
+
     $this->executeKey($item, array(), 'title', $settings);
 
     // Test exact, filter.
@@ -611,17 +610,15 @@ class FeedsTamperKeyWordFilterTestCase extends FeedsTamperUnitTestCase {
       'words' => 'a title',
       'word_boundaries' => TRUE,
       'case_sensitive' => FALSE,
-      'invert' => FALSE,
       'exact' => TRUE,
     );
+
     $this->executeKey($item, array(), 'title', $settings);
 
     // Test exact, filter.
     $settings = array(
-      'words' => 'This is a title',
-      'word_boundaries' => TRUE,
+      'words' => 'This is a Title',
       'case_sensitive' => FALSE,
-      'invert' => FALSE,
       'exact' => TRUE,
     );
     $this->executeKey($item, array($item), 'title', $settings);
@@ -698,6 +695,7 @@ class FeedsTamperKeyWordFilterTestCase extends FeedsTamperUnitTestCase {
       'title' => 'This is atitle',
       'body' => 'hello body',
     );
+
     $settings = array(
       'words' => 'title',
       'word_boundaries' => TRUE,
@@ -705,34 +703,34 @@ class FeedsTamperKeyWordFilterTestCase extends FeedsTamperUnitTestCase {
       'invert' => TRUE,
     );
     $this->executeKey($item, array($item), 'title', $settings);
-
-    // Test multiple values.
-    $item = array(
-      'title' => array('This is a Title'),
-      'body' => 'hello body',
-    );
-    $settings = array(
-      'words' => 'title',
-      'word_boundaries' => TRUE,
-      'case_sensitive' => FALSE,
-      'invert' => TRUE,
-    );
-    $this->executeKey($item, array(), 'title', $settings);
   }
 
   public function executeKey($item, $output, $element_key, $settings) {
     $result = new stdClass();
     $result->items = array();
     $result->items[] = $item;
+
     $this->validate($settings);
-    if (is_array($result->items[0][$element_key])) {
-      foreach ($result->items[0][$element_key] as $value) {
-        $this->callback($result, 0, NULL, $value, $settings);
+
+    $this->callback($result, 0, NULL, $result->items[0][$element_key], $settings);
+    $this->assertEqual($result->items, $output);
+
+    // Test multi valued.
+    foreach ($item as $key => $value) {
+      $item[$key] = array($value);
+    }
+
+    if (!empty($output)) {
+      foreach ($output[0] as $key => $value) {
+        $output[0][$key] = array($value);
       }
     }
-    else {
-      $this->callback($result, 0, NULL, $result->items[0][$element_key], $settings);
-    }
+
+    $result = new stdClass();
+    $result->items = array();
+    $result->items[] = $item;
+
+    $this->callback($result, 0, NULL, $result->items[0][$element_key], $settings);
     $this->assertEqual($result->items, $output);
   }
 
