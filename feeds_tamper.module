@@ -27,7 +27,7 @@ function feeds_tamper_feeds_after_parse(FeedsSource $source, FeedsParserResult $
   }
 
   $parser = $source->importer->parser;
-  $is_csv = get_class($parser) == 'FeedsCSVParser';
+  $is_csv = $parser instanceof FeedsCSVParser;
 
   $sources = array_fill_keys(feeds_tamper_get_unique_source_list($source->importer), '');
 
