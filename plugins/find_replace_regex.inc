@@ -49,7 +49,9 @@ function feeds_tamper_find_replace_regex_validate(&$settings) {
   if ($test === NULL) {
     form_set_error('settings][find', 'Invalid regular expression.');
   }
+
   $settings['limit'] = trim($settings['limit']);
+
   if (empty($settings['limit'])) {
     $settings['real_limit'] = -1;
   }
