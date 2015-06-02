@@ -832,13 +832,13 @@ class FeedsTamperRequiredTestCase extends FeedsTamperUnitTestCase {
     );
   }
 
-  public function executeReq($input, $output, $source) {
+  public function executeReq(array $input, array $output, $source, $settings = array()) {
     $result = new stdClass();
     $result->items = $input;
     foreach ($result->items as $key => &$item) {
       foreach ($item as $element_key => &$i) {
         if ($source == $element_key) {
-          $this->callback($result, $key, $element_key, $i, array());
+          $this->callback($result, $key, $element_key, $i, $settings);
         }
       }
     }
@@ -853,6 +853,12 @@ class FeedsTamperRequiredTestCase extends FeedsTamperUnitTestCase {
     $output = $input;
     unset($output[1]);
     $this->executeReq($input, $output, 's3');
+
+    // Test inverted.
+    $output = $input;
+    unset($output[0], $output[2]);
+
+    $this->executeReq($input, $output, 's3', array('invert' => TRUE));
   }
 
 }
