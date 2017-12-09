@@ -5,4 +5,5 @@ dependencies[] = feeds
 files[] = tests/feeds_tamper.test
 files[] = tests/feeds_tamper_plugins.test
 files[] = tests/feeds_tamper_efq_finder.test
+files[] = tests/temporary_target.test
 core = 7.x
