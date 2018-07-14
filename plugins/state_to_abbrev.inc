@@ -88,7 +88,7 @@ function _feeds_tamper_state_to_abbrev_states_get_list() {
     'new york' => 'NY',
     'north carolina' => 'NC',
     'north dakota' => 'ND',
-    'northern mariana islands' => 'mp',
+    'northern mariana islands' => 'MP',
     'ohio' => 'OH',
     'oklahoma' => 'OK',
     'oregon' => 'OR',
