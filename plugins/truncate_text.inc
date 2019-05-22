@@ -14,6 +14,10 @@ $plugin = array(
   'category' => 'Text',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_truncate_text_form($importer, $element_key, $settings) {
   $form = array();
   $form['num_char'] = array(
@@ -37,6 +41,10 @@ function feeds_tamper_truncate_text_form($importer, $element_key, $settings) {
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_truncate_text_validate($settings) {
   $settings['num_char'] = trim($settings['num_char']);
   if (!is_int($settings['num_char']) && ($settings['num_char'] !== (string) (int) $settings['num_char'])) {
@@ -44,6 +52,10 @@ function feeds_tamper_truncate_text_validate($settings) {
   }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_truncate_text_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   if (!empty($settings['wordsafe'])) {
     $field = truncate_utf8($field, $settings['num_char'], $settings['wordsafe'], $settings['ellipses']);

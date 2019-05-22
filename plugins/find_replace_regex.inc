@@ -6,14 +6,18 @@
  */
 
 $plugin = array(
-  'form'     => 'feeds_tamper_find_replace_regex_form',
+  'form' => 'feeds_tamper_find_replace_regex_form',
   'callback' => 'feeds_tamper_find_replace_regex_callback',
   'validate' => 'feeds_tamper_find_replace_regex_validate',
-  'name'     => 'Find replace REGEX',
-  'multi'    => 'direct',
+  'name' => 'Find replace REGEX',
+  'multi' => 'direct',
   'category' => 'Text',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_find_replace_regex_form($importer, $element_key, $settings) {
   $form = array();
 
@@ -43,6 +47,10 @@ function feeds_tamper_find_replace_regex_form($importer, $element_key, $settings
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_find_replace_regex_validate(&$settings) {
   // Test the regex.
   $test = @preg_replace($settings['find'], '', 'asdfsadf');
@@ -63,6 +71,10 @@ function feeds_tamper_find_replace_regex_validate(&$settings) {
   }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_find_replace_regex_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   $field = preg_replace($settings['find'], $settings['replace'], $field, $settings['real_limit']);
 }

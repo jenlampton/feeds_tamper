@@ -12,6 +12,10 @@ $plugin = array(
   'multi' => 'direct',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_copy_form($importer, $element_key, $settings) {
   $form = $sources = array();
   $source_configs = $importer->parser->getMappingSources();
@@ -32,7 +36,10 @@ function feeds_tamper_copy_form($importer, $element_key, $settings) {
     '#title' => t('To or from'),
     '#type' => 'radios',
     '#default_value' => isset($settings['to_from']) ? $settings['to_from'] : 'to',
-    '#options' => array('to' => t('To'), 'from' => t('From')),
+    '#options' => array(
+      'to' => t('To'),
+      'from' => t('From'),
+    ),
     '#description' => t('Select whether this source value should be copied <em>to</em> another source, or <em>from</em> another source to this one.'),
   );
 
@@ -46,6 +53,10 @@ function feeds_tamper_copy_form($importer, $element_key, $settings) {
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_copy_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   switch ($settings['to_from']) {
     case 'to':

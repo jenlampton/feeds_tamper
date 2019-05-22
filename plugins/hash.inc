@@ -13,6 +13,10 @@ $plugin = array(
   'category' => 'Other',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_hash_form($importer, $element_key, $settings) {
   return array(
     'help' => array(
@@ -27,6 +31,10 @@ function feeds_tamper_hash_form($importer, $element_key, $settings) {
   );
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_hash_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   if ($settings['override'] || !trim($field)) {
     $field = md5(serialize($result->items[$item_key]));

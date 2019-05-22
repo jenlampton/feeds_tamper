@@ -13,6 +13,10 @@ $plugin = array(
   'category' => 'Text',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_trim_form($importer, $element_key, $settings) {
   $form = array();
   $form['mask'] = array(
@@ -25,11 +29,19 @@ function feeds_tamper_trim_form($importer, $element_key, $settings) {
     '#type' => 'radios',
     '#title' => t('Side'),
     '#default_value' => isset($settings['side']) ? $settings['side'] : 'trim',
-    '#options' => array('trim' => t('Both'), 'ltrim' => t('Left'), 'rtrim' => t('Right')),
+    '#options' => array(
+      'trim' => t('Both'),
+      'ltrim' => t('Left'),
+      'rtrim' => t('Right'),
+    ),
   );
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_trim_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   if (!empty($settings['mask'])) {
     $field = $settings['side']($field, $settings['mask']);

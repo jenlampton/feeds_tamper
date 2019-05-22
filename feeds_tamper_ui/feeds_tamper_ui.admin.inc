@@ -6,15 +6,15 @@
  * UI.
  */
 
- /**
-  * List of plugins for current importer.
-  */
+/**
+ * List of plugins for current importer.
+ */
 function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
   $mappings = $importer->processor->config['mappings'];
 
   if (!$mappings) {
     $args = array('@url' => url('admin/structure/feeds/' . $importer->id . '/mapping'));
-    drupal_set_message(t('There are no <a href="@url">mappings</a> defined for this importer.', $args), 'warning');
+    backdrop_set_message(t('There are no <a href="@url">mappings</a> defined for this importer.', $args), 'warning');
     return $form;
   }
 
@@ -171,7 +171,7 @@ function feeds_tamper_ui_list_form_submit($form, &$form_state) {
       feeds_tamper_save_instance($instance);
     }
   }
-  drupal_set_message(t('Your changes have been saved.'));
+  backdrop_set_message(t('Your changes have been saved.'));
 }
 
 /**
@@ -212,7 +212,10 @@ function theme_feeds_tamper_ui_list_form($variables) {
       $header = $header_empty;
       $help_text = t('No plugins defined.');
       $table_rows = array(
-        'data' => array(array('data' => $help_text, 'colspan' => 5)),
+        'data' => array(array(
+            'data' => $help_text,
+            'colspan' => 5,
+          )),
       );
     }
     else {
@@ -225,7 +228,7 @@ function theme_feeds_tamper_ui_list_form($variables) {
           // Add description column.
           $this_row[] = $map[$i]['table'][$id]['#description'];
           // Add weight column, it will be hidden if javascript is enabled.
-          $this_row[] = drupal_render($map[$i]['table'][$id]['weight']);
+          $this_row[] = backdrop_render($map[$i]['table'][$id]['weight']);
           // The name of the plugin, as defined in a PLUGIN.inc.
           $this_row[] = $map[$i]['table'][$id]['#name'];
           // One of Normal, Default, Overridden.
@@ -233,9 +236,12 @@ function theme_feeds_tamper_ui_list_form($variables) {
           // Operations to perform on a plugin instance.
           $this_row[] = $map[$i]['table'][$id]['#edit'];
           // Enabled checkbox.
-          $this_row[] = drupal_render($map[$i]['table'][$id]['enabled']);
+          $this_row[] = backdrop_render($map[$i]['table'][$id]['enabled']);
           // Add draggable class for sortable table.
-          $table_rows[] = array('data' => $this_row, 'class' => array('draggable'));
+          $table_rows[] = array(
+            'data' => $this_row,
+            'class' => array('draggable'),
+          );
         }
         else {
           // Assemble disabled plugin rows.
@@ -243,7 +249,7 @@ function theme_feeds_tamper_ui_list_form($variables) {
           // Add description column.
           $this_row[] = $map[$i]['table'][$id]['#description'];
           // Add weight column, it will be hidden if javascript is enabled.
-          $this_row[] = drupal_render($map[$i]['table'][$id]['weight']);
+          $this_row[] = backdrop_render($map[$i]['table'][$id]['weight']);
           // The name of the plugin, as defined in a PLUGIN.inc.
           $this_row[] = $map[$i]['table'][$id]['#name'];
           // One of Normal, Default, Overridden.
@@ -252,13 +258,16 @@ function theme_feeds_tamper_ui_list_form($variables) {
           // it just text.
           $this_row[] = strip_tags($map[$i]['table'][$id]['#edit']);
           // Enabled checkbox.
-          $this_row[] = drupal_render($map[$i]['table'][$id]['enabled']);
+          $this_row[] = backdrop_render($map[$i]['table'][$id]['enabled']);
           // Add disabled class to differentiate.
-          $disabled_rows[] = array('data' => $this_row, 'class' => array('disabled'));
+          $disabled_rows[] = array(
+            'data' => $this_row,
+            'class' => array('disabled'),
+          );
         }
       }
       // Only add tabledrag if there were plugins for that source.
-      drupal_add_tabledrag($table_id, 'order', 'sibling', 'weight');
+      backdrop_add_tabledrag($table_id, 'order', 'sibling', 'weight');
     }
     // Combine enabled and disabled rows.
     $table_rows = array_merge($table_rows, $disabled_rows);
@@ -267,7 +276,10 @@ function theme_feeds_tamper_ui_list_form($variables) {
     $add = '<ul class="feeds-tamper-add action-links"><li>' . $map[$i]['#add_link'] . '</li></ul>';
     // "Add plugin" link is the last row.
     $table_rows[] = array(
-      'data' => array(array('data' => $add, 'colspan' => 7)),
+      'data' => array(array(
+          'data' => $add,
+          'colspan' => 7,
+        )),
       'class' => array('feeds-tamper-add'),
     );
     // Table caption, in the form of source_name -> target_name1, target_name2
@@ -280,12 +292,12 @@ function theme_feeds_tamper_ui_list_form($variables) {
       '#sticky' => FALSE,
     );
     $table['#attributes']['id'] = $table_id;
-    $table['#attached']['css'][] = drupal_get_path('module', 'feeds_tamper_ui') . '/feeds_tamper_ui.css';
+    $table['#attached']['css'][] = backdrop_get_path('module', 'feeds_tamper_ui') . '/feeds_tamper_ui.css';
     $map[$i]['table'] = $table;
     $map[$i]['#prefix'] = '<div class="feeds-tamper-table">';
     $map[$i]['#suffix'] = '</div>';
   }
-  return drupal_render_children($form);
+  return backdrop_render_children($form);
 }
 
 /**
@@ -312,7 +324,7 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
     $machine_name = $form_state['values']['plugin_id'];
   }
   // Add css.
-  $form['#attached']['css'][] = drupal_get_path('module', 'feeds_tamper_ui') . '/feeds_tamper_ui.css';
+  $form['#attached']['css'][] = backdrop_get_path('module', 'feeds_tamper_ui') . '/feeds_tamper_ui.css';
 
   $plugin = feeds_tamper_get_plugin($machine_name);
 
@@ -331,7 +343,7 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
   $form['update'] = array(
     '#type' => 'submit',
     '#limit_validation_errors' => array(
-      array('plugin_id')
+      array('plugin_id'),
     ),
     '#submit' => array('feeds_tamper_ui_add_plugin_form_submit'),
     '#value' => t('Choose'),
@@ -418,7 +430,7 @@ function feeds_tamper_ui_add_plugin_form_submit($form, &$form_state) {
     feeds_tamper_save_instance($obj);
     $form_state['redirect'] = 'admin/structure/feeds/' . $obj->importer . '/tamper';
     $source_name = feeds_tamper_ui_source_name($obj);
-    drupal_set_message(t('Plugin %description was successfully added to %source.', array('%description' => $obj->description, '%source' => $source_name)));
+    backdrop_set_message(t('Plugin %description was successfully added to %source.', array('%description' => $obj->description, '%source' => $source_name)));
     return;
   }
   $form_state['rebuild'] = TRUE;
@@ -455,7 +467,7 @@ function feeds_tamper_ui_edit_plugin_form($form, &$form_state, $instance) {
     '#value' => t('Save'),
   );
 
-  $form['#attached']['css'][] = drupal_get_path('module', 'feeds_tamper_ui') . '/feeds_tamper_ui.css';
+  $form['#attached']['css'][] = backdrop_get_path('module', 'feeds_tamper_ui') . '/feeds_tamper_ui.css';
 
   return $form;
 }
@@ -482,7 +494,7 @@ function feeds_tamper_ui_edit_plugin_form_submit($form, &$form_state) {
   $instance->description = $form_state['values']['description'];
 
   feeds_tamper_save_instance($instance);
-  drupal_set_message(t('The plugin %plugin has been updated.', array('%plugin' => $instance->description)));
+  backdrop_set_message(t('The plugin %plugin has been updated.', array('%plugin' => $instance->description)));
   $form_state['redirect'] = 'admin/structure/feeds/' . $instance->importer . '/tamper';
 }
 
@@ -491,7 +503,7 @@ function feeds_tamper_ui_edit_plugin_form_submit($form, &$form_state) {
  */
 function feeds_tamper_ui_delete_form($form, &$form_state, $instance) {
   if (!$instance) {
-    drupal_set_message(t('Invalid plugin id.'), 'error');
+    backdrop_set_message(t('Invalid plugin id.'), 'error');
     return;
   }
 
@@ -524,10 +536,10 @@ function feeds_tamper_ui_delete_form_submit($form, &$form_state) {
 
   switch ($instance->export_type) {
     case EXPORT_IN_DATABASE:
-      drupal_set_message(t('The plugin %plugin has been deleted from %source.', array('%plugin' => $instance->description, '%source' => $source_name)));
+      backdrop_set_message(t('The plugin %plugin has been deleted from %source.', array('%plugin' => $instance->description, '%source' => $source_name)));
       break;
     case EXPORT_IN_CODE | EXPORT_IN_DATABASE:
-      drupal_set_message(t('The plugin %plugin has been reverted.', array('%plugin' => $instance->description)));
+      backdrop_set_message(t('The plugin %plugin has been reverted.', array('%plugin' => $instance->description)));
       break;
   }
   $form_state['redirect'] = 'admin/structure/feeds/' . $instance->importer . '/tamper';

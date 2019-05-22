@@ -14,6 +14,10 @@ $plugin = array(
   'multi' => 'loop',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_math_form($importer, $element_key, $settings) {
   $form = array();
 
@@ -23,10 +27,10 @@ function feeds_tamper_math_form($importer, $element_key, $settings) {
     '#description' => t('The operation to apply to the imported value.'),
     '#required' => TRUE,
     '#options' => array(
-      'addition' =>  '+',
-      'subtraction' =>  '-',
-      'multiplication' =>  '*',
-      'division' =>  '/',
+      'addition' => '+',
+      'subtraction' => '-',
+      'multiplication' => '*',
+      'division' => '/',
     ),
     '#default_value' => isset($settings['operation']) ? $settings['operation'] : '',
   );
@@ -64,6 +68,10 @@ function feeds_tamper_math_form($importer, $element_key, $settings) {
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_math_validate(&$settings) {
   if (!is_numeric($settings['value'])) {
     form_set_error('settings][value', t('The value must be numeric.'));
@@ -73,6 +81,10 @@ function feeds_tamper_math_validate(&$settings) {
   }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_math_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   if ($field === TRUE || $field === FALSE || $field === NULL) {
     $field = (int) $field;
@@ -82,7 +94,7 @@ function feeds_tamper_math_callback($result, $item_key, $element_key, &$field, $
 
     if (!empty($settings['log'])) {
       $source->log('feeds_tamper:math', 'Math plugin failed because @key was not numeric. Value: @field', array('@key' => $element_key, '@field' => $field));
-      drupal_set_message(t('Math plugin failed because @key was not numeric. Value: @field', array('@key' => $element_key, '@field' => $field)));
+      backdrop_set_message(t('Math plugin failed because @key was not numeric. Value: @field', array('@key' => $element_key, '@field' => $field)));
     }
 
     return;
@@ -100,7 +112,7 @@ function feeds_tamper_math_callback($result, $item_key, $element_key, &$field, $
         if (empty($field)) {
           if (!empty($settings['log'])) {
             $source->log('feeds_tamper:math', 'Math plugin failed because @key was zero.', array('@key' => $element_key));
-            drupal_set_message(t('Math plugin failed because @key was zero.', array('@key' => $element_key)));
+            backdrop_set_message(t('Math plugin failed because @key was zero.', array('@key' => $element_key)));
           }
 
           return;

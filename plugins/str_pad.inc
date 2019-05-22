@@ -14,6 +14,10 @@ $plugin = array(
   'category' => 'Text',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_str_pad_form($importer, $element_key, $settings) {
   $form = array();
   $form['pad_length'] = array(
@@ -31,12 +35,20 @@ function feeds_tamper_str_pad_form($importer, $element_key, $settings) {
   $form['pad_type'] = array(
     '#type' => 'radios',
     '#title' => t('Pad type'),
-    '#options' => array(STR_PAD_RIGHT => t('Right'), STR_PAD_LEFT => t('Left'), STR_PAD_BOTH => t('Both')),
+    '#options' => array(
+      STR_PAD_RIGHT => t('Right'),
+      STR_PAD_LEFT => t('Left'),
+      STR_PAD_BOTH => t('Both'),
+    ),
     '#default_value' => isset($settings['pad_type']) ? $settings['pad_type'] : STR_PAD_RIGHT,
   );
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_str_pad_validate(&$settings) {
   $settings['pad_length'] = trim($settings['pad_length']);
 
@@ -54,6 +66,10 @@ function feeds_tamper_str_pad_validate(&$settings) {
   }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_str_pad_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   $field = str_pad($field, $settings['pad_length'], $settings['real_pad_string'], $settings['pad_type']);
 }

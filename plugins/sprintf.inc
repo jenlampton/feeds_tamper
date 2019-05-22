@@ -13,6 +13,10 @@ $plugin = array(
   'category' => 'Text',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_sprintf_form($importer, $element_key, $settings) {
   $form = array();
   $form['format'] = array(
@@ -27,6 +31,10 @@ function feeds_tamper_sprintf_form($importer, $element_key, $settings) {
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_sprintf_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   $field = sprintf($settings['format'], $field);
 }

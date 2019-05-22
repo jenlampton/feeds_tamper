@@ -14,6 +14,10 @@ $plugin = array(
   'category' => 'Number',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_number_format_form($importer, $element_key, $settings) {
   $form = array();
   $form['decimals'] = array(
@@ -37,6 +41,10 @@ function feeds_tamper_number_format_form($importer, $element_key, $settings) {
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_number_format_validate(&$settings) {
   $settings['decimals'] = trim($settings['decimals']);
 
@@ -48,6 +56,10 @@ function feeds_tamper_number_format_validate(&$settings) {
   }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_number_format_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   if (is_numeric($field)) {
     $field = number_format($field, $settings['decimals'], $settings['dec_point'], $settings['thousands_sep']);

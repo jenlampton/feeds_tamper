@@ -14,6 +14,10 @@ $plugin = array(
   'default description' => 'Full state name to abbrev',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_state_to_abbrev_form($importer, $element_key, $settings) {
   $form = array();
   $form['help'] = array(
@@ -23,6 +27,10 @@ function feeds_tamper_state_to_abbrev_form($importer, $element_key, $settings) {
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_state_to_abbrev_callback($result, $item_key, $element_key, &$field, $settings) {
   static $states;
 
@@ -36,7 +44,7 @@ function feeds_tamper_state_to_abbrev_callback($result, $item_key, $element_key,
   }
 
   // Trim whitespace, set to lowercase.
-  $state = drupal_strtolower(trim($field));
+  $state = backdrop_strtolower(trim($field));
 
   if (isset($states[$state])) {
     $field = $states[$state];

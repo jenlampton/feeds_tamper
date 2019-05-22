@@ -15,6 +15,10 @@ $plugin = array(
   'category' => 'List',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_implode_form($importer, $element_key, $settings) {
   $form = array();
   $form['glue'] = array(
@@ -27,10 +31,18 @@ function feeds_tamper_implode_form($importer, $element_key, $settings) {
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_implode_validate(&$settings) {
   $settings['real_glue'] = str_replace(array('%s', '%t', '%n'), array(' ', "\t", "\n"), $settings['glue']);
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_implode_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   $field = implode($settings['real_glue'], $field);
 }

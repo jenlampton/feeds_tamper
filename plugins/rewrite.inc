@@ -6,13 +6,17 @@
  */
 
 $plugin = array(
-  'form'     => 'feeds_tamper_rewrite_form',
+  'form' => 'feeds_tamper_rewrite_form',
   'callback' => 'feeds_tamper_rewrite_callback',
-  'name'     => 'Rewrite',
-  'multi'    => 'skip',
+  'name' => 'Rewrite',
+  'multi' => 'skip',
   'category' => 'Other',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_rewrite_form($importer, $element_key, $settings) {
   $form = array();
   $replace = array();
@@ -36,6 +40,10 @@ function feeds_tamper_rewrite_form($importer, $element_key, $settings) {
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_rewrite_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   $trans = array();
   $item = $result->items[$item_key];

@@ -14,6 +14,10 @@ $plugin = array(
   'category' => 'Text',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_find_replace_form($importer, $element_key, $settings) {
   $form = array();
   $form['find'] = array(
@@ -47,6 +51,10 @@ function feeds_tamper_find_replace_form($importer, $element_key, $settings) {
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_find_replace_validate(&$settings) {
   $settings['regex'] = FALSE;
 
@@ -76,6 +84,10 @@ function feeds_tamper_find_replace_validate(&$settings) {
   }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_find_replace_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   if ($settings['regex']) {
     $field = preg_replace($settings['regex_find'], $settings['replace'], $field);

@@ -13,6 +13,10 @@ $plugin = array(
   'category' => 'Date/time',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_strtotime_form($importer, $element_key, $settings) {
   $form = array();
   $form['html'] = array(
@@ -21,6 +25,10 @@ function feeds_tamper_strtotime_form($importer, $element_key, $settings) {
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_strtotime_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   $field = strtotime($field);
 }

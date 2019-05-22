@@ -12,8 +12,12 @@ $plugin = array(
   'multi' => 'loop',
   'name' => t('URL Encode'),
   'category' => t('Text'),
- );
+);
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_urlencode_form($importer, $element_key, array $settings, array &$form_state) {
   $form = array();
   $form['help']['#markup'] = t('Run values through the <a href="!url">urlencode()</a> function.', array('!url' => 'http://us3.php.net/urlencode'));
@@ -29,6 +33,10 @@ function feeds_tamper_urlencode_form($importer, $element_key, array $settings, a
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_urlencode_validate(array &$settings) {
   if ($settings['method'] === 'raw') {
     $settings['function'] = 'rawurlencode';
@@ -38,6 +46,10 @@ function feeds_tamper_urlencode_validate(array &$settings) {
   }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_urlencode_callback($source, $item_key, $element_key, &$field, array $settings) {
   $field = $settings['function']($field);
 }

@@ -13,6 +13,10 @@ $plugin = array(
   'category' => 'List',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_array_filter_form($importer, $element_key, $settings) {
   $form = array();
   $form['help'] = array(
@@ -21,6 +25,10 @@ function feeds_tamper_array_filter_form($importer, $element_key, $settings) {
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_array_filter_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   if (is_array($field)) {
     $field = array_values(array_filter($field));

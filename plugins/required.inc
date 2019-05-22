@@ -13,6 +13,10 @@ $plugin = array(
   'category' => 'Filter',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_required_form($importer, $element_key, $settings) {
   $form = array();
 
@@ -37,6 +41,10 @@ function feeds_tamper_required_form($importer, $element_key, $settings) {
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_required_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   if (!empty($settings['invert'])) {
     if (!empty($field)) {
@@ -58,8 +66,11 @@ function feeds_tamper_required_callback($result, $item_key, $element_key, &$fiel
 }
 
 function _feeds_tamper_required_log($source, $item_key, $element_key) {
-  $args = array('@key' => $element_key, '@num' => $item_key);
+  $args = array(
+    '@key' => $element_key,
+    '@num' => $item_key,
+  );
 
   $source->log('feeds_tamper:required', 'Feed item number @num skipped because @key was empty.', $args);
-  drupal_set_message(t('Feed item number @num skipped because @key was empty.', $args));
+  backdrop_set_message(t('Feed item number @num skipped because @key was empty.', $args));
 }

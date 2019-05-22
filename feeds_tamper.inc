@@ -57,7 +57,7 @@ function feeds_tamper_load_all_instances($disabled = FALSE, $reset = FALSE) {
  *   A plugin instance object.
  */
 function feeds_tamper_load_instance($id) {
-  $id = drupal_substr($id, 0, 127);
+  $id = backdrop_substr($id, 0, 127);
   ctools_include('export');
   return ctools_export_crud_load('feeds_tamper', $id);
 }
@@ -73,12 +73,15 @@ function feeds_tamper_load_instance($id) {
  *   SAVED_NEW or SAVED_UPDATED, depending on the operation performed.
  */
 function feeds_tamper_save_instance($instance) {
-  $instance->id = drupal_substr($instance->id, 0, 127);
+  $instance->id = backdrop_substr($instance->id, 0, 127);
 
   ctools_include('export');
   // It's a new instance, give it the heaviest weight.
   if (!isset($instance->weight)) {
-    $conditions = array('importer' => $instance->importer, 'source' => $instance->source);
+    $conditions = array(
+      'importer' => $instance->importer,
+      'source' => $instance->source,
+    );
     $all = ctools_export_load_object('feeds_tamper', 'conditions', $conditions);
     $weight = 0;
     foreach ($all as $i) {
@@ -88,9 +91,9 @@ function feeds_tamper_save_instance($instance) {
     }
     $instance->weight = $weight;
   }
-  $disabled = variable_get('default_feeds_tamper', array());
+  $disabled = config_get('feeds_tamper.settings', 'default_feeds_tamper');
   $disabled[$instance->id] = !empty($instance->disabled) ? TRUE : FALSE;
-  variable_set('default_feeds_tamper', $disabled);
+  config_set('feeds_tamper.settings', 'default_feeds_tamper', $disabled);
   return ctools_export_crud_save('feeds_tamper', $instance);
 }
 
@@ -200,7 +203,7 @@ function feeds_tamper_get_unique_source_list($importer, $lower = TRUE) {
 
   foreach ($importer->processor->getMappings() as $mapping) {
     if ($is_csv) {
-      $sources[] = drupal_strtolower($mapping['source']);
+      $sources[] = backdrop_strtolower($mapping['source']);
     }
     else {
       $sources[] = $mapping['source'];
@@ -263,7 +266,7 @@ function feeds_tamper_get_plugin($id) {
  *   underscore and shortened to 128 characters.
  */
 function feeds_tamper_make_machine($string) {
-  return drupal_substr(preg_replace('/[^a-z0-9-]/u', '_', drupal_strtolower($string)), 0, 127);
+  return backdrop_substr(preg_replace('/[^a-z0-9-]/u', '_', backdrop_strtolower($string)), 0, 127);
 }
 
 /**

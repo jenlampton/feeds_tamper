@@ -14,6 +14,10 @@ $plugin = array(
   'default description' => 'Convert country to ISO code',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_country_to_code_form($importer, $element_key, $settings) {
   $form = array();
   $form['help'] = array(
@@ -22,8 +26,12 @@ function feeds_tamper_country_to_code_form($importer, $element_key, $settings) {
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_country_to_code_callback($result, $item_key, $element_key, &$field, $settings, $source) {
-  include_once DRUPAL_ROOT . '/includes/locale.inc';
+  include_once BACKDROP_ROOT . '/includes/locale.inc';
   static $countries = array();
 
   if (empty($countries)) {
@@ -38,7 +46,7 @@ function feeds_tamper_country_to_code_callback($result, $item_key, $element_key,
   }
 
   // Trim whitespace, set to lowercase.
-  $country = t(drupal_strtolower(trim($field)));
+  $country = t(backdrop_strtolower(trim($field)));
   if (isset($countries[$country])) {
     $field = $countries[$country];
   }
@@ -52,5 +60,5 @@ function feeds_tamper_country_to_code_callback($result, $item_key, $element_key,
  * Callback for array_walk().
  */
 function _feeds_tamper_country_to_code_strtolower(&$word) {
-  $word = drupal_strtolower($word);
+  $word = backdrop_strtolower($word);
 }

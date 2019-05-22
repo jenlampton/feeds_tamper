@@ -20,7 +20,7 @@ $plugin = array(
 function feeds_tamper_efq_finder_form($importer, $element_key, array $settings, array &$form_state) {
   $form = array(
     '#prefix' => '<div id="feeds-tamper-efq-finder-wrapper">',
-    '#suffix' => '</div>'
+    '#suffix' => '</div>',
   );
 
   // Get some info on entities and bundles.

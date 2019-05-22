@@ -14,6 +14,10 @@ $plugin = array(
   'category' => 'HTML',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_absolute_url_form($importer, $element_key, $settings) {
   $form = array();
   $links = htmlentities('<a href="/stuff/things"> to <a href="http://example.com/stuff/things">');
@@ -23,6 +27,10 @@ function feeds_tamper_absolute_url_form($importer, $element_key, $settings) {
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_absolute_url_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   static $dom;
 
@@ -48,9 +56,16 @@ function feeds_tamper_absolute_url_callback($result, $item_key, $element_key, &$
   libxml_disable_entity_loader($entity_loader);
 
   $urls = array();
-  $tags = array('a' => 'href', 'img' => 'src', 'iframe' => 'src',
-                'script' => 'src', 'object' => 'codebase', 'link' => 'href',
-                'applet' => 'code', 'base' => 'href');
+  $tags = array(
+    'a' => 'href',
+    'img' => 'src',
+    'iframe' => 'src',
+    'script' => 'src',
+    'object' => 'codebase',
+    'link' => 'href',
+    'applet' => 'code',
+    'base' => 'href',
+  );
   foreach ($tags as $tag => $attr) {
     foreach ($dom->getElementsByTagName($tag) as $t) {
       $value = trim($t->getAttribute($attr));

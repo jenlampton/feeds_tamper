@@ -6,13 +6,17 @@
  */
 
 $plugin = array(
-  'form'     => 'feeds_tamper_default_value_form',
+  'form' => 'feeds_tamper_default_value_form',
   'callback' => 'feeds_tamper_default_value_callback',
-  'name'     => 'Set value or default value',
-  'multi'    => 'direct',
+  'name' => 'Set value or default value',
+  'multi' => 'direct',
   'category' => 'Other',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_default_value_form($importer, $element_key, $settings) {
   $form = array();
 
@@ -33,6 +37,10 @@ function feeds_tamper_default_value_form($importer, $element_key, $settings) {
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_default_value_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   // Setting a default value.
   if (!empty($settings['only_if_empty']) && !$field) {

@@ -14,6 +14,10 @@ $plugin = array(
   'category' => 'Filter',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_keyword_filter_form($importer, $element_key, $settings) {
   $form = array();
   $form['words'] = array(
@@ -49,6 +53,10 @@ function feeds_tamper_keyword_filter_form($importer, $element_key, $settings) {
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_keyword_filter_validate(&$settings) {
   global $multibyte;
   $is_multibyte = ($multibyte == UNICODE_MULTIBYTE) ? TRUE : FALSE;
@@ -85,6 +93,10 @@ function feeds_tamper_keyword_filter_validate(&$settings) {
   }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_keyword_filter_callback($result, $item_key, $element_key, &$field, array $settings) {
   $match_func = '_feeds_tamper_keyword_filter_match_regex';
 

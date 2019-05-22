@@ -13,6 +13,10 @@ $plugin = array(
   'category' => 'HTML',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_html_entity_encode_form($importer, $element_key, $settings) {
   $form = array();
   $form['html'] = array(
@@ -21,6 +25,10 @@ function feeds_tamper_html_entity_encode_form($importer, $element_key, $settings
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_html_entity_encode_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   $field = check_plain($field);
 }

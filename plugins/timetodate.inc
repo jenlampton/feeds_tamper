@@ -14,6 +14,10 @@ $plugin = array(
   'category' => 'Date/time',
 );
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_timetodate_form($importer, $element_key, $settings) {
   $form = array();
   $form['date_format'] = array(
@@ -25,12 +29,20 @@ function feeds_tamper_timetodate_form($importer, $element_key, $settings) {
   return $form;
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_timetodate_validate(&$settings) {
   if (empty($settings['date_format'])) {
     form_set_error('settings][date_format', t('Please enter a valid date format string.'));
   }
 }
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function feeds_tamper_timetodate_callback($result, $item_key, $element_key, &$field, $settings, $source) {
   $field = date($settings['date_format'], $field);
 }
