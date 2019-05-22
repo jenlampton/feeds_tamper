@@ -11,7 +11,7 @@
  * @{
  * API functions for dealing with plugins and plugin instances.
  */
-
+ 
 /**
  * Create a new plugin instance with default values filled in.
  *
@@ -237,8 +237,9 @@ function _feeds_tamper_cmp($a, $b) {
  *   the plugin info arrays as defined in a plugin include file.
  */
 function feeds_tamper_get_plugins() {
-  ctools_include('plugins');
-  return ctools_get_plugins('feeds_tamper', 'plugins');
+  module_invoke_all('feeds_tamper_info');
+  $plugins = feeds_tamper_info();
+  return $plugins;
 }
 
 /**
@@ -251,8 +252,9 @@ function feeds_tamper_get_plugins() {
  *   A plugin object.
  */
 function feeds_tamper_get_plugin($id) {
-  ctools_include('plugins');
-  return ctools_get_plugins('feeds_tamper', 'plugins', $id);
+  module_invoke_all('feeds_tamper_info');
+  $plugins = feeds_tamper_info();
+  return (isset($plugins[$id])) ? $plugins[$id] : FALSE;
 }
 
 /**
@@ -375,22 +377,4 @@ function feeds_tamper_form_feeds_ui_mapping_form_alter(array &$form, array &$for
  */
 function feeds_tamper_form_feeds_ui_mapping_form_submit(array &$form, array &$form_state) {
   feeds_tamper_rectify_instances(feeds_importer($form['#importer']));
-}
-
-/**
- * Implements hook_ctools_plugin_api().
- */
-function feeds_tamper_ctools_plugin_api($owner, $api) {
-  if ($owner == 'feeds_tamper' && $api == 'plugins') {
-    return array('version' => 2);
-  }
-}
-
-/**
- * Implements hook_ctools_plugin_directory().
- */
-function feeds_tamper_ctools_plugin_directory($module, $plugin) {
-  if ($module == 'feeds_tamper') {
-    return 'plugins';
-  }
 }

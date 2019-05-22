@@ -11,6 +11,33 @@
 require_once dirname(__FILE__) . '/feeds_tamper.inc';
 
 /**
+  * Load plugins.
+  */
+  $path = '/' . backdrop_get_path('module', 'feeds_tamper') . '/plugins/';
+  foreach(feeds_tamper_info() as $key => $info) {
+    require_once BACKDROP_ROOT . $path . $key . '.inc';
+  }
+
+/**
+  *
+  * Implements hook_info().
+  *
+  */
+function feeds_tamper_info() {
+  $plugins = array(
+  'explode' => array(
+      'form' => 'feeds_tamper_explode_form',
+      'callback' => 'feeds_tamper_explode_callback',
+      'validate' => 'feeds_tamper_explode_validate',
+      'name' => 'Explode',
+      'multi' => 'direct',
+      'category' => 'List',
+    ),
+  );
+  return $plugins;
+}
+
+/**
  * Implements hook_feeds_after_parse().
  *
  * This is the meat of the whole deal. After every Feeds run, before going into
