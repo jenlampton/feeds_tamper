@@ -12,7 +12,7 @@ require_once dirname(__FILE__) . '/feeds_tamper.inc';
 
 /**
   *
-  * Implements hook_info().
+  * Implements hook_feeds_tamper_info().
   *
   */
 function feeds_tamper_feeds_tamper_info() {
@@ -24,12 +24,12 @@ function feeds_tamper_feeds_tamper_info() {
       'name' => 'Explode',
       'multi' => 'direct',
       'category' => 'List',
+      'filepath' => '/' . backdrop_get_path('module', 'feeds_tamper') . '/plugins/explode.inc',
     ),
   );
   // Load plugins.
-  $path = '/' . backdrop_get_path('module', 'feeds_tamper') . '/plugins/';
-  foreach($plugins as $key => $info) {
-    require_once BACKDROP_ROOT . $path . $key . '.inc';
+  foreach($plugins as $info) {
+    require_once BACKDROP_ROOT . $info['filepath'];
   }
   return $plugins;
 }
@@ -112,7 +112,7 @@ function feeds_tamper_feeds_after_parse(FeedsSource $source, FeedsParserResult $
  */
 function feeds_tamper_feeds_parser_sources_alter(&$sources, $content_type) {
   $sources['Blank source 1'] = array(
-    'description' => t("A source provided by Feeds Tamper with no value of it's own."),
+    'description' => t('A source provided by Feeds Tamper with no value of its own.'),
   );
 }
 
