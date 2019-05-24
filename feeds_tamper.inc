@@ -237,8 +237,7 @@ function _feeds_tamper_cmp($a, $b) {
  *   the plugin info arrays as defined in a plugin include file.
  */
 function feeds_tamper_get_plugins() {
-  module_invoke_all('feeds_tamper_info');
-  $plugins = feeds_tamper_info();
+  $plugins = module_invoke_all('feeds_tamper_info');
   return $plugins;
 }
 
@@ -252,8 +251,7 @@ function feeds_tamper_get_plugins() {
  *   A plugin object.
  */
 function feeds_tamper_get_plugin($id) {
-  module_invoke_all('feeds_tamper_info');
-  $plugins = feeds_tamper_info();
+  $plugins = module_invoke_all('feeds_tamper_info');
   return (isset($plugins[$id])) ? $plugins[$id] : FALSE;
 }
 

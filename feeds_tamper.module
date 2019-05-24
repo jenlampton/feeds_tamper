@@ -11,19 +11,11 @@
 require_once dirname(__FILE__) . '/feeds_tamper.inc';
 
 /**
-  * Load plugins.
-  */
-  $path = '/' . backdrop_get_path('module', 'feeds_tamper') . '/plugins/';
-  foreach(feeds_tamper_info() as $key => $info) {
-    require_once BACKDROP_ROOT . $path . $key . '.inc';
-  }
-
-/**
   *
   * Implements hook_info().
   *
   */
-function feeds_tamper_info() {
+function feeds_tamper_feeds_tamper_info() {
   $plugins = array(
   'explode' => array(
       'form' => 'feeds_tamper_explode_form',
@@ -34,6 +26,11 @@ function feeds_tamper_info() {
       'category' => 'List',
     ),
   );
+  // Load plugins.
+  $path = '/' . backdrop_get_path('module', 'feeds_tamper') . '/plugins/';
+  foreach($plugins as $key => $info) {
+    require_once BACKDROP_ROOT . $path . $key . '.inc';
+  }
   return $plugins;
 }
 
