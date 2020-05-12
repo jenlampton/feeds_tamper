@@ -19,8 +19,10 @@
  *   A new plugin instance object.
  */
 function feeds_tamper_new_instance() {
-  ctools_include('export');
-  return ctools_export_crud_new('feeds_tamper');
+  // TODO: CTOOLS export conversions
+  // https://github.com/laryn/feeds_tamper/issues/1
+  // ctools_include('export');
+  // return ctools_export_crud_new('feeds_tamper');
 }
 
 /**
@@ -37,8 +39,11 @@ function feeds_tamper_new_instance() {
  */
 function feeds_tamper_load_all_instances($disabled = FALSE, $reset = FALSE) {
   $instances = array();
-  ctools_include('export');
-  $configs = ctools_export_crud_load_all('feeds_tamper', $reset);
+  // TODO: CTOOLS export conversions
+  // https://github.com/laryn/feeds_tamper/issues/1
+  // ctools_include('export');
+  // $configs = ctools_export_crud_load_all('feeds_tamper', $reset);
+  $configs = null;
   foreach ($configs as $instance_id => $config) {
     if (!empty($config->id) && ($disabled || empty($config->disabled))) {
       $instances[$instance_id] = $config;
@@ -58,8 +63,10 @@ function feeds_tamper_load_all_instances($disabled = FALSE, $reset = FALSE) {
  */
 function feeds_tamper_load_instance($id) {
   $id = backdrop_substr($id, 0, 127);
-  ctools_include('export');
-  return ctools_export_crud_load('feeds_tamper', $id);
+  // TODO: CTOOLS export conversions
+  // https://github.com/laryn/feeds_tamper/issues/1
+  // ctools_include('export');
+  // return ctools_export_crud_load('feeds_tamper', $id);
 }
 
 /**
@@ -75,14 +82,17 @@ function feeds_tamper_load_instance($id) {
 function feeds_tamper_save_instance($instance) {
   $instance->id = backdrop_substr($instance->id, 0, 127);
 
-  ctools_include('export');
+  // TODO: CTOOLS export conversions
+  // https://github.com/laryn/feeds_tamper/issues/1
+  // ctools_include('export');
   // It's a new instance, give it the heaviest weight.
   if (!isset($instance->weight)) {
     $conditions = array(
       'importer' => $instance->importer,
       'source' => $instance->source,
     );
-    $all = ctools_export_load_object('feeds_tamper', 'conditions', $conditions);
+    // $all = ctools_export_load_object('feeds_tamper', 'conditions', $conditions);
+    $all = null;
     $weight = 0;
     foreach ($all as $i) {
       if ($i->weight >= $weight) {
@@ -94,18 +104,21 @@ function feeds_tamper_save_instance($instance) {
   $disabled = config_get('feeds_tamper.settings', 'default_feeds_tamper');
   $disabled[$instance->id] = !empty($instance->disabled) ? TRUE : FALSE;
   config_set('feeds_tamper.settings', 'default_feeds_tamper', $disabled);
-  return ctools_export_crud_save('feeds_tamper', $instance);
+  // return ctools_export_crud_save('feeds_tamper', $instance);
 }
 
 /**
- * Removes plugin instances whos source was removed.
+ * Removes plugin instances whose source was removed.
  *
  * @param FeedsImporter $importer
  *   The importer to rectify against.
  */
 function feeds_tamper_rectify_instances(FeedsImporter $importer) {
-  ctools_include('export');
-  $instances = ctools_export_load_object('feeds_tamper', 'conditions', array('importer' => $importer->id));
+  // TODO: CTOOLS export conversions
+  // https://github.com/laryn/feeds_tamper/issues/1
+  // ctools_include('export');
+  // $instances = ctools_export_load_object('feeds_tamper', 'conditions', array('importer' => $importer->id));
+  $instances = null;
   $sources = feeds_tamper_get_unique_source_list($importer, FALSE);
 
   foreach ($instances as $instance) {
@@ -134,8 +147,10 @@ function feeds_tamper_delete_instance($instance) {
   if (is_scalar($instance)) {
     $instance = feeds_tamper_load_instance($instance);
   }
-  ctools_include('export');
-  ctools_export_crud_delete('feeds_tamper', $instance);
+  // TODO: CTOOLS export conversions
+  // https://github.com/laryn/feeds_tamper/issues/1
+  // ctools_include('export');
+  // ctools_export_crud_delete('feeds_tamper', $instance);
 }
 
 /**
@@ -154,8 +169,10 @@ function feeds_tamper_load_by_importer($importer, $disabled = FALSE) {
     $importer = feeds_importer($importer);
   }
 
-  ctools_include('export');
-  $t = ctools_export_load_object('feeds_tamper', 'conditions', array('importer' => $importer->id));
+  // TODO: CTOOLS export conversions
+  // https://github.com/laryn/feeds_tamper/issues/1
+  // ctools_include('export');
+  // $t = ctools_export_load_object('feeds_tamper', 'conditions', array('importer' => $importer->id));
 
   $sources = feeds_tamper_get_unique_source_list($importer, FALSE);
 

@@ -185,15 +185,18 @@ function feeds_tamper_ctools_plugin_type() {
  *   An exported list of plugins.
  */
 function feeds_tamper_export($importer_id, $indent = '') {
-  ctools_include('export');
-  $result = ctools_export_load_object('feeds_tamper', 'conditions', array('importer' => $importer_id));
+  // TODO: CTOOLS export conversions
+  // https://github.com/laryn/feeds_tamper/issues/1
+  // ctools_include('export');
+  // $result = ctools_export_load_object('feeds_tamper', 'conditions', array('importer' => $importer_id));
+  $result = null;
 
   if (!empty($result)) {
 
     $output = array('$export = array();' . "\n");
 
     foreach ($result as $object) {
-      $output[] = ctools_export_object('feeds_tamper', $object, $indent);
+      // $output[] = ctools_export_object('feeds_tamper', $object, $indent);
       $output[] = '$export[$feeds_tamper->id] = $feeds_tamper;' . "\n";
     }
 
