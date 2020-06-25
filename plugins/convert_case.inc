@@ -5,14 +5,6 @@
  * Convert text to upper, lower, or title case.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_convert_case_form',
-  'callback' => 'feeds_tamper_convert_case_callback',
-  'name' => 'Convert case',
-  'multi' => 'loop',
-  'category' => 'Text',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

@@ -11,7 +11,7 @@
 /**
  * Base class for plugin unit tests.
  */
-class FeedsTamperUnitTestCase extends DrupalUnitTestCase {
+class FeedsTamperUnitTestCase extends BackdropUnitTestCase {
   protected $plugin_id = '';
 
   public function setUp() {
@@ -55,14 +55,6 @@ class FeedsTamperAbsoluteURLTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'absolute_url';
 
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Make URLs absolute',
-      'description' => 'Unit tests for "Make URLs absolute" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
   public function test() {
     $this->executeAbs('http://example.com', '<a href="dog"></a>', '<a href="http://example.com/dog"></a>');
     $this->executeAbs('http://example.com/cat/chicken', '<a href="dog"></a>', '<a href="http://example.com/cat/chicken/dog"></a>');
@@ -93,14 +85,6 @@ class FeedsTamperArrayFilterTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'array_filter';
 
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Filter empty items',
-      'description' => 'Unit tests for "Filter empty items".',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
   public function test() {
     $this->executeFilter(array('asdf', 0, FALSE, '', 1234), array('asdf', 1234));
   }
@@ -118,14 +102,6 @@ class FeedsTamperArrayFilterTestCase extends FeedsTamperUnitTestCase {
 class FeedsTamperCastToIntTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'cast_to_int';
-
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Cast to int',
-      'description' => 'Unit tests for "Cast to integer" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
 
   public function test() {
     $this->execute('1', 1);
@@ -151,14 +127,6 @@ class FeedsTamperCastToIntTestCase extends FeedsTamperUnitTestCase {
 class FeedsTamperCovertBooleanTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'convert_boolean';
-
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Convert to boolean',
-      'description' => 'Unit tests for "Convert to boolean" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
 
   public function test() {
     $settings = array(
@@ -199,14 +167,6 @@ class FeedsTamperConvertCaseTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'convert_case';
 
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Convert Case',
-      'description' => 'Unit tests for "Convert Case" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
   public function test() {
     $this->execute('asdfasdf', 'ASDFASDF', array('mode' => MB_CASE_UPPER));
     $this->execute('AsdFasdf', 'asdfasdf', array('mode' => MB_CASE_LOWER));
@@ -221,14 +181,6 @@ class FeedsTamperConvertCaseTestCase extends FeedsTamperUnitTestCase {
 class FeedsTamperCopyTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'copy';
-
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Copy',
-      'description' => 'Unit tests for "Copy" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
 
   public function test() {
     $settings = array(
@@ -265,14 +217,6 @@ class FeedsTamperCountryToCodeTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'country_to_code';
 
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Country to Code',
-      'description' => 'Unit tests for "Country to Code" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
   public function test() {
     $this->execute('Argentina', 'AR');
     // Test that lowercasing and trimming works.
@@ -287,14 +231,6 @@ class FeedsTamperCountryToCodeTestCase extends FeedsTamperUnitTestCase {
 class FeedsTamperDefaultValueTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'default_value';
-
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Set default value',
-      'description' => 'Unit tests for "Set default value" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
 
   public function test() {
     $this->execute('asdfasdf', 'HELLO', array('default_value' => 'HELLO'));
@@ -313,14 +249,6 @@ class FeedsTamperDefaultValueTestCase extends FeedsTamperUnitTestCase {
 class FeedsTamperExplodeTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'explode';
-
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Explode',
-      'description' => 'Unit tests for "Explode" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
 
   public function test() {
     $settings = array(
@@ -353,14 +281,6 @@ class FeedsTamperExplodeTestCase extends FeedsTamperUnitTestCase {
 class FeedsTamperFindReplaceTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'find_replace';
-
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Find Replace',
-      'description' => 'Unit tests for "Find Replace" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
 
   public function test() {
     $settings = array(
@@ -414,14 +334,6 @@ class FeedsTamperFindReplaceREGEXTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'find_replace_regex';
 
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Find Replace Regex',
-      'description' => 'Unit tests for "Find Replace Regex" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
   public function test() {
     $settings = array('find' => '/cat/', 'replace' => 'dog', 'limit' => '');
     $this->execute('The cat went to the park.', 'The dog went to the park.', $settings);
@@ -454,14 +366,6 @@ class FeedsTamperHashTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'hash';
 
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Hash',
-      'description' => 'Unit tests for "Calculate hash" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
   public function test() {
     $item = array('title' => 'Yay title!', 'body' => 'Yay body!', 'hash' => 'asdfasf');
     $settings = array('override' => TRUE);
@@ -487,14 +391,6 @@ class FeedsTamperHTMLEntityEncodeTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'html_entity_encode';
 
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: HTML Entity Encode',
-      'description' => 'Unit tests for "HTML Entity Encode" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
   public function test() {
     $this->execute('<html>asdfsadfasf<b>asfasf</b></html>', '&lt;html&gt;asdfsadfasf&lt;b&gt;asfasf&lt;/b&gt;&lt;/html&gt;');
   }
@@ -508,14 +404,6 @@ class FeedsTamperHTMLEntityDecodeTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'html_entity_decode';
 
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: HTML Entity Decode',
-      'description' => 'Unit tests for "HTML Entity Decode" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
   public function test() {
     $this->execute('&lt;html&gt;asdfsadfasf&lt;b&gt;asfasf&lt;/b&gt;&lt;/html&gt;', '<html>asdfsadfasf<b>asfasf</b></html>');
   }
@@ -528,14 +416,6 @@ class FeedsTamperHTMLEntityDecodeTestCase extends FeedsTamperUnitTestCase {
 class FeedsTamperImplodeTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'implode';
-
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Implode',
-      'description' => 'Unit tests for "Implode" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
 
   public function test() {
     $settings = array(
@@ -564,14 +444,6 @@ class FeedsTamperImplodeTestCase extends FeedsTamperUnitTestCase {
 class FeedsTamperKeyWordFilterTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'keyword_filter';
-
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Keyword Filter',
-      'description' => 'Unit tests for "Keyword Filter" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
 
   public function test() {
     $item = array(
@@ -743,14 +615,6 @@ class FeedsTamperMathTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'math';
 
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Math',
-      'description' => 'Unit tests for "Math" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
   public function test() {
     $settings = array(
       'operation' => 'addition',
@@ -796,14 +660,6 @@ class FeedsTamperNumberFormatTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'number_format';
 
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Format a number',
-      'description' => 'Unit tests for "Format a number" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
   public function test() {
     $settings = array(
       'decimals' => '0',
@@ -831,14 +687,6 @@ class FeedsTamperNumberFormatTestCase extends FeedsTamperUnitTestCase {
 class FeedsTamperRequiredTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'required';
-
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Required',
-      'description' => 'Unit tests for "Required" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
 
   public function executeReq(array $input, array $output, $source, $settings = array()) {
     $result = new stdClass();
@@ -878,14 +726,6 @@ class FeedsTamperRewriteTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'rewrite';
 
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Rewrite',
-      'description' => 'Unit tests for "Rewrite" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
   public function executeRew($input, $output, $source, $settings) {
     $result = new stdClass();
     $result->items = array($input);
@@ -911,14 +751,6 @@ class FeedsTamperRewriteTestCase extends FeedsTamperUnitTestCase {
 class FeedsTamperSprintfTestCase extends FeedsTamperUnitTestCase {
   protected $plugin_id = 'sprintf';
 
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Format string',
-      'description' => 'Unit tests for the "sprintf" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
   public function test() {
     $this->execute('abc0123def', 'abc0123def', array('format' => '%s'));
     $this->execute('0123', '00000123', array('format' => '%08d'));
@@ -934,14 +766,6 @@ class FeedsTamperStripTagsTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'strip_tags';
 
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Strip Tags',
-      'description' => 'Unit tests for the "Strip Tags" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
   public function test() {
     $this->execute('sdfsdfsdfsdf<b>sdfsdf</b>sdfsdf', 'sdfsdfsdfsdfsdfsdfsdfsdf', array('allowed_tags' => NULL));
     $this->execute('sdfsdfsdfsdf<b>sdfsdfsdfsdf', 'sdfsdfsdfsdfsdfsdfsdfsdf', array('allowed_tags' => NULL));
@@ -956,14 +780,6 @@ class FeedsTamperStripTagsTestCase extends FeedsTamperUnitTestCase {
 class FeedsTamperStrPadTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'str_pad';
-
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Pad a string',
-      'description' => 'Unit tests for "Pad a string" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
 
   public function test() {
     $settings = array(
@@ -990,14 +806,6 @@ class FeedsTamperStrToTimeTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'strtotime';
 
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: String to Unix Timestamp',
-      'description' => 'Unit tests for the "String to Unix Timestamp" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
   public function test() {
     $this->execute('1986-05-09 04:00:00 GMT', 515995200);
     $this->execute('May 9, 1986 04:00:00 GMT', 515995200);
@@ -1012,14 +820,6 @@ class FeedsTamperStrToTimeTestCase extends FeedsTamperUnitTestCase {
 class FeedsTamperTimeToDateTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'timetodate';
-
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Unix timestamp to Date',
-      'description' => 'Unit tests for the "Unix timestamp to Date" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
 
   public function test() {
     $settings = array(
@@ -1037,14 +837,6 @@ class FeedsTamperTimeToDateTestCase extends FeedsTamperUnitTestCase {
 class FeedsTamperTrimTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'trim';
-
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Trim',
-      'description' => 'Unit tests for "Trim" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
 
   public function test() {
     $settings = array(
@@ -1069,14 +861,6 @@ class FeedsTamperTruncateTextTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'truncate_text';
 
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Truncate Text',
-      'description' => 'Unit tests for "Truncate Text" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
   public function test() {
     $this->execute('Hello, how are you today?', 'Hello', array('num_char' => 5, 'ellipses' => FALSE));
     $this->execute('Hello, how are you today?', 'He...', array('num_char' => 5, 'ellipses' => TRUE));
@@ -1093,14 +877,6 @@ class FeedsTamperUniqueTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'unique';
 
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Unique',
-      'description' => 'Unit tests for "Unique" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
   public function test() {
     $this->execute(array('a', 'a', 'b', 'c'), array('a', 'b', 'c'));
     $this->execute(array(1, 1, 2, 3, 4), array(1, 2, 3, 4));
@@ -1114,14 +890,6 @@ class FeedsTamperUniqueTestCase extends FeedsTamperUnitTestCase {
 class FeedsTamperURLencodeTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'urlencode';
-
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: URLencode text',
-      'description' => 'Unit tests for "URL Encode" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
 
   public function test() {
     $settings = array('method' => 'legacy');
@@ -1143,14 +911,6 @@ class FeedsTamperURLencodeTestCase extends FeedsTamperUnitTestCase {
 class FeedsTamperURLdecodeTestCase extends FeedsTamperUnitTestCase {
 
   protected $plugin_id = 'urldecode';
-
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: URLdecode text',
-      'description' => 'Unit tests for "URL Decode" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
 
   public function test() {
     $settings = array('method' => 'legacy');
@@ -1177,17 +937,6 @@ class FeedsTamperEncodeDecodeTestCase extends FeedsTamperUnitTestCase {
    * @var string
    */
   protected $plugin_id = 'encode';
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: Encode',
-      'description' => 'Unit tests for "Encode/Decode" plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
 
   /**
    * {@inheritdoc}

@@ -7,13 +7,6 @@
  * @todo Use DOM rather than strtr().
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_absolute_url_form',
-  'callback' => 'feeds_tamper_absolute_url_callback',
-  'name' => 'Make URLs absolute',
-  'category' => 'HTML',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

@@ -81,25 +81,6 @@ function feeds_tamper_schema() {
 }
 
 /**
- * Implements hook_uninstall().
- */
-function feeds_tamper_uninstall() {
-  config_clear('feeds_tamper.settings', 'default_feeds_tamper');
-}
-
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function feeds_tamper_update_7001(&$sandbox) { }
-
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function feeds_tamper_update_7002(&$sandbox) { }
-
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function feeds_tamper_update_7003(&$sandbox) { }
-
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-function feeds_tamper_update_7004(&$sandbox) { }
-
-/**
  * Implements hook_update_last_removed().
  */
 function feeds_tamper_update_last_removed() {

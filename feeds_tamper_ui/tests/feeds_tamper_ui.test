@@ -10,13 +10,6 @@
  */
 class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
 
-  public static function getInfo() {
-    return array(
-      'name' => 'Feeds Tamper UI',
-      'description' => 'Regression tests for Feeds Tamper UI.',
-      'group' => 'Feeds Tamper',
-    );
-  }
   public function setUp() {
     parent::setUp(array('feeds_tamper_ui'), array('administer feeds_tamper'));
   }
@@ -132,13 +125,13 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     $this->assertHashedDevseedFeedContent();
 
     // Verify that removing a mapping removes the plugins.
-    $plugins = feeds_tamper_load_all_instances(TRUE, TRUE);
+    $plugins = feeds_tamper_load_all_instances(TRUE);
     $this->assertTrue(reset($plugins)->plugin_id === 'hash', 'Hash plugin exists before removal.');
     $settings = array(
       'remove_flags[2]' => TRUE,
     );
     $this->drupalPost($mapping_url, $settings, 'Save');
-    $plugins = feeds_tamper_load_all_instances(TRUE, TRUE);
+    $plugins = feeds_tamper_load_all_instances(TRUE);
     $this->assertTrue(empty($plugins), 'Hash plugin removed with mapping');
 
     // Get to a somewhat clean state.

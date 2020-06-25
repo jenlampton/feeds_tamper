@@ -5,14 +5,6 @@
  * Remove text or whitespace from the beginning, middle, or both sides of text.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_trim_form',
-  'callback' => 'feeds_tamper_trim_callback',
-  'name' => 'Trim',
-  'multi' => 'loop',
-  'category' => 'Text',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

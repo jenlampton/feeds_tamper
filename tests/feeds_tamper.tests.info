@@ -1,7 +1,7 @@
 [FeedsTamperWebTestHelper]
 name = FeedsTamperWebTestHelper
 description = FeedsTamperWebTestHelper
-group = feeds_tamper
+group = Feeds Tamper
 file = tests/feeds_tamper.test
 
 [FeedsTamperWebTestCase]
@@ -25,7 +25,7 @@ file = tests/feeds_tamper_efq_finder.test
 [FeedsTamperUnitTestCase]
 name = FeedsTamperUnitTestCase
 description = FeedsTamperUnitTestCase
-group = feeds_tamper
+group = Feeds Tamper
 file = tests/feeds_tamper_plugins.test
 
 [FeedsTamperAbsoluteURLTestCase]

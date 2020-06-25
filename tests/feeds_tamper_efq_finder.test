@@ -10,14 +10,6 @@
  */
 class FeedsTamperEfqFinderTestCase extends FeedsTamperWebTestHelper {
 
-  public static function getInfo() {
-    return array(
-      'name' => 'Plugins: EFQ finder',
-      'description' => 'Regression tests for the EFQ finder plugin.',
-      'group' => 'Feeds Tamper',
-    );
-  }
-
   public function setUp() {
     parent::setUp(array('feeds_tamper_ui'), array('administer feeds_tamper'));
 

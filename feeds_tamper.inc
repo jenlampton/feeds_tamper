@@ -13,32 +13,18 @@
  */
 
 /**
- * Create a new plugin instance with default values filled in.
- *
- * @return stdClass
- *   A new plugin instance object.
- */
-function feeds_tamper_new_instance() {
-  ctools_include('export');
-  return ctools_export_crud_new('feeds_tamper');
-}
-
-/**
  * Load all plugin instances.
  *
  * @param bool $disabled
  *   (optional) If TRUE, load disabled plugin instances. Defaults to FALSE.
- * @param bool $reset
- *   (optional) If TRUE, the static cache of all objects will be flushed prior
- *   to loading. Defaults to FALSE.
  *
  * @return array
  *   An associative array of plugin instances keyed to their id.
  */
-function feeds_tamper_load_all_instances($disabled = FALSE, $reset = FALSE) {
+function feeds_tamper_load_all_instances($disabled = FALSE) {
   $instances = array();
-  ctools_include('export');
-  $configs = ctools_export_crud_load_all('feeds_tamper', $reset);
+
+  $configs = feeds_tamper_load_tamper_object();
   foreach ($configs as $instance_id => $config) {
     if (!empty($config->id) && ($disabled || empty($config->disabled))) {
       $instances[$instance_id] = $config;
@@ -58,8 +44,25 @@ function feeds_tamper_load_all_instances($disabled = FALSE, $reset = FALSE) {
  */
 function feeds_tamper_load_instance($id) {
   $id = backdrop_substr($id, 0, 127);
-  ctools_include('export');
-  return ctools_export_crud_load('feeds_tamper', $id);
+  $source = feeds_tamper_get_source_from_instance($id);
+  $instance = $source->get('instances.' . $id);
+  $instance = !empty($instance) ? (object) $instance : NULL;
+
+  return $instance;
+}
+
+/**
+ * Find the source and importer from the instance id.
+ * 
+ * @param string $id
+ *   The id of the plugin instance.
+ * 
+ * @return Config
+ *   The source config object.
+ */
+function feeds_tamper_get_source_from_instance($id) {
+  $chunks = explode('-', $id);
+  return config('feeds_tamper.' . $chunks[0] . '.' . $chunks[1]);
 }
 
 /**
@@ -75,37 +78,40 @@ function feeds_tamper_load_instance($id) {
 function feeds_tamper_save_instance($instance) {
   $instance->id = backdrop_substr($instance->id, 0, 127);
 
-  ctools_include('export');
+  $prefix = 'feeds_tamper.' . $instance->importer . '.' . $instance->source;
+  $source = config($prefix);
+
   // It's a new instance, give it the heaviest weight.
   if (!isset($instance->weight)) {
-    $conditions = array(
-      'importer' => $instance->importer,
-      'source' => $instance->source,
-    );
-    $all = ctools_export_load_object('feeds_tamper', 'conditions', $conditions);
     $weight = 0;
-    foreach ($all as $i) {
-      if ($i->weight >= $weight) {
-        $weight = $i->weight + 1;
+    foreach ($source->get('instances') as $i) {
+      if ($i['weight'] >= $weight) {
+        $weight = $i['weight'] + 1;
       }
     }
     $instance->weight = $weight;
   }
-  $disabled = config_get('feeds_tamper.settings', 'default_feeds_tamper');
-  $disabled[$instance->id] = !empty($instance->disabled) ? TRUE : FALSE;
-  config_set('feeds_tamper.settings', 'default_feeds_tamper', $disabled);
-  return ctools_export_crud_save('feeds_tamper', $instance);
+
+  if (!isset($instance->settings)) {
+    $instance->settings = array();
+  }
+
+  $instance->disabled = !empty($instance->disabled) ? TRUE : FALSE;
+
+  $source->set('importer', $instance->importer);
+  $source->set('source', $instance->source);
+  $source->set('instances.' . $instance->id, $instance);
+  $source->save();
 }
 
 /**
- * Removes plugin instances whos source was removed.
+ * Removes plugin instances whose source was removed.
  *
  * @param FeedsImporter $importer
  *   The importer to rectify against.
  */
 function feeds_tamper_rectify_instances(FeedsImporter $importer) {
-  ctools_include('export');
-  $instances = ctools_export_load_object('feeds_tamper', 'conditions', array('importer' => $importer->id));
+  $instances = feeds_tamper_load_by_importer($importer);
   $sources = feeds_tamper_get_unique_source_list($importer, FALSE);
 
   foreach ($instances as $instance) {
@@ -113,13 +119,7 @@ function feeds_tamper_rectify_instances(FeedsImporter $importer) {
       continue;
     }
 
-    if ($instance->export_type == EXPORT_IN_DATABASE) {
-      feeds_tamper_delete_instance($instance);
-    }
-    else {
-      $instance->disabled = TRUE;
-      feeds_tamper_save_instance($instance);
-    }
+    feeds_tamper_delete_instance($instance);
   }
 }
 
@@ -134,8 +134,10 @@ function feeds_tamper_delete_instance($instance) {
   if (is_scalar($instance)) {
     $instance = feeds_tamper_load_instance($instance);
   }
-  ctools_include('export');
-  ctools_export_crud_delete('feeds_tamper', $instance);
+
+  $source = feeds_tamper_get_source_from_instance($instance->id);
+  $source->clear('instances.' . $instance->id);
+  $source->save();
 }
 
 /**
@@ -154,36 +156,24 @@ function feeds_tamper_load_by_importer($importer, $disabled = FALSE) {
     $importer = feeds_importer($importer);
   }
 
-  ctools_include('export');
-  $t = ctools_export_load_object('feeds_tamper', 'conditions', array('importer' => $importer->id));
+  $sources = config_get_names_with_prefix('feeds_tamper.' . $importer->id);
 
-  $sources = feeds_tamper_get_unique_source_list($importer, FALSE);
-
-  $plugins = feeds_tamper_get_plugins();
-
-  $instances = array();
-  foreach ($t as $i) {
-    // Add an empty settings array, if the plugin instance doesn't provide any settings itself.
-    if (empty($i->settings)) {
-      $i->settings = array();
-    }
-    // Filter disabled and only pull plugins that actually have a corresponding
-    // source since we don't delete them with a mapping.
-    if (($disabled || empty($i->disabled)) && in_array($i->source, $sources) && isset($plugins[$i->plugin_id]) && function_exists($plugins[$i->plugin_id]['callback'])) {
-      $instances[$i->source][] = $i;
-    }
+  $return = array();
+  foreach ($sources as $i) {
+    $source_config = config($i);
+    $source = $source_config->get('source');
+    $return[$source] = $source_config->get('instances');
   }
-  foreach ($instances as &$instance_list) {
-    usort($instance_list, '_feeds_tamper_cmp');
-  }
+  // foreach ($instances as &$instance_list) {
+  //   usort($instance_list, '_feeds_tamper_cmp');
+  // }
 
   // Sort the plugins by the order they appear on the mapping page.
-  $return = array();
-  foreach ($sources as $source) {
-    if (isset($instances[$source])) {
-      $return[$source] = $instances[$source];
-    }
-  }
+  // foreach ($sources as $source) {
+  //   if (isset($instances[$source])) {
+  //     $return[$source] = $instances[$source];
+  //   }
+  // }
 
   return $return;
 }
@@ -236,9 +226,10 @@ function _feeds_tamper_cmp($a, $b) {
  *   An associative array where the keys are the plugin keys and the values are
  *   the plugin info arrays as defined in a plugin include file.
  */
-function feeds_tamper_get_plugins() {
-  ctools_include('plugins');
-  return ctools_get_plugins('feeds_tamper', 'plugins');
+function feeds_tamper_get_plugins($plugin = NULL) {
+  $plugins = module_invoke_all('feeds_tamper_plugins');
+
+  return $plugins;
 }
 
 /**
@@ -251,8 +242,9 @@ function feeds_tamper_get_plugins() {
  *   A plugin object.
  */
 function feeds_tamper_get_plugin($id) {
-  ctools_include('plugins');
-  return ctools_get_plugins('feeds_tamper', 'plugins', $id);
+  $plugins = module_invoke_all('feeds_tamper_plugins');
+
+  return $plugins[$id];
 }
 
 /**
@@ -283,7 +275,7 @@ function feeds_tamper_make_machine($string) {
  *   Defaults to NULL.
  *
  * @return bool
- *   TRUE if the user has acces, FALSE if not.
+ *   TRUE if the user has access, FALSE if not.
  */
 function feeds_tamper_access($importer, $instance = NULL) {
   if (isset($instance)) {
@@ -375,22 +367,4 @@ function feeds_tamper_form_feeds_ui_mapping_form_alter(array &$form, array &$for
  */
 function feeds_tamper_form_feeds_ui_mapping_form_submit(array &$form, array &$form_state) {
   feeds_tamper_rectify_instances(feeds_importer($form['#importer']));
-}
-
-/**
- * Implements hook_ctools_plugin_api().
- */
-function feeds_tamper_ctools_plugin_api($owner, $api) {
-  if ($owner == 'feeds_tamper' && $api == 'plugins') {
-    return array('version' => 2);
-  }
-}
-
-/**
- * Implements hook_ctools_plugin_directory().
- */
-function feeds_tamper_ctools_plugin_directory($module, $plugin) {
-  if ($module == 'feeds_tamper') {
-    return 'plugins';
-  }
 }

@@ -32,15 +32,15 @@ function feeds_tamper_ui_menu() {
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
 
-  $items['admin/structure/feeds/%feeds_importer/tamper/export'] = array(
-    'title' => 'Export',
-    'title arguments' => array(),
-    'page arguments' => array('feeds_tamper_ui_export_form', 3),
-    'access callback' => 'user_access',
-    'access arguments' => array('administer feeds_tamper'),
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 10,
-  ) + $defaults;
+  // $items['admin/structure/feeds/%feeds_importer/tamper/export'] = array(
+  //   'title' => 'Export',
+  //   'title arguments' => array(),
+  //   'page arguments' => array('feeds_tamper_ui_export_form', 3),
+  //   'access callback' => 'user_access',
+  //   'access arguments' => array('administer feeds_tamper'),
+  //   'type' => MENU_LOCAL_TASK,
+  //   'weight' => 10,
+  // ) + $defaults;
 
   $items['admin/structure/feeds/%feeds_importer/tamper/add/%feeds_tamper_ui_source'] = array(
     'title callback' => 'feeds_tamper_ui_add_title',
@@ -104,20 +104,14 @@ function feeds_tamper_ui_add_title($source) {
  * Edit plugin title callback.
  */
 function feeds_tamper_ui_edit_title($instance) {
-  if ($instance->export_type == EXPORT_IN_DATABASE) {
-    return t('Edit: @id', array('@id' => $instance->description));
-  }
-  return t('Override: @id', array('@id' => $instance->description));
+  return t('Edit: @id', array('@id' => $instance->description));
 }
 
 /**
  * Delete plugin title callback.
  */
 function feeds_tamper_ui_delete_title($instance) {
-  if ($instance->export_type == EXPORT_IN_DATABASE) {
-    return t('Delete plugin: @id', array('@id', $instance->id));
-  }
-  return t('Revert plugin: @id', array('@id', $instance->id));
+  return t('Delete plugin: @id', array('@id', $instance->id));
 }
 
 /**
@@ -166,7 +160,7 @@ function feeds_tamper_form_feeds_ui_create_form_alter(array &$form, array &$form
     '#title' => t('Clone Tamper Plugins'),
     '#description' => t('Check this box if you also want to clone the Feeds Tamper plugins for this importer.'),
     '#weight' => 1,
-  );
+ );
 
   // Give submit button a higher weight so it shows up under the checkbox.
   $form['submit']['#weight'] = 2;
@@ -216,12 +210,4 @@ function _feeds_tamper_clone_tamper_plugins(array &$form, array &$form_state) {
       feeds_tamper_save_instance($new_instance);
     }
   }
-}
-
-/**
- * Implements hook_autoload_info().
- */
-function feeds_tamper_ui_autoload_info() {
-  return array(
-  );
 }

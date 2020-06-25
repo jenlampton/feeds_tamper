@@ -130,79 +130,105 @@ function feeds_tamper_permission() {
   return $perms;
 }
 
-/**
- * Implements hook_ctools_plugin_type().
- */
-function feeds_tamper_ctools_plugin_type() {
-  return array(
-    'plugins' => array(
-      'use hooks' => FALSE,
-      'defaults' => array(
-        'validate' => FALSE,
-        'multi' => FALSE,
-        'category' => 'Other',
-        'single' => FALSE,
-        'default description' => '',
-        'defaults' => array(),
-      ),
-    ),
-  );
+function feeds_tamper_load_tamper_object() {
+
 }
 
-/**
- * Exports a list of Feeds Tamper plugins to code.
- *
- * @param string $importer_id
- *   The id of the importer to export plugins for.
- * @param string $indent
- *   The level of indentation. Defaults to no indentation.
- *
- * @return string
- *   An exported list of plugins.
- */
-function feeds_tamper_export($importer_id, $indent = '') {
-  ctools_include('export');
-  $result = ctools_export_load_object('feeds_tamper', 'conditions', array('importer' => $importer_id));
+// function feeds_tamper_load_tamper_object($tamper_id = NULL) {
+//   $table = 'feeds_tamper';
 
-  if (!empty($result)) {
+//   $cache = &backdrop_static(__FUNCTION__);
 
-    $output = array('$export = array();' . "\n");
+//   // If fetching all we are finished.
+//   if (!$tamper_id && $cache) {
+//     return $cache;
+//   }
 
-    foreach ($result as $object) {
-      $output[] = ctools_export_object('feeds_tamper', $object, $indent);
-      $output[] = '$export[$feeds_tamper->id] = $feeds_tamper;' . "\n";
-    }
+//   // Don't load anything we've already cached.
+//   if (!empty($tamper_id) && isset($cache[$tamper_id])) {
+//     return $cache[$tamper_id];
+//   }
 
-    return trim(implode("\n", $output));
-  }
-}
+//   $result = array();
+//   $config_names = config_get_names_with_prefix('feeds.feeds_tamper.');
+//   foreach ($config_names as $config_file) {
+//     $config = config($config_file);
+//     $data = $config->get();
+//     $result[$data['id']] = $data;
+//   }
 
-/**
- * Implements hook_features_pipe_COMPONENT_alter().
- */
-function feeds_tamper_features_pipe_feeds_importer_alter(&$pipe, $data, $export) {
-  // Automatically add tamper plugins when a Feed importer is selected in
-  // Features.
-  foreach ($data as $importer_id) {
-    // Find tamper plugins for this importer.
-    $tamper_plugins = feeds_tamper_load_by_importer($importer_id, TRUE);
 
-    if (!$tamper_plugins) {
-      continue;
-    }
+//   // Unpack the results of the query onto objects and cache them.
+//   foreach ($result as $data) {
+//     $object = new stdClass;
+//     $object->id = $data['id'];
+//     $object->config = $data['config'];
+//     $object->table = $table;
+//     $object->type = t('Normal');
+//     $object->export_type = EXPORT_IN_DATABASE;
 
-    foreach ($tamper_plugins as $source_plugins) {
-      foreach ($source_plugins as $plugin) {
-        $pipe['feeds_tamper'][] = $plugin->id;
+//     $cache[$object->id] = $object;
+//   }
+
+//   $defaults = _feeds_tamper_get_defaults($table);
+
+//   if ($defaults) {
+//     foreach ($defaults as $object) {
+//       if ($object->id != $tamper_id) {
+//         continue;
+//       }
+
+//       if (!empty($cache[$object->id])) {
+//         $cache[$object->id]->type = t('Overridden');
+//         $cache[$object->id]->export_type |= EXPORT_IN_CODE;
+//         $cache[$object->id]->export_module = isset($object->export_module) ? $object->export_module : NULL;
+//       }
+//       else {
+//         $object->type = t('Default');
+//         $object->export_type = EXPORT_IN_CODE;
+//         $object->in_code_only = TRUE;
+//         $object->table = $table;
+
+//         $cache[$object->id] = $object;
+//       }
+//     }
+//   }
+//   // If fetching all, we've done so and we are finished.
+//   if (!$tamper_id) {
+//     return $cache;
+//   }
+
+//   return !empty($cache[$tamper_id]) ? $cache[$tamper_id] : NULL;
+// }
+
+function _feeds_tamper_get_defaults($table) {
+  $cache = &backdrop_static(__FUNCTION__, array());
+
+  if (!isset($cache)) {
+    $cache = array();
+
+    $modules = module_implements('feeds_tamper_default');
+    foreach ($modules as $module) {
+      $function = $module . '_feeds_tamper_default';
+      if (function_exists($function)) {
+        foreach ((array) $function() as $name => $object) {
+          // Record the module that provides this exportable.
+          $object->export_module = $module;
+          $cache[$name] = $object;
+        }
       }
     }
+
+    backdrop_alter('feeds_importer_default', $cache);
   }
+
+  return $cache;
 }
 
 /**
- * Implements hook_autoload_info().
+ * Implements hook_feeds_tamper_plugins().
  */
-function feeds_tamper_autoload_info() {
-  return array(
-  );
+function feeds_tamper_feeds_tamper_plugins() {
+  module_load_include('inc', 'feeds_tamper', 'feeds_tamper.plugins');
+  return _feeds_tamper_feeds_tamper_plugins();
 }
