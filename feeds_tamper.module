@@ -65,6 +65,7 @@ function feeds_tamper_feeds_after_parse(FeedsSource $source, FeedsParserResult $
         $is_array = is_array($result->items[$item_key][$element_key]);
         $plugin = $plugins[$instance->plugin_id];
 
+        module_load_include($plugin['handler']['file_type'], $plugin['handler']['module'], $plugin['handler']['path'] . $plugin['handler']['file_name']);
         if ($is_array && $plugin['multi'] === 'loop') {
           foreach ($result->items[$item_key][$element_key] as &$i) {
             $plugin['callback']($result, $item_key, $element_key, $i, $instance->settings, $source);
@@ -73,7 +74,7 @@ function feeds_tamper_feeds_after_parse(FeedsSource $source, FeedsParserResult $
         elseif ($is_array && $plugin['multi'] === 'direct') {
           $plugin['callback']($result, $item_key, $element_key, $result->items[$item_key][$element_key], $instance->settings, $source);
         }
-        elseif (!$is_array && $plugin['single'] !== 'skip') {
+        elseif (!$is_array && (!isset($plugin['single']) || $plugin['single'] !== 'skip')) {
           $plugin['callback']($result, $item_key, $element_key, $result->items[$item_key][$element_key], $instance->settings, $source);
         }
       }

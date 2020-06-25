@@ -162,7 +162,11 @@ function feeds_tamper_load_by_importer($importer, $disabled = FALSE) {
   foreach ($sources as $i) {
     $source_config = config($i);
     $source = $source_config->get('source');
-    $return[$source] = $source_config->get('instances');
+    $instances = $source_config->get('instances');
+    foreach ($instances as &$instance) {
+      $instance = (object) $instance;
+    }
+    $return[$source] = $instances;
   }
   // foreach ($instances as &$instance_list) {
   //   usort($instance_list, '_feeds_tamper_cmp');

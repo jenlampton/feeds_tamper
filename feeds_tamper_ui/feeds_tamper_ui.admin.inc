@@ -66,33 +66,33 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
     foreach ($instances[$source] as $instance) {
 
       // Plugin instance description.
-      $description = !empty($instance['description']) ? check_plain($instance['description']) : $instance['id'];
-      $map[$delta]['table'][$instance['id']]['#description'] = $description;
+      $description = !empty($instance->description) ? check_plain($instance->description) : $instance->id;
+      $map[$delta]['table'][$instance->id]['#description'] = $description;
 
       // Weight field.
-      $map[$delta]['table'][$instance['id']]['weight'] = array(
+      $map[$delta]['table'][$instance->id]['weight'] = array(
         '#type' => 'textfield',
         '#size' => 5,
-        '#default_value' => $instance['weight'],
+        '#default_value' => $instance->weight,
         '#attributes' => array('class' => array('weight')),
       );
 
       // Name of plugin.
-      $plugin = feeds_tamper_get_plugin($instance['plugin_id']);
-      $map[$delta]['table'][$instance['id']]['#name'] = $plugin['name'];
+      $plugin = feeds_tamper_get_plugin($instance->plugin_id);
+      $map[$delta]['table'][$instance->id]['#name'] = $plugin['name'];
 
       // Build Edit | Delete links.
-      $ops = l(t('Edit'), 'admin/structure/feeds/' . $importer->id . '/tamper/' . $instance['id'] . '/edit');
+      $ops = l(t('Edit'), 'admin/structure/feeds/' . $importer->id . '/tamper/' . $instance->id . '/edit');
 
       $ops .= ' | ';
-      $ops .= l(t('Delete'), 'admin/structure/feeds/' . $importer->id . '/tamper/' . $instance['id'] . '/delete');
+      $ops .= l(t('Delete'), 'admin/structure/feeds/' . $importer->id . '/tamper/' . $instance->id . '/delete');
 
-      $map[$delta]['table'][$instance['id']]['#edit'] = $ops;
+      $map[$delta]['table'][$instance->id]['#edit'] = $ops;
 
       // Enable/disable checkbox.
-      $map[$delta]['table'][$instance['id']]['enabled'] = array(
+      $map[$delta]['table'][$instance->id]['enabled'] = array(
         '#type' => 'checkbox',
-        '#default_value' => !$instance['disabled'],
+        '#default_value' => !$instance->disabled,
       );
     }
   }
@@ -300,7 +300,7 @@ function feeds_tamper_ui_add_plugin_form($form, &$form_state, $importer, $source
 
   $plugin = feeds_tamper_get_plugin($machine_name);
 
-  module_load_include($plugin['handler']['file_type'], $plugin['handler']['module'], $plugin['handler']['path'] . $plugin['handler']['file']);
+  module_load_include($plugin['handler']['file_type'], $plugin['handler']['module'], $plugin['handler']['path'] . $plugin['handler']['file_name']);
 
   $form['plugin_id'] = array(
     '#title' => t('The plugin to add'),
@@ -423,7 +423,7 @@ function feeds_tamper_ui_edit_plugin_form($form, &$form_state, $instance) {
   $form_state['instance'] = $instance;
   $plugin = feeds_tamper_get_plugin($instance->plugin_id);
 
-  module_load_include($plugin['handler']['file_type'], $plugin['handler']['module'], $plugin['handler']['path'] . $plugin['handler']['file']);
+  module_load_include($plugin['handler']['file_type'], $plugin['handler']['module'], $plugin['handler']['path'] . $plugin['handler']['file_name']);
 
   $form['#tree'] = TRUE;
 

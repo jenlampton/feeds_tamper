@@ -203,7 +203,6 @@ function _feeds_tamper_clone_tamper_plugins(array &$form, array &$form_state) {
       }
 
       $new_instance->importer = $form_state['values']['id'];
-      $new_instance->export_type = NULL;
       $new_instance->type = t('Local');
       unset($new_instance->table);
       unset($new_instance->disabled);
