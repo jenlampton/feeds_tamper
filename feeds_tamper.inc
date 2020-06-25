@@ -115,6 +115,9 @@ function feeds_tamper_rectify_instances(FeedsImporter $importer) {
   $sources = feeds_tamper_get_unique_source_list($importer, FALSE);
 
   foreach ($instances as $instance) {
+    if (!is_object($instance)) {
+      continue;
+    }
     if (in_array($instance->source, $sources)) {
       continue;
     }

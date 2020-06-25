@@ -21,7 +21,7 @@
  *   'default description' => 'Description here', // optional
  *   'handler' => array(
  *     'file_type' => 'inc',
- *     'file' => 'MACHINE_NAME',
+ *     'file_name' => 'MACHINE_NAME',
  *     'path' => 'plugins/', // usually plugins/ directory
  *     'module' => MODULE_NAME,
  *   ),
@@ -277,16 +277,16 @@ function _feeds_tamper_feeds_tamper_plugins() {
     'callback' => 'feeds_tamper_urldecode_callback',
     'validate' => 'feeds_tamper_urldecode_validate',
     'multi' => 'loop',
-    'name' => t('URL Decode'),
-    'category' => t('Text'),
+    'name' => 'URL Decode',
+    'category' => 'Text',
   );
   $info['urlencode'] = array(
     'form' => 'feeds_tamper_urlencode_form',
     'callback' => 'feeds_tamper_urlencode_callback',
     'validate' => 'feeds_tamper_urlencode_validate',
     'multi' => 'loop',
-    'name' => t('URL Encode'),
-    'category' => t('Text'),
+    'name' => 'URL Encode',
+    'category' => 'Text',
   );
 
   foreach($info as $k => $v) {
