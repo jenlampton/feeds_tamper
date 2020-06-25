@@ -2,83 +2,8 @@
 
 /**
  * @file
- * Schema definitions install/update/uninstall hooks.
+ * Update hooks.
  */
-
-/**
- * Implements hook_schema().
- */
-function feeds_tamper_schema() {
-  $schema = array();
-  $schema['feeds_tamper'] = array(
-    'description' => 'Table storing tamper instances.',
-    'export' => array(
-      'key' => 'id',
-      'identifier' => 'feeds_tamper', // Exports will be as $tamper_instalce
-      'default hook' => 'feeds_tamper_default', // Function hook name.
-      'api' => array(
-        'owner' => 'feeds_tamper',
-        'api' => 'feeds_tamper_default', // Base name for api include files.
-        'minimum_version' => 2,
-        'current_version' => 2,
-      ),
-    ),
-    'fields' => array(
-      'id' => array(
-        'type' => 'varchar',
-        'length' => 128,
-        'not null' => TRUE,
-        'default' => '',
-        'description' => 'Id of the feeds tamper instance.',
-      ),
-      'importer' => array(
-        'type' => 'varchar',
-        'length' => 128,
-        'not null' => TRUE,
-        'default' => '',
-        'description' => 'Id of the feeds importer.',
-      ),
-      'source' => array(
-        'type' => 'varchar',
-        'length' => 128,
-        'not null' => TRUE,
-        'default' => '',
-        'description' => 'The source field of the importer.',
-      ),
-      'plugin_id' => array(
-        'type' => 'varchar',
-        'length' => 128,
-        'not null' => TRUE,
-        'default' => '',
-        'description' => 'Id of the tamper plugin.',
-      ),
-      'settings' => array(
-        'type' => 'text',
-        'size' => 'big',
-        'description' => 'A serialized array of options for a Feeds Tamper plugin.',
-        'serialize' => TRUE,
-      ),
-      'weight' => array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'unsigned' => TRUE,
-        'description' => 'The weight of a plugin instance. Plugins are executed in order.',
-      ),
-      'description' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
-        'description' => 'Description of this plugin.',
-      ),
-    ),
-    'primary key' => array('id'),
-    'indexes' => array(
-      'importer' => array('importer'),
-    ),
-  );
-  return $schema;
-}
 
 /**
  * Implements hook_update_last_removed().
@@ -88,18 +13,28 @@ function feeds_tamper_update_last_removed() {
 }
 
 /**
- * Implements hook_update_N().
+ * Update Feeds Tamper from Drupal to Backdrop.
  */
 function feeds_tamper_update_1000() {
-  $config = config('feeds_tamper.settings');
-  $config->set('default_feeds_tamper', update_variable_get('default_feeds_tamper', 'dynamic value in file /feeds_tamper/feeds_tamper.inc line 91'));
-  update_variable_del('default_feeds_tamper');
-}
+  if (db_table_exists('feeds_tamper')) {
+    $feeds_tampers = db_select('feeds_tamper', 'ft')
+    ->fields('ft')
+    ->execute()
+    ->fetchAllAssoc('id');
 
-/**
- * Implements hook_install().
- */
-function feeds_tamper_install() {
-  // Dynamically generated variable data was detected.
-  // /feeds_tamper/feeds_tamper.inc line 91
+    $disabled = update_variable_get('default_feeds_tamper', array());
+
+    foreach($feeds_tampers as $tamper) {
+      $source_config = config('feeds_tamper.' . $tamper->importer . '.' . $tamper->source);
+      if ($source_config->isNew()) {
+        $source_config->set('instances.' . $tamper->id, (array) $tamper);
+        $source_config->set('instances.' . $tamper->id . '.settings', unserialize($tamper->settings));
+        $source_config->set('instances.' . $tamper->id . '.disabled', !empty($disabled[$tamper->id]) ? TRUE : FALSE);
+        $source_config->save();
+      }
+    }
+    db_drop_table('feeds_tamper');
+  }
+
+  update_variable_del('default_feeds_tamper');
 }
