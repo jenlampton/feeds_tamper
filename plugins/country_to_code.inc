@@ -5,15 +5,6 @@
  * Convert a country name to ISO code.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_country_to_code_form',
-  'callback' => 'feeds_tamper_country_to_code_callback',
-  'name' => 'Country to ISO code',
-  'multi' => 'loop',
-  'category' => 'Other',
-  'default description' => 'Convert country to ISO code',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

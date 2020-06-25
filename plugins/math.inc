@@ -5,15 +5,6 @@
  * Performs basic mathematical calculations on the imported value.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_math_form',
-  'validate' => 'feeds_tamper_math_validate',
-  'callback' => 'feeds_tamper_math_callback',
-  'name' => 'Mathematical operation',
-  'category' => 'Number',
-  'multi' => 'loop',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

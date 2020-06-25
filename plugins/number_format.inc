@@ -5,15 +5,6 @@
  * Format a number with grouped thousands and decimal point.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_number_format_form',
-  'callback' => 'feeds_tamper_number_format_callback',
-  'validate' => 'feeds_tamper_number_format_validate',
-  'name' => 'Format a number',
-  'multi' => 'loop',
-  'category' => 'Number',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

@@ -5,14 +5,6 @@
  * Decode HTML entities.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_html_entity_decode_form',
-  'callback' => 'feeds_tamper_html_entity_decode_callback',
-  'name' => 'HTML entity decode',
-  'multi' => 'loop',
-  'category' => 'HTML',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

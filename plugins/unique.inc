@@ -5,15 +5,6 @@
  * Ensure a multi-valued field has unique values.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_unique_form',
-  'callback' => 'feeds_tamper_unique_callback',
-  'name' => 'Unique',
-  'multi' => 'direct',
-  'single' => 'skip',
-  'category' => 'List',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

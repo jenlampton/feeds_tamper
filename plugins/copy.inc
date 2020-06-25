@@ -5,13 +5,6 @@
  * Copy value from one source to another.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_copy_form',
-  'callback' => 'feeds_tamper_copy_callback',
-  'name' => 'Copy source value',
-  'multi' => 'direct',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

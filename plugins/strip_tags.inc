@@ -5,15 +5,6 @@
  * Strip HTML tags.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_strip_tags_form',
-  'callback' => 'feeds_tamper_strip_tags_callback',
-  'validate' => 'feeds_tamper_strip_tags_validate',
-  'name' => 'Strip tags',
-  'multi' => 'loop',
-  'category' => 'HTML',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

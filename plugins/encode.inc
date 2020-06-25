@@ -5,14 +5,6 @@
  * Encode and Decode a text with a set of defined functions.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_encode_form',
-  'callback' => 'feeds_tamper_encode_callback',
-  'name' => 'Encode/Decode Plugin',
-  'multi' => 'direct',
-  'category' => 'Text',
-);
-
 /**
  * Form callback for the 'encode' plugin.
  */

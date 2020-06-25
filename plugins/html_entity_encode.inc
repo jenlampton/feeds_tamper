@@ -5,14 +5,6 @@
  * Encode HTML entities.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_html_entity_encode_form',
-  'callback' => 'feeds_tamper_html_entity_encode_callback',
-  'name' => 'HTML entity encode',
-  'multi' => 'loop',
-  'category' => 'HTML',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

@@ -5,15 +5,6 @@
  * Pad a string to a certain length with another string.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_str_pad_form',
-  'callback' => 'feeds_tamper_str_pad_callback',
-  'validate' => 'feeds_tamper_str_pad_validate',
-  'name' => 'Pad a string',
-  'multi' => 'loop',
-  'category' => 'Text',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

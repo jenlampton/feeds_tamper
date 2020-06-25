@@ -5,15 +5,6 @@
  * Break up text on every specified delimeter.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_explode_form',
-  'callback' => 'feeds_tamper_explode_callback',
-  'validate' => 'feeds_tamper_explode_validate',
-  'name' => 'Explode',
-  'multi' => 'direct',
-  'category' => 'List',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

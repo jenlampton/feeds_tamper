@@ -5,15 +5,6 @@
  * Convert timestamp to date with custom format.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_timetodate_form',
-  'callback' => 'feeds_tamper_timetodate_callback',
-  'validate' => 'feeds_tamper_timetodate_validate',
-  'name' => 'Unix timestamp to Date',
-  'multi' => 'loop',
-  'category' => 'Date/time',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

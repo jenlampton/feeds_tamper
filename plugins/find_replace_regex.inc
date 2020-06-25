@@ -5,15 +5,6 @@
  * Find/replace text using REGEX.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_find_replace_regex_form',
-  'callback' => 'feeds_tamper_find_replace_regex_callback',
-  'validate' => 'feeds_tamper_find_replace_regex_validate',
-  'name' => 'Find replace REGEX',
-  'multi' => 'direct',
-  'category' => 'Text',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

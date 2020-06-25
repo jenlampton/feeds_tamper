@@ -5,14 +5,6 @@
  * Make field required. If not present, the feed item will be removed.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_required_form',
-  'callback' => 'feeds_tamper_required_callback',
-  'name' => 'Required field',
-  'multi' => 'direct',
-  'category' => 'Filter',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

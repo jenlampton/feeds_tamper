@@ -5,15 +5,6 @@
  * Truncate text to a specified length.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_truncate_text_form',
-  'callback' => 'feeds_tamper_truncate_text_callback',
-  'validate' => 'feeds_tamper_truncate_text_validate',
-  'name' => 'Truncate',
-  'multi' => 'loop',
-  'category' => 'Text',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

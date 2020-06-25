@@ -5,15 +5,6 @@
  * Convert a full U.S. state name to a 2-letter abbreviation.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_state_to_abbrev_form',
-  'callback' => 'feeds_tamper_state_to_abbrev_callback',
-  'name' => 'Full U.S. state name to abbrev.',
-  'multi' => 'loop',
-  'category' => 'Other',
-  'default description' => 'Full state name to abbrev',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

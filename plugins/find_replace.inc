@@ -5,15 +5,6 @@
  * Find/replace text.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_find_replace_form',
-  'callback' => 'feeds_tamper_find_replace_callback',
-  'validate' => 'feeds_tamper_find_replace_validate',
-  'name' => 'Find replace',
-  'multi' => 'loop',
-  'category' => 'Text',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

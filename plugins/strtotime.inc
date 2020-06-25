@@ -5,14 +5,6 @@
  * Convert string to timestamp.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_strtotime_form',
-  'callback' => 'feeds_tamper_strtotime_callback',
-  'name' => 'String to Unix timestamp',
-  'multi' => 'loop',
-  'category' => 'Date/time',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

@@ -5,14 +5,6 @@
  * Cast the value to an integer.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_cast_to_int_form',
-  'callback' => 'feeds_tamper_cast_to_int_callback',
-  'name' => 'Cast to integer',
-  'multi' => 'loop',
-  'category' => 'Number',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

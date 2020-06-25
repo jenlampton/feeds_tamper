@@ -5,14 +5,6 @@
  * Calculate hash of a feed item.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_hash_form',
-  'callback' => 'feeds_tamper_hash_callback',
-  'name' => 'Calculate hash',
-  'multi' => 'direct',
-  'category' => 'Other',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

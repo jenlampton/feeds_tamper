@@ -5,15 +5,6 @@
  * URL Encode text.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_urlencode_form',
-  'callback' => 'feeds_tamper_urlencode_callback',
-  'validate' => 'feeds_tamper_urlencode_validate',
-  'multi' => 'loop',
-  'name' => t('URL Encode'),
-  'category' => t('Text'),
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

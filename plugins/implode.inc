@@ -5,16 +5,6 @@
  * Convery an array to a string.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_implode_form',
-  'callback' => 'feeds_tamper_implode_callback',
-  'validate' => 'feeds_tamper_implode_validate',
-  'name' => 'Implode',
-  'multi' => 'direct',
-  'single' => 'skip',
-  'category' => 'List',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

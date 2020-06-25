@@ -5,14 +5,6 @@
  * Rewrite a field using tokens.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_rewrite_form',
-  'callback' => 'feeds_tamper_rewrite_callback',
-  'name' => 'Rewrite',
-  'multi' => 'skip',
-  'category' => 'Other',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

@@ -5,14 +5,6 @@
  * Format a string with printf format.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_sprintf_form',
-  'callback' => 'feeds_tamper_sprintf_callback',
-  'name' => 'Format string',
-  'multi' => 'loop',
-  'category' => 'Text',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

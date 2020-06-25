@@ -5,15 +5,6 @@
  * URL Decode text.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_urldecode_form',
-  'callback' => 'feeds_tamper_urldecode_callback',
-  'validate' => 'feeds_tamper_urldecode_validate',
-  'multi' => 'loop',
-  'name' => t('URL Decode'),
-  'category' => t('Text'),
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

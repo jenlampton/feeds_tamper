@@ -5,15 +5,6 @@
  * Convert text value to boolean value.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_convert_boolean_form',
-  'callback' => 'feeds_tamper_convert_boolean_callback',
-  'validate' => 'feeds_tamper_convert_boolean_validate',
-  'name' => 'Convert to boolean',
-  'multi' => 'loop',
-  'category' => 'Text',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

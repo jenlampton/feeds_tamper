@@ -5,15 +5,6 @@
  * Filter based on a list of words/phrases.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_keyword_filter_form',
-  'callback' => 'feeds_tamper_keyword_filter_callback',
-  'validate' => 'feeds_tamper_keyword_filter_validate',
-  'name' => 'Keyword filter',
-  'multi' => 'direct',
-  'category' => 'Filter',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

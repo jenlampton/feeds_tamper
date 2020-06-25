@@ -5,14 +5,6 @@
  * Set field to default value.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_default_value_form',
-  'callback' => 'feeds_tamper_default_value_callback',
-  'name' => 'Set value or default value',
-  'multi' => 'direct',
-  'category' => 'Other',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354

@@ -5,15 +5,6 @@
  * Provides a plugin that maps arbitrary values to entity ids.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_efq_finder_form',
-  'callback' => 'feeds_tamper_efq_finder_callback',
-  'validate' => 'feeds_tamper_efq_finder_validate',
-  'name' => 'Entity Field Query finder',
-  'multi' => 'loop',
-  'category' => 'Other',
-);
-
 /**
  * Configuration form.
  */
