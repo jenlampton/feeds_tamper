@@ -53,16 +53,22 @@ function feeds_tamper_load_instance($id) {
 
 /**
  * Find the source and importer from the instance id.
- * 
+ *
  * @param string $id
  *   The id of the plugin instance.
- * 
+ *
  * @return Config
  *   The source config object.
  */
 function feeds_tamper_get_source_from_instance($id) {
   $chunks = explode('-', $id);
-  return config('feeds_tamper.' . $chunks[0] . '.' . $chunks[1]);
+
+  // Replace illegal colon with an underscore.
+  $source = str_replace(':', '_', $chunks[1]);
+
+  $prefix = 'feeds_tamper.' . $chunks[0] . '.' . $source;
+
+  return config($prefix);
 }
 
 /**
@@ -78,7 +84,10 @@ function feeds_tamper_get_source_from_instance($id) {
 function feeds_tamper_save_instance($instance) {
   $instance->id = backdrop_substr($instance->id, 0, 127);
 
-  $prefix = 'feeds_tamper.' . $instance->importer . '.' . $instance->source;
+  // Replace illegal colon with an underscore.
+  $instance_source = str_replace(':', '_', $instance->source);
+  $prefix = 'feeds_tamper.' . $instance->importer . '.' . $instance_source;
+
   $source = config($prefix);
 
   // It's a new instance, give it the heaviest weight.
