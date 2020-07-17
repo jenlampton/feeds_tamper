@@ -3,6 +3,9 @@
 /**
  * Tests blank sources and temporary targets.
  */
+
+module_load_include('test', 'feeds_tamper', 'tests/feeds_tamper');
+
 class FeedsTamperTemporaryTargetTestCase extends FeedsTamperWebTestHelper {
 
   /**
@@ -10,7 +13,7 @@ class FeedsTamperTemporaryTargetTestCase extends FeedsTamperWebTestHelper {
    */
   public function testAddTemporaryTargets() {
     $importer_name = $this->randomName();
-    $importer_id = drupal_strtolower($importer_name);
+    $importer_id = backdrop_strtolower($importer_name);
     // Set up an importer.
     $this->createImporterConfiguration($importer_name, $importer_id);
 
@@ -41,7 +44,7 @@ class FeedsTamperTemporaryTargetTestCase extends FeedsTamperWebTestHelper {
    */
   public function testAddBlankSources() {
     $importer_name = $this->randomName();
-    $importer_id = drupal_strtolower($importer_name);
+    $importer_id = backdrop_strtolower($importer_name);
     // Set up an importer.
     $this->createImporterConfiguration($importer_name, $importer_id);
 

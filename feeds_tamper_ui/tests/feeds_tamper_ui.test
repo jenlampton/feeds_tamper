@@ -16,14 +16,14 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
 
   public function testBasic() {
     $importer_name = $this->randomName();
-    $importer_id = drupal_strtolower($importer_name);
+    $importer_id = backdrop_strtolower($importer_name);
     $mapping_url = 'admin/structure/feeds/' . $importer_id . '/mapping';
     $tamper_url = 'admin/structure/feeds/' . $importer_id . '/tamper';
 
     $this->createImporterConfiguration($importer_name, $importer_id);
 
      // Check help text when there are no mappings.
-    $this->drupalGet($tamper_url);
+    $this->backdropGet($tamper_url);
     $this->assertText('There are no mappings defined for this importer.');
     $this->addMappings($importer_id,
       array(
@@ -45,11 +45,11 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     );
 
     // Check that tamper operation exists on feeds page.
-    $this->drupalGet('admin/structure/feeds');
+    $this->backdropGet('admin/structure/feeds');
     $this->assertText('Edit | Export | Clone | Delete | Tamper');
 
     // Check help text and link.
-    $this->drupalGet($tamper_url);
+    $this->backdropGet($tamper_url);
     $this->assertLinkByHref($mapping_url);
     $this->assertText('Configure plugins to modify Feeds data before it gets saved. Each mapping can be manipulated individually.');
 
@@ -61,7 +61,7 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     // Create feed node, running import automatically.
     $nid = $this->createFeedNode($importer_id);
     // Assert that all titles were uppercased.
-    $this->drupalGet('node');
+    $this->backdropGet('node');
     $this->assertUppercaseDevseedFeedContent();
     $this->toggleTamperPlugin($importer_id, 0, $id);
     $this->toggleTamperPlugin($importer_id, 0, $id, TRUE);
@@ -82,29 +82,29 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     $this->deleteTamperPlugin($trim);
 
     // Login with user who can't tamper.
-    $this->feeds_user = $this->drupalCreateUser(array('administer feeds'));
-    $this->drupalLogin($this->feeds_user);
+    $this->feeds_user = $this->backdropCreateUser(array('administer feeds'));
+    $this->backdropLogin($this->feeds_user);
     // Check that tamper operation is gone.
-    $this->drupalGet('admin/structure/feeds');
+    $this->backdropGet('admin/structure/feeds');
     $this->assertText('Edit | Export | Clone | Delete');
     $this->assertNoText('Tamper');
 
     // Check that "tamper importer_id" permissions work. Reset permission static
     // cache.
     $this->checkPermissions(array(), TRUE);
-    $this->feeds_user = $this->drupalCreateUser(array('administer feeds', 'tamper ' . $importer_id));
-    $this->drupalLogin($this->feeds_user);
+    $this->feeds_user = $this->backdropCreateUser(array('administer feeds', 'tamper ' . $importer_id));
+    $this->backdropLogin($this->feeds_user);
     // Check that things are back.
-    $this->drupalGet('admin/structure/feeds');
+    $this->backdropGet('admin/structure/feeds');
     $this->assertText('Edit | Export | Clone | Delete | Tamper');
 
-    $this->drupalLogin($this->admin_user);
+    $this->backdropLogin($this->admin_user);
 
     // Verify that sources with spaces in the name work. See #1093958.
     $settings = array(
       'remove_flags[0]' => TRUE,
     );
-    $this->drupalPost($mapping_url, $settings, 'Save');
+    $this->backdropPost($mapping_url, $settings, 'Save');
     $this->addMappings($importer_id,
       array(
         2 => array(
@@ -116,12 +116,12 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     // Test that form_alter is working properly.
     $this->assertFieldByXPath('id("edit-source")/option[text() = "Blank source"]/@value', 'Blank source 2');
     // Delete feed items.
-    $this->drupalPost('node/' . $nid . '/delete-items', array(), 'Delete');
+    $this->backdropPost('node/' . $nid . '/delete-items', array(), 'Delete');
 
     // Verify that Blank source behaves properly.
     $id = $this->addTamperPlugin($importer_id, 'Blank source 1', 'hash');
     // Reimport.
-    $this->drupalPost('node/' . $nid . '/import', array(), 'Import');
+    $this->backdropPost('node/' . $nid . '/import', array(), 'Import');
     $this->assertHashedDevseedFeedContent();
 
     // Verify that removing a mapping removes the plugins.
@@ -130,19 +130,19 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     $settings = array(
       'remove_flags[2]' => TRUE,
     );
-    $this->drupalPost($mapping_url, $settings, 'Save');
+    $this->backdropPost($mapping_url, $settings, 'Save');
     $plugins = feeds_tamper_load_all_instances(TRUE);
     $this->assertTrue(empty($plugins), 'Hash plugin removed with mapping');
 
     // Get to a somewhat clean state.
-    $this->drupalPost('node/' . $nid . '/delete-items', array(), 'Delete');
+    $this->backdropPost('node/' . $nid . '/delete-items', array(), 'Delete');
     node_delete($nid);
-    $this->drupalPost('admin/structure/feeds/' . $importer_id . '/delete', array(), 'Delete');
+    $this->backdropPost('admin/structure/feeds/' . $importer_id . '/delete', array(), 'Delete');
   }
 
   public function testCSV() {
     $importer_name = $this->randomName();
-    $importer_id = drupal_strtolower($importer_name);
+    $importer_id = backdrop_strtolower($importer_name);
     // Set up an importer.
     $this->createImporterConfiguration($importer_name, $importer_id);
     // Set and configure plugins and mappings.
@@ -169,21 +169,21 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     $this->setSettings($importer_id, 'FeedsNodeProcessor', array('update_existing' => 1));
 
     // Test basic plugin adding. Use the literal UI to verify things work.
-    $this->drupalGet('admin/structure/feeds/' . $importer_id . '/tamper');
+    $this->backdropGet('admin/structure/feeds/' . $importer_id . '/tamper');
     $this->clickLink(t('Add plugin'));
-    $this->drupalPost(NULL, array('plugin_id' => 'convert_case'), t('Choose'));
-    $this->drupalPost(NULL, array('settings[mode]' => 0), t('Add'));
+    $this->backdropPost(NULL, array('plugin_id' => 'convert_case'), t('Choose'));
+    $this->backdropPost(NULL, array('settings[mode]' => 0), t('Add'));
 
-    $this->drupalGet('admin/structure/feeds/' . $importer_id . '/tamper');
+    $this->backdropGet('admin/structure/feeds/' . $importer_id . '/tamper');
     $this->clickLink(t('Add plugin'), 1);
-    $this->drupalPost(NULL, array('plugin_id' => 'convert_case'), t('Choose'));
-    $this->drupalPost(NULL, array('settings[mode]' => 0), t('Add'));
+    $this->backdropPost(NULL, array('plugin_id' => 'convert_case'), t('Choose'));
+    $this->backdropPost(NULL, array('settings[mode]' => 0), t('Add'));
 
-    $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'feeds_tamper') . '/tests/feeds_tamper/';
+    $path = $GLOBALS['base_url'] . '/' . backdrop_get_path('module', 'feeds_tamper') . '/tests/feeds_tamper/';
     $nid = $this->createFeedNode($importer_id, $path . 'csv_test.csv', 'Testing CSV Parser');
     $this->assertText('Basic page Testing CSV Parser has been created.');
     $this->assertText('Created 2 nodes.');
-    $this->drupalGet('node');
+    $this->backdropGet('node');
     $this->assertText('HELLO WORLD');
     $this->assertText('THIS IS A GREAT BODY.');
     $this->assertText('WORLD DOES NOT RESPOND');
@@ -192,11 +192,11 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
       '0[table][' . $importer_id . '-' . feeds_tamper_make_machine('a /T~!@#$%^&*()_+`<>;:itle✈') . '-convert_case][enabled]' => FALSE,
       '1[table][' . $importer_id . '-' . feeds_tamper_make_machine('a Body.') . '-convert_case][enabled]' => FALSE
     );
-    $this->drupalPost('admin/structure/feeds/' . $importer_id . '/tamper', $edit, t('Save'));
+    $this->backdropPost('admin/structure/feeds/' . $importer_id . '/tamper', $edit, t('Save'));
 
-    $this->drupalPost('node/' . $nid . '/import', array(), 'Import');
+    $this->backdropPost('node/' . $nid . '/import', array(), 'Import');
     $this->assertText('Updated 2 nodes.');
-    $this->drupalGet('node');
+    $this->backdropGet('node');
     $this->assertText('Hello world');
     $this->assertText('This is a great body.');
     $this->assertText('World does not respond');
@@ -208,7 +208,7 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     $default_description = !empty($plugin['default description']) ? $plugin['default description'] : $plugin['name'];
 
     $url = 'admin/structure/feeds/' . $importer_id . '/tamper/add/' . bin2hex($source);
-    $this->drupalPost($url, array('plugin_id' => $plugin_id), t('Choose'));
+    $this->backdropPost($url, array('plugin_id' => $plugin_id), t('Choose'));
 
     // Check that default values were added to form.
     $this->assertFieldByName('description', $default_description);
@@ -220,7 +220,7 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     if (!empty($id)) {
       $edit['id'] = $id;
     }
-    $this->drupalPost(NULL, $edit + $settings, 'Add');
+    $this->backdropPost(NULL, $edit + $settings, 'Add');
     $description = !empty($description) ? $description : $default_description;
 
     $id = $importer_id . '-' . feeds_tamper_make_machine($source) . '-' . $plugin_id;
@@ -235,7 +235,7 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     $url = 'admin/structure/feeds/' . $importer_id . '/tamper';
 
     $name = $delta . '[table][' . $id . '][enabled]';
-    $this->drupalPost($url, array($name => $enable), 'Save');
+    $this->backdropPost($url, array($name => $enable), 'Save');
     $this->assertFieldByName($name, $enable);
     $this->assertText('Your changes have been saved.');
   }
@@ -243,7 +243,7 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
   protected function setTamperPluginWeight($importer_id, $delta, $id, $weight) {
     $url = 'admin/structure/feeds/' . $importer_id . '/tamper';
     $name = $delta . '[table][' . $id . '][weight]';
-    $this->drupalPost($url, array($name => $weight), 'Save');
+    $this->backdropPost($url, array($name => $weight), 'Save');
     $this->assertFieldByName($name, $weight);
     $this->assertText('Your changes have been saved.');
   }
@@ -251,10 +251,10 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
   protected function deleteTamperPlugin($id) {
     $instance = feeds_tamper_load_instance($id);
     $url = 'admin/structure/feeds/' . $instance->importer . '/tamper/' . $id . '/delete';
-    $this->drupalGet($url);
+    $this->backdropGet($url);
     $this->assertText('Would you really like to delete the plugin ' . $instance->description . '?');
     $this->assertText('This action cannot be undone.');
-    $this->drupalPost(NULL, array(), 'Delete');
+    $this->backdropPost(NULL, array(), 'Delete');
     $source_name = feeds_tamper_ui_source_name($instance);
     $this->assertText('The plugin ' . $instance->description . ' has been deleted from ' . $source_name . '.');
     $result = db_query("SELECT * FROM {feeds_tamper} WHERE id = :id", array(':id' => $instance->id))->fetchObject();

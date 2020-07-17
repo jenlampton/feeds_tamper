@@ -18,7 +18,7 @@ class FeedsTamperEfqFinderTestCase extends FeedsTamperWebTestHelper {
       'name' => 'Ref terms',
       'machine_name' => 'terms',
     );
-    $this->drupalPost('admin/structure/taxonomy/add', $edit, t('Save'));
+    $this->backdropPost('admin/structure/taxonomy/add', $edit, t('Save'));
 
     // // Add a taxonomy term field.
     $edit = array(
@@ -27,11 +27,11 @@ class FeedsTamperEfqFinderTestCase extends FeedsTamperWebTestHelper {
       'fields[_add_new_field][type]' => 'taxonomy_term_reference',
       'fields[_add_new_field][widget_type]' => 'options_select',
     );
-    $this->drupalPost('admin/structure/types/manage/article/fields', $edit, t('Save'));
+    $this->backdropPost('admin/structure/types/manage/article/fields', $edit, t('Save'));
     $edit = array(
       'field[settings][allowed_values][0][vocabulary]' => 'terms',
     );
-    $this->drupalPost(NULL, $edit, t('Save field settings'));
+    $this->backdropPost(NULL, $edit, t('Save field settings'));
 
     $this->createImporterConfiguration();
     $this->setSettings('syndication', NULL, array('content_type' => ''));
@@ -98,7 +98,7 @@ class FeedsTamperEfqFinderTestCase extends FeedsTamperWebTestHelper {
       'fields[_add_new_field][type]' => 'text',
       'fields[_add_new_field][widget_type]' => 'text_textfield',
     );
-    $this->drupalPost('admin/structure/taxonomy/terms/fields', $edit, t('Save'));
+    $this->backdropPost('admin/structure/taxonomy/terms/fields', $edit, t('Save'));
 
     // Create some taxonomy terms.
     foreach (array(1, 2, 3) as $id) {
@@ -128,7 +128,7 @@ class FeedsTamperEfqFinderTestCase extends FeedsTamperWebTestHelper {
     $this->importFile('syndication', dirname(__FILE__) . '/feeds_tamper/efq_finder_nodes.csv');
 
     foreach (array(1, 2, 3) as $id) {
-      $this->drupalGet('node/' . $id . '/edit');
+      $this->backdropGet('node/' . $id . '/edit');
       $this->assertFieldByName('field_term[und]', $id);
     }
   }
@@ -141,15 +141,15 @@ class FeedsTamperEfqFinderTestCase extends FeedsTamperWebTestHelper {
       'plugin_id' => 'efq_finder',
     );
 
-    $this->drupalPost('admin/structure/feeds/' . $importer . '/tamper/add/' . bin2hex($source), $edit, t('Choose'));
+    $this->backdropPost('admin/structure/feeds/' . $importer . '/tamper/add/' . bin2hex($source), $edit, t('Choose'));
 
     foreach (array('entity_type', 'bundle', 'field', 'column') as $key) {
       if (!empty($settings[$key])) {
-        $this->drupalPost(NULL, array("settings[$key]" => $settings[$key]), t('Update'));
+        $this->backdropPost(NULL, array("settings[$key]" => $settings[$key]), t('Update'));
       }
     }
 
-    $this->drupalPost(NULL, array(), t('Add'));
+    $this->backdropPost(NULL, array(), t('Add'));
     $this->assertRaw(t('Plugin %name was successfully added to %source.', array('%name' => 'Entity Field Query finder', '%source' => $source)));
   }
 

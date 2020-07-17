@@ -5,6 +5,8 @@
  * Tests for feeds_tamper.module.
  */
 
+module_load_include('test', 'feeds', 'tests/feeds');
+
 /**
  * Base class for Feeds Tamper tests.
  */
@@ -67,6 +69,7 @@ class FeedsTamperWebTestHelper extends FeedsWebTestCase {
     $plugin->description = $description;
     $this->assertEqual(SAVED_NEW, feeds_tamper_save_instance($plugin));
     $result = db_query("SELECT * FROM {feeds_tamper} WHERE id = :id", array(':id' => $plugin->id));
+    // @todo CHECK CONFIG NOT DB
     // test that default weight is added.
     $instance = $result->fetchObject();
     $this->assertTrue(($instance->weight >= 0));
@@ -94,7 +97,7 @@ class FeedsTamperWebTestHelper extends FeedsWebTestCase {
   }
 
   protected function assertUppercaseDevseedFeedContent() {
-    $this->drupalGet('node');
+    $this->backdropGet('node');
     $this->assertText('SCALING THE OPEN ATRIUM UI');
     $this->assertText("PERU&#039;S SOFTWARE FREEDOM DAY: IMPRESSIONS &amp; PHOTOS");
     $this->assertText('WEEK IN DC TECH: SEPTEMBER 21 EDITION');
@@ -108,7 +111,7 @@ class FeedsTamperWebTestHelper extends FeedsWebTestCase {
   }
 
   protected function assertDevseedFeedContent() {
-    $this->drupalGet('node');
+    $this->backdropGet('node');
     $this->asserttext('Scaling the Open Atrium UI');
     $this->asserttext("Peru&#039;s Software Freedom Day: Impressions &amp; Photos");
     $this->asserttext('Week in DC Tech: September 21 Edition');
@@ -122,7 +125,7 @@ class FeedsTamperWebTestHelper extends FeedsWebTestCase {
   }
 
   protected function assertHashedDevseedFeedContent() {
-    $this->drupalGet('node');
+    $this->backdropGet('node');
     $this->asserttext('b802e0e74831d506bcafd3e0d8339c0c');
     $this->asserttext('40dd7b1ae61ad8b1fb55d662b8ca77c4');
     $this->asserttext('40bcfee6c3ddb980236f2f1f2a519fb3');
@@ -188,7 +191,7 @@ class FeedsTamperWebTestCase extends FeedsTamperWebTestHelper {
     // Disable plugin.
     $this->disableTamperPlugin($id);
     //$this->deleteTamperPlugin($id);
-    $this->drupalPost('node/' . $nid . '/import', array(), 'Import');
+    $this->backdropPost('node/' . $nid . '/import', array(), 'Import');
     $this->assertText('Updated 10 nodes.');
     $this->assertDevseedFeedContent();
   }
@@ -218,14 +221,14 @@ class FeedsTamperWebTestCase extends FeedsTamperWebTestHelper {
 
     // Create feed node, running import automatically.
     $nid = $this->createFeedNode();
-    $this->drupalGet('node/2/edit');
+    $this->backdropGet('node/2/edit');
     $this->assertFieldByXPath("//textarea[@name='body[und][0][value]']", 'Open Atrium Translation Workflow: Two Way Translation Updates', 'The textfield widget is populated.');
     $this->assertFieldByName('title', 'OPEN ATRIUM TRANSLATION WORKFLOW: TWO WAY TRANSLATION UPDATES');
 
     $this->disableTamperPlugin($convert_case);
     $this->addTamperPlugin('syndication', 'Blank source 1', 'convert_case', array('mode' => 0));
-    $this->drupalPost('node/' . $nid . '/import', array(), 'Import');
-    $this->drupalGet('node/2/edit');
+    $this->backdropPost('node/' . $nid . '/import', array(), 'Import');
+    $this->backdropGet('node/2/edit');
     $this->assertFieldByXPath("//textarea[@name='body[und][0][value]']", 'OPEN ATRIUM TRANSLATION WORKFLOW: TWO WAY TRANSLATION UPDATES', 'The textfield widget is populated.');
     $this->assertFieldByName('title', 'Open Atrium Translation Workflow: Two Way Translation Updates');
   }
@@ -247,7 +250,7 @@ class FeedsTamperCSVTestCase extends FeedsTamperWebTestHelper {
 
   public function test() {
     $importer_name = $this->randomName();
-    $importer_id = drupal_strtolower($importer_name);
+    $importer_id = backdrop_strtolower($importer_name);
     // Set up an importer.
     $this->createImporterConfiguration($importer_name, $importer_id);
     // Set and configure plugins and mappings.
@@ -286,32 +289,32 @@ class FeedsTamperCSVTestCase extends FeedsTamperWebTestHelper {
     // Verify that Blank source works for CSV parser.
     $this->addTamperPlugin($importer_id, 'Blank source 1', 'default_value', array('default_value' => $this->admin_user->uid));
 
-    $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'feeds_tamper') . '/tests/feeds_tamper/';
+    $path = $GLOBALS['base_url'] . '/' . backdrop_get_path('module', 'feeds_tamper') . '/tests/feeds_tamper/';
     $nid = $this->createFeedNode($importer_id, $path . 'csv_test.csv', 'Testing CSV Parser');
     $this->assertText('Basic page Testing CSV Parser has been created.');
     $this->assertText('Created 2 nodes.');
-    $this->drupalGet('node');
+    $this->backdropGet('node');
     $this->assertText('HELLO WORLD');
     $this->assertText('THIS IS A GREAT BODY.');
     $this->assertText('WORLD DOES NOT RESPOND');
     $this->assertText('THIS IS A SAD BODY.');
     $this->disableTamperPlugin($id);
     $this->disableTamperPlugin($id2);
-    $this->drupalPost('node/' . $nid . '/import', array(), 'Import');
+    $this->backdropPost('node/' . $nid . '/import', array(), 'Import');
     $this->assertText('Updated 2 nodes.');
-    $this->drupalGet('node');
+    $this->backdropGet('node');
     $this->assertText('Hello world');
     $this->assertText('This is a great body.');
     $this->assertText('World does not respond');
     $this->assertText('This is a sad body.');
 
-    $this->drupalGet('node/2/edit');
+    $this->backdropGet('node/2/edit');
     $this->assertFieldByName('name', $this->admin_user->name);
   }
 
   public function testRewrite() {
     $importer_name = $this->randomName();
-    $importer_id = drupal_strtolower($importer_name);
+    $importer_id = backdrop_strtolower($importer_name);
     // Set up an importer.
     $this->createImporterConfiguration($importer_name, $importer_id);
     // Set and configure plugins and mappings.
@@ -336,11 +339,11 @@ class FeedsTamperCSVTestCase extends FeedsTamperWebTestHelper {
     // Copy the field to the node's body field.
     $this->addTamperPlugin($importer_id, 'Blank source 1', 'rewrite', array('text' => '[a body.]'));
 
-    $path = $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'feeds_tamper') . '/tests/feeds_tamper/';
+    $path = $GLOBALS['base_url'] . '/' . backdrop_get_path('module', 'feeds_tamper') . '/tests/feeds_tamper/';
     $nid = $this->createFeedNode($importer_id, $path . 'csv_test.csv', 'Testing CSV Parser');
     $this->assertText('Basic page Testing CSV Parser has been created.');
     $this->assertText('Created 2 nodes.');
-    $this->drupalGet('node');
+    $this->backdropGet('node');
     $this->assertText('Hello world');
     $this->assertText('This is a great body.');
     $this->assertText('World does not respond');

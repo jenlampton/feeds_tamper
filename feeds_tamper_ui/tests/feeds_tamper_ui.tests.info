@@ -3,4 +3,3 @@ name = Feeds Tamper UI
 description = Regression tests for Feeds Tamper UI.
 group = Feeds Tamper
 file = tests/feeds_tamper_ui.test
-

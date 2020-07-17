@@ -17,7 +17,7 @@ class FeedsTamperUnitTestCase extends BackdropUnitTestCase {
   public function setUp() {
     parent::setUp();
     $plugin = NULL;
-    $file = drupal_get_path('module', 'feeds_tamper') . '/plugins/' . $this->plugin_id . '.inc';
+    $file = backdrop_get_path('module', 'feeds_tamper') . '/plugins/' . $this->plugin_id . '.inc';
     require_once $file;
     $this->plugin_info = $plugin;
   }
