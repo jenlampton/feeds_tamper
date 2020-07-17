@@ -7,7 +7,7 @@
  */
 
 /**
- * Implements _feeds_tamper_feeds_tamper_plugins().
+ * @see feeds_tamper_feeds_tamper_plugins().
  *
  * The format of the plugin info:
  *
@@ -28,9 +28,6 @@
  * );
  */
 function _feeds_tamper_feeds_tamper_plugins() {
-  $path = 'plugins/';
-  $module = 'feeds_tamper';
-
   $info = array();
   $info['absolute_url'] = array(
     'form' => 'feeds_tamper_absolute_url_form',

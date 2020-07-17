@@ -373,6 +373,7 @@ function feeds_tamper_ui_add_plugin_form_validate($form, &$form_state) {
     $plugin_id = $form_state['values']['plugin_id'];
     $plugin = feeds_tamper_get_plugin($plugin_id);
     if (!empty($plugin['validate']) && isset($form_state['values']['settings'])) {
+      module_load_include($plugin['handler']['file_type'], $plugin['handler']['module'], $plugin['handler']['path'] . $plugin['handler']['file_name']);
       $plugin['validate']($form_state['values']['settings']);
     }
     $id = $form_state['values']['id'];
@@ -457,6 +458,7 @@ function feeds_tamper_ui_edit_plugin_form_validate($form, &$form_state) {
   $plugin_id = $form_state['instance']->plugin_id;
   $plugin = feeds_tamper_get_plugin($plugin_id);
   if (isset($plugin['validate'])) {
+    module_load_include($plugin['handler']['file_type'], $plugin['handler']['module'], $plugin['handler']['path'] . $plugin['handler']['file_name']);
     $plugin['validate']($form_state['values']['settings']);
   }
 }
