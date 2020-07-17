@@ -5,14 +5,6 @@
  * Filters out empty values from an array.
  */
 
-$plugin = array(
-  'form' => 'feeds_tamper_array_filter_form',
-  'callback' => 'feeds_tamper_array_filter_callback',
-  'name' => 'Filter empty items',
-  'multi' => 'direct',
-  'category' => 'List',
-);
-
 /**
  * @todo Please document this function.
  * @see http://drupal.org/node/1354
