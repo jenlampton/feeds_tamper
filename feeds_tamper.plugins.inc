@@ -174,13 +174,6 @@ function _feeds_tamper_feeds_tamper_plugins() {
     'category' => 'Number',
     'multi' => 'loop',
   );
-  $info[''] = array(
-    'form' => 'feeds_tamper_cast_to_int_form',
-    'callback' => 'feeds_tamper_cast_to_int_callback',
-    'name' => 'Cast to integer',
-    'multi' => 'loop',
-    'category' => 'Number',
-  );
   $info['number_format'] = array(
     'form' => 'feeds_tamper_number_format_form',
     'callback' => 'feeds_tamper_number_format_callback',
