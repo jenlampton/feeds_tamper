@@ -19,7 +19,7 @@ require_once dirname(__FILE__) . '/feeds_tamper.inc';
  * @todo Add support for source plugins.
  */
 function feeds_tamper_feeds_after_parse(FeedsSource $source, FeedsParserResult $result) {
-  $importer_instances = feeds_tamper_load_by_importer($source->importer->id, FALSE);
+  $importer_instances = feeds_tamper_load_by_importer($source->importer->__get('id'), FALSE);
 
   // Don't go through all of the nonsense if we don't have anything to do.
   if (empty($importer_instances)) {
@@ -122,7 +122,7 @@ function feeds_tamper_permission() {
   if (function_exists('feeds_importer_load_all')) {
     foreach (feeds_importer_load_all() as $importer) {
       $name = array('%name' => $importer->config['name']);
-      $perms['tamper ' . $importer->id] = array(
+      $perms['tamper ' . $importer->__get('id')] = array(
         'title' => t('Tamper %name feeds', $name),
         'description' => t('Create, edit and delete plugins for %name feeds.', $name),
       );

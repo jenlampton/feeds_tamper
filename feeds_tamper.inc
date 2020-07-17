@@ -159,7 +159,7 @@ function feeds_tamper_load_by_importer($importer, $disabled = FALSE) {
     $importer = feeds_importer($importer);
   }
 
-  $sources = config_get_names_with_prefix('feeds_tamper.' . $importer->id);
+  $sources = config_get_names_with_prefix('feeds_tamper.' . $importer->__get('id'));
 
   $return = array();
   foreach ($sources as $i) {
@@ -294,7 +294,7 @@ function feeds_tamper_access($importer, $instance = NULL) {
     }
   }
   elseif (is_object($importer)) {
-    $importer = $importer->id;
+    $importer = $importer->__get('id');
   }
 
   // Verify actual input if above failed.
