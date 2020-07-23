@@ -82,12 +82,28 @@ function feeds_tamper_ui_list_form($form, &$form_state, $importer) {
       $map[$delta]['table'][$instance->id]['#name'] = $plugin['name'];
 
       // Build Edit | Delete links.
-      $ops = l(t('Edit'), 'admin/structure/feeds/' . $importer->__get('id') . '/tamper/' . $instance->id . '/edit');
+      $current_path = current_path();
+      $options = array('destination' => $current_path);
 
-      $ops .= ' | ';
-      $ops .= l(t('Delete'), 'admin/structure/feeds/' . $importer->__get('id') . '/tamper/' . $instance->id . '/delete');
+      $links = array();
+      $links['edit'] = array(
+        'title' => t('Edit'),
+        'href' => 'admin/structure/feeds/' . $importer->__get('id') . '/tamper/' . $instance->id . '/edit',
+        'query' => $options,
+      );
 
-      $map[$delta]['table'][$instance->id]['#edit'] = $ops;
+      $links['delete'] = array(
+        'title' => t('Delete'),
+        'href' => 'admin/structure/feeds/' . $importer->__get('id') . '/tamper/' . $instance->id . '/delete',
+        'query' => $options,
+      );
+
+      $map[$delta]['table'][$instance->id]['operations'] = array(
+        'data' => array(
+          '#type' => 'operations',
+          '#links' => $links,
+        ),
+      );
 
       // Enable/disable checkbox.
       $map[$delta]['table'][$instance->id]['enabled'] = array(
@@ -208,7 +224,7 @@ function theme_feeds_tamper_ui_list_form($variables) {
           // The name of the plugin, as defined in a PLUGIN.inc.
           $this_row[] = $map[$i]['table'][$id]['#name'];
           // Operations to perform on a plugin instance.
-          $this_row[] = $map[$i]['table'][$id]['#edit'];
+          $this_row[] = $map[$i]['table'][$id]['operations'];
           // Enabled checkbox.
           $this_row[] = backdrop_render($map[$i]['table'][$id]['enabled']);
           // Add draggable class for sortable table.
@@ -228,7 +244,7 @@ function theme_feeds_tamper_ui_list_form($variables) {
           $this_row[] = $map[$i]['table'][$id]['#name'];
           // Operations to perform on a plugin instance. It's disabled, so make
           // it just text.
-          $this_row[] = strip_tags($map[$i]['table'][$id]['#edit']);
+          $this_row[] = strip_tags($map[$i]['table'][$id]['operations']);
           // Enabled checkbox.
           $this_row[] = backdrop_render($map[$i]['table'][$id]['enabled']);
           // Add disabled class to differentiate.
