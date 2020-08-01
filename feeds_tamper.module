@@ -19,7 +19,7 @@ require_once dirname(__FILE__) . '/feeds_tamper.inc';
  * @todo Add support for source plugins.
  */
 function feeds_tamper_feeds_after_parse(FeedsSource $source, FeedsParserResult $result) {
-  $importer_instances = feeds_tamper_load_by_importer($source->importer->__get('id'), FALSE);
+  $importer_instances = feeds_tamper_load_by_importer($source->importer, FALSE);
 
   // Don't go through all of the nonsense if we don't have anything to do.
   if (empty($importer_instances)) {
@@ -131,77 +131,6 @@ function feeds_tamper_permission() {
   return $perms;
 }
 
-function feeds_tamper_load_tamper_object() {
-
-}
-
-// function feeds_tamper_load_tamper_object($tamper_id = NULL) {
-//   $table = 'feeds_tamper';
-
-//   $cache = &backdrop_static(__FUNCTION__);
-
-//   // If fetching all we are finished.
-//   if (!$tamper_id && $cache) {
-//     return $cache;
-//   }
-
-//   // Don't load anything we've already cached.
-//   if (!empty($tamper_id) && isset($cache[$tamper_id])) {
-//     return $cache[$tamper_id];
-//   }
-
-//   $result = array();
-//   $config_names = config_get_names_with_prefix('feeds.feeds_tamper.');
-//   foreach ($config_names as $config_file) {
-//     $config = config($config_file);
-//     $data = $config->get();
-//     $result[$data['id']] = $data;
-//   }
-
-
-//   // Unpack the results of the query onto objects and cache them.
-//   foreach ($result as $data) {
-//     $object = new stdClass;
-//     $object->id = $data['id'];
-//     $object->config = $data['config'];
-//     $object->table = $table;
-//     $object->type = t('Normal');
-//     $object->export_type = EXPORT_IN_DATABASE;
-
-//     $cache[$object->id] = $object;
-//   }
-
-//   $defaults = _feeds_tamper_get_defaults($table);
-
-//   if ($defaults) {
-//     foreach ($defaults as $object) {
-//       if ($object->id != $tamper_id) {
-//         continue;
-//       }
-
-//       if (!empty($cache[$object->id])) {
-//         $cache[$object->id]->type = t('Overridden');
-//         $cache[$object->id]->export_type |= EXPORT_IN_CODE;
-//         $cache[$object->id]->export_module = isset($object->export_module) ? $object->export_module : NULL;
-//       }
-//       else {
-//         $object->type = t('Default');
-//         $object->export_type = EXPORT_IN_CODE;
-//         $object->in_code_only = TRUE;
-//         $object->table = $table;
-
-//         $cache[$object->id] = $object;
-//       }
-//     }
-//   }
-//   // If fetching all, we've done so and we are finished.
-//   if (!$tamper_id) {
-//     return $cache;
-//   }
-
-//   return !empty($cache[$tamper_id]) ? $cache[$tamper_id] : NULL;
-// }
-
 function _feeds_tamper_get_defaults($table) {
   $cache = &backdrop_static(__FUNCTION__, array());
 
@@ -232,4 +161,14 @@ function _feeds_tamper_get_defaults($table) {
 function feeds_tamper_feeds_tamper_plugins() {
   module_load_include('inc', 'feeds_tamper', 'feeds_tamper.plugins');
   return _feeds_tamper_feeds_tamper_plugins();
+}
+
+/**
+ * Implements hook_hook_info().
+ */
+function feeds_tamper_hook_info() {
+  $hooks['feeds_tamper_plugins'] = array(
+    'group' => 'feeds_tamper',
+  );
+  return $hooks;
 }

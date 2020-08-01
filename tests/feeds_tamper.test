@@ -67,7 +67,8 @@ class FeedsTamperWebTestHelper extends FeedsWebTestCase {
     }
     $plugin->id = $id;
     $plugin->description = $description;
-    $this->assertEqual(SAVED_NEW, feeds_tamper_save_instance($plugin));
+    $importer = feeds_importer($importer_id);
+    $this->assertEqual(SAVED_NEW, feeds_tamper_save_instance($importer, $plugin, $source));
     $result = db_query("SELECT * FROM {feeds_tamper} WHERE id = :id", array(':id' => $plugin->id));
     // @todo CHECK CONFIG NOT DB
     // test that default weight is added.
@@ -79,20 +80,22 @@ class FeedsTamperWebTestHelper extends FeedsWebTestCase {
     return $id;
   }
 
-  protected function disableTamperPlugin($id) {
-    $plugin = feeds_tamper_load_instance($id);
+  protected function disableTamperPlugin($importer_id, $id) {
+    $importer = feeds_importer($importer_id);
+    $plugin = feeds_tamper_load_instance($importer, $id);
     $plugin->disabled = TRUE;
-    $this->assertEqual(SAVED_UPDATED, feeds_tamper_save_instance($plugin));
+    $source_id = $plugin->source;
+    $this->assertEqual(SAVED_UPDATED, feeds_tamper_save_instance($importer, $plugin, $source_id));
     // reload and test that changes were kept.
-    $plugin = feeds_tamper_load_instance($id);
+    $plugin = feeds_tamper_load_instance($importer, $id);
     $this->assertIdentical(TRUE, $plugin->disabled);
   }
 
   protected function setTamperPluginWeight($importer_id, $source, $id, $weight) {
   }
 
-  protected function deleteTamperPlugin($id) {
-    feeds_tamper_delete_instance($id);
+  protected function deleteTamperPlugin($importer, $id) {
+    feeds_tamper_delete_instance($importer, $id);
     //$source = db_query("SELECT * FROM {feeds_source} WHERE feed_nid = :nid", array(':nid' => $nid))->fetchObject();
   }
 
@@ -298,8 +301,8 @@ class FeedsTamperCSVTestCase extends FeedsTamperWebTestHelper {
     $this->assertText('THIS IS A GREAT BODY.');
     $this->assertText('WORLD DOES NOT RESPOND');
     $this->assertText('THIS IS A SAD BODY.');
-    $this->disableTamperPlugin($id);
-    $this->disableTamperPlugin($id2);
+    $this->disableTamperPlugin($importer_id, $id);
+    $this->disableTamperPlugin($importer_id, $id2);
     $this->backdropPost('node/' . $nid . '/import', array(), 'Import');
     $this->assertText('Updated 2 nodes.');
     $this->backdropGet('node');

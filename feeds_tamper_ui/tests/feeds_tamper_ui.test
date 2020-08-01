@@ -66,7 +66,7 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     $this->toggleTamperPlugin($importer_id, 0, $id);
     $this->toggleTamperPlugin($importer_id, 0, $id, TRUE);
     $this->setTamperPluginWeight($importer_id, 0, $id, 2);
-    $this->deleteTamperPlugin($id);
+    $this->deleteTamperPlugin($importer_id, $id);
     $settings = array(
       'settings[mode]' => 0,
     );
@@ -78,8 +78,8 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     $this->toggleTamperPlugin($importer_id, 0, $case);
     $this->toggleTamperPlugin($importer_id, 0, $case, TRUE);
     $this->setTamperPluginWeight($importer_id, 0, $case, 2);
-    $this->deleteTamperPlugin($case);
-    $this->deleteTamperPlugin($trim);
+    $this->deleteTamperPlugin($importer_id, $case);
+    $this->deleteTamperPlugin($importer_id, $trim);
 
     // Login with user who can't tamper.
     $this->feeds_user = $this->backdropCreateUser(array('administer feeds'));
@@ -225,8 +225,9 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
 
     $id = $importer_id . '-' . feeds_tamper_make_machine($source) . '-' . $plugin_id;
 
-    $instance = feeds_tamper_load_instance($id);
-    $source_name = feeds_tamper_ui_source_name($instance);
+    $importer = feeds_importer($importer_id);
+    $instance = feeds_tamper_load_instance($importer, $id);
+    $source_name = feeds_tamper_ui_source_name($importer, $instance->source);
     $this->assertText('Plugin ' . $description . ' was successfully added to ' . $source_name . '.');
     return $id;
   }
@@ -248,14 +249,15 @@ class FeedsTamperUIWebTestCase extends FeedsTamperWebTestHelper {
     $this->assertText('Your changes have been saved.');
   }
 
-  protected function deleteTamperPlugin($id) {
-    $instance = feeds_tamper_load_instance($id);
+  protected function deleteTamperPlugin($importer_id, $id) {
+    $importer = feeds_importer($importer_id);
+    $instance = feeds_tamper_load_instance($importer, $id);
     $url = 'admin/structure/feeds/' . $instance->importer . '/tamper/' . $id . '/delete';
     $this->backdropGet($url);
     $this->assertText('Would you really like to delete the plugin ' . $instance->description . '?');
     $this->assertText('This action cannot be undone.');
     $this->backdropPost(NULL, array(), 'Delete');
-    $source_name = feeds_tamper_ui_source_name($instance);
+    $source_name = feeds_tamper_ui_source_name($importer, $instance->source);
     $this->assertText('The plugin ' . $instance->description . ' has been deleted from ' . $source_name . '.');
     $result = db_query("SELECT * FROM {feeds_tamper} WHERE id = :id", array(':id' => $instance->id))->fetchObject();
     $this->assertFalse($result);

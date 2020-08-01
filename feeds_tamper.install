@@ -38,3 +38,31 @@ function feeds_tamper_update_1000() {
 
   update_variable_del('default_feeds_tamper');
 }
+
+/**
+ * Put tampers into feeds_importer config files.
+ */
+function feeds_tamper_update_1001() {
+  $old_config_names = config_get_names_with_prefix('feeds_tamper.');
+  foreach ($old_config_names as $old_config_name) {
+    $old_config = config($old_config_name);
+    $instances = $old_config->get('instances');
+    foreach ($instances as $instance) {
+      $importer_config = config('feeds.feeds_importer.' . $instance['importer']);
+      $mappings = $importer_config->get('config.processor.config.mappings');
+      foreach ($mappings as $key => $mapping) {
+        if ($mapping['source'] == $instance['source'] ) {
+          if (!isset($mapping['tampers'])) {
+            $importer_config->set('config.processor.config.mappings.' . $key . '.tampers', array());
+          }
+          unset($instance['importer']);
+          unset($instance['source']);
+          $importer_config->set('config.processor.config.mappings.' . $key . '.tampers.' . $instance['id'], (object) $instance);
+          $importer_config->save();
+        }
+      }
+    }
+
+    $old_config->delete();
+  }
+}
