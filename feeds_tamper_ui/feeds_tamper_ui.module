@@ -109,7 +109,11 @@ function feeds_tamper_ui_form_feeds_ui_overview_form_alter(&$form, &$form_state)
     foreach ($form['enabled'] as $id => &$table) {
       $importer = feeds_importer($id);
       if (feeds_tamper_access($importer)) {
-        $table['operations']['#markup'] .= ' | ' . l(t('Tamper'), "admin/structure/feeds/$id/tamper");
+        $table['operations']['#links']['tamper'] = array(
+          'title' => t('Tamper'),
+          'href' => 'admin/structure/feeds/' . $id . '/tamper',
+          'query' => array('destination' => current_path()),
+        );
       }
     }
   }
