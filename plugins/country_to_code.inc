@@ -22,7 +22,7 @@ function feeds_tamper_country_to_code_form($importer, $element_key, $settings) {
  * @see http://drupal.org/node/1354
  */
 function feeds_tamper_country_to_code_callback($result, $item_key, $element_key, &$field, $settings, $source) {
-  include_once BACKDROP_ROOT . '/includes/locale.inc';
+  include_once BACKDROP_ROOT . '/core/includes/locale.inc';
   static $countries = array();
 
   if (empty($countries)) {
